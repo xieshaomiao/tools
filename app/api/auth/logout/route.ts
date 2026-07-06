@@ -3,7 +3,8 @@ import { NextResponse } from 'next/server';
 import { invalidateSession } from '@/app/lib/auth';
 
 export async function POST() {
-  const token = cookies().get('toolly_token')?.value;
+  const cookieStore = await cookies();
+  const token = cookieStore.get('toolly_token')?.value;
   if (token) {
     await invalidateSession(token);
   }

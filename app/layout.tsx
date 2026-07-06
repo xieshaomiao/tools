@@ -3,11 +3,16 @@ import type { Metadata } from 'next';
 import AdSenseLoader from './components/AdSenseLoader';
 import Link from 'next/link';
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+  ?? (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : 'http://localhost:3000');
+
 export const metadata: Metadata = {
   title: 'Toolly — 免费试用半年会员 | 在线工具、SEO 服务 与 App 下载',
   description: 'Toolly 提供真实可用的在线工具、SEO 标题生成、关键词提取和翻译服务。所有付费工具用户前半年免费体验，适合流量变现与会员推广。',
   keywords: ['在线工具', 'SEO', '会员免费试用', '关键词提取', '翻译', '文案润色'],
-  metadataBase: new URL('https://example.com'),
+  metadataBase: new URL(siteUrl),
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

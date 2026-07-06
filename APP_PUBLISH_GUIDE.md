@@ -1,13 +1,12 @@
-# 同时发布网站和移动 App
+# Toolly 网站与移动 App 发布状态
 
-## 1. 网站部署（推荐 Vercel）
+## 1. 网站部署
 
-1. 在 GitHub 上确认仓库已推送至 `main`。
-2. 登录 Vercel，创建新项目，选择 `https://github.com/xieshaomiao/tools`。
-3. Vercel 会自动识别 Next.js，构建命令保持 `npm run build`。
-4. 部署后，你会得到一个临时域名，如 `toolly.vercel.app`。
-5. 替换 `app/layout.tsx` 中的 `metadata.metadataBase` 为你的正式域名（如果要自定义域名）。
-6. 绑定域名并完成 DNS 验证。
+- Vercel 项目：`one-zero2/toolly`
+- 当前线上地址：`https://toolly-ruddy.vercel.app`
+- GitHub 仓库：`https://github.com/xieshaomiao/tools`
+- `main` 分支已连接 Vercel，后续推送会自动触发部署。
+- 如需自定义域名，在 Vercel 项目设置中添加域名并完成 DNS 验证；站点元数据会自动读取生产域名。
 
 ## 2. 移动 App 打包（Capacitor）
 
@@ -18,14 +17,19 @@
 
 ### 2.2. 本地打包流程
 
+仓库已经安装 Capacitor 8 的核心、iOS、Android 与命令行依赖。生成原生工程前，必须先确定最终 App ID（Bundle ID / Application ID），并把 `capacitor.config.ts` 中的 `com.yourcompany.toolly` 替换掉。
+
+当前 Next.js 项目包含服务端 API，不能直接静态导出到 `out/`。因此需要先选定移动端方案：
+
+1. 独立移动客户端，调用线上 Toolly API（更适合商店发布）。
+2. 仅把线上网站包进 WebView（开发快，但 Capacitor 官方不建议把 `server.url` 用于生产，商店审核风险也更高）。
+
+确定方案与 App ID 后，再运行：
+
 ```bash
-npm install
-npm run build
-npx cap init "Toolly" "com.yourcompany.toolly"
-npx cap add android
-npx cap add ios
-npm run build
-npx cap sync
+npm run cap:add-android
+npm run cap:add-ios
+npm run cap:sync
 ```
 
 ### 2.3. Android 发布
@@ -50,21 +54,18 @@ npx cap sync
 3. 替换广告单元 `sampleAdUnit` 为真实 Ad Unit ID。
 4. 部署到线上站点后，Google AdSense 需要验证网站并允许显示广告。
 
-## 4. 现在可做的事
+## 4. 当前阻塞项
 
-- 网站：推送到 GitHub，连接 Vercel 部署。
-- App：补充真实 `com.yourcompany.toolly` 包名，完成 Capacitor 平台添加。
-- 广告：先完成网站部署，再替换真实 AdSense ID。
+- App：需要最终 App ID，以及选择独立移动客户端还是 WebView 方案。
+- iOS：本机尚未安装完整 Xcode，且提交时需要 Apple Developer 帐号与签名。
+- Android：本机尚未安装 Android Studio，且提交时需要 Google Play 开发者帐号与签名密钥。
+- 广告：需要真实 AdSense Publisher ID 和广告单元 ID。
+- 会员账号：当前仍使用本地 JSON 文件，Vercel 上不能作为可靠的长期数据库；商用前应迁移到持久化数据库。
 
 ## 5. 本仓库当前准备情况
 
-- `vercel.json` 已创建。
 - `capacitor.config.ts` 已存在。
 - `app/config/ad.ts` 已存在广告占位配置。
 - `DEPLOY_VERSEL.md`、`CAPACITOR_README.md` 已包含发布说明。
-
-如果你要，我可以继续直接：
-
-- 生成 `package.json` 的 `deploy:vercel` 命令
-- 创建 `README.md` 中的部署步骤摘要
-- 把 `workflow-add` 分支合并到 `main` 并推送
+- Next.js、React 与 Capacitor 已升级到当前安全版本，依赖审计为 0 个漏洞。
+- GitHub CI 会执行依赖安装、安全审计、类型检查和生产构建。

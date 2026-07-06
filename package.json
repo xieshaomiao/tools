@@ -7,24 +7,31 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "cap:init": "npx @capacitor/cli create --name=Toolly --web-dir=out || true",
-    "cap:add-android": "npx cap add android || true",
-    "cap:add-ios": "npx cap add ios || true",
-    "cap:sync": "npx cap sync || true",
-    "deploy:vercel": "echo \"Deploy to Vercel: connect this repo in Vercel dashboard or run 'vercel' CLI.\"",
-    "ad:validate": "node ./scripts/validateAdsPlaceholder.js || true"
+    "check": "tsc --noEmit",
+    "lint": "npm run check",
+    "cap:add-android": "npx cap add android",
+    "cap:add-ios": "npx cap add ios",
+    "cap:sync": "npx cap sync",
+    "deploy:vercel": "vercel --prod",
+    "ad:validate": "node ./scripts/validateAdsPlaceholder.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
   "dependencies": {
-    "next": "^14.2.15",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "@capacitor/android": "^8.4.1",
+    "@capacitor/core": "^8.4.1",
+    "@capacitor/ios": "^8.4.1",
+    "next": "^16.2.10",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.4.1",
     "@types/node": "^26.1.0",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
@@ -32,5 +39,8 @@
     "postcss": "^8.5.16",
     "tailwindcss": "^3.4.13",
     "typescript": "^6.0.3"
+  },
+  "overrides": {
+    "postcss": "$postcss"
   }
 }

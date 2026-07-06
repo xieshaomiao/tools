@@ -10,7 +10,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: false, message: '请选择有效的升级方案。' }, { status: 400 });
   }
 
-  const token = cookies().get('toolly_token')?.value;
+  const cookieStore = await cookies();
+  const token = cookieStore.get('toolly_token')?.value;
   if (!token) {
     return NextResponse.json({ success: false, message: '请先登录后再升级会员。' }, { status: 401 });
   }

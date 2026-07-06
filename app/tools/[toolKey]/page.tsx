@@ -8,8 +8,13 @@ export function generateStaticParams() {
   return toolList.map((tool) => ({ toolKey: tool.toolKey }));
 }
 
-export function generateMetadata({ params }: { params: { toolKey: string } }) {
-  const tool = toolMap.get(params.toolKey);
+type ToolPageProps = {
+  params: Promise<{ toolKey: string }>;
+};
+
+export async function generateMetadata({ params }: ToolPageProps) {
+  const { toolKey } = await params;
+  const tool = toolMap.get(toolKey);
   if (!tool) {
     return {
       title: '工具未找到 - Toolly',
@@ -23,8 +28,9 @@ export function generateMetadata({ params }: { params: { toolKey: string } }) {
   };
 }
 
-export default function ToolPage({ params }: { params: { toolKey: string } }) {
-  const tool = toolMap.get(params.toolKey);
+export default async function ToolPage({ params }: ToolPageProps) {
+  const { toolKey } = await params;
+  const tool = toolMap.get(toolKey);
   if (!tool) {
     notFound();
   }

@@ -3,7 +3,8 @@ import { NextResponse } from 'next/server';
 import { getMembershipStatus, getUserFromToken } from '@/app/lib/auth';
 
 export async function GET() {
-  const token = cookies().get('toolly_token')?.value || '';
+  const cookieStore = await cookies();
+  const token = cookieStore.get('toolly_token')?.value || '';
   const user = await getUserFromToken(token);
   const membership = getMembershipStatus(user);
 

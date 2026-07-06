@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'node:fs';
+import path from 'node:path';
 
 const adConfigPath = path.join(process.cwd(), 'app', 'config', 'ad.ts');
 if (!fs.existsSync(adConfigPath)) {
