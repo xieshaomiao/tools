@@ -5,4 +5,4 @@ Toolly helps creators and product teams craft better copy and improve SEO.
 - Membership features to unlock premium tools.
 - Built-in ad placeholders and privacy guidance for easy monetization.
 
-Use the privacy policy URL in the store listing after deployment: https://yourdomain.com/privacy
+Privacy policy: https://toolly-ruddy.vercel.app/privacy

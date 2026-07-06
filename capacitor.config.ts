@@ -1,9 +1,15 @@
-// Capacitor config template (plain export to avoid requiring @capacitor/cli at build-time)
-const config = {
-  appId: 'com.yourcompany.toolly',
+import type { CapacitorConfig } from '@capacitor/cli';
+
+const config: CapacitorConfig = {
+  appId: 'com.xieshaomiao.toolly',
   appName: 'Toolly',
-  webDir: 'out',
-  bundledWebRuntime: false,
+  webDir: 'mobile-dist',
+  loggingBehavior: 'none',
+  server: {
+    url: 'https://toolly-ruddy.vercel.app',
+    cleartext: false,
+    errorPath: 'offline.html',
+  },
 };
 
 export default config;

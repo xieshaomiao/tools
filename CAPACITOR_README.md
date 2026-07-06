@@ -1,33 +1,24 @@
-# Capacitor 本地打包指南（快速模板）
+# Capacitor 本地打包指南
 
-1. 在本机安装 Capacitor CLI（可选）：
+原生工程已生成，App ID 为 `com.xieshaomiao.toolly`。Capacitor 依赖已经安装在项目中，无需全局安装。
 
-```bash
-npm install -g @capacitor/cli
-npm install @capacitor/core
-```
-
-2. 初始化（仅在本地运行一次）：
+1. 网站代码或 Capacitor 配置发生变化后，同步两端：
 
 ```bash
-npx cap init
-# 或使用仓库内模板： npx cap init "Toolly" "com.yourcompany.toolly"
+npm install
+npm run cap:sync
 ```
 
-3. 添加平台：
+2. 打开 Android 工程：
 
 ```bash
-npx cap add android
-npx cap add ios
+npx cap open android
 ```
 
-4. 构建并同步 Web 代码：
+3. 打开 iOS 工程：
 
 ```bash
-npm run build
-npx cap sync
-npx cap open android    # 在 Android Studio 中打开
-npx cap open ios        # 在 Xcode 中打开
+npx cap open ios
 ```
 
-注意：iOS 构建需要 Apple Developer 账号和在 Xcode 中配置签名；Android 推荐使用 `.aab` 并在 Google Play Console 中上传。
+当前 App 加载 `https://toolly-ruddy.vercel.app`，断网时显示内置离线提示页。iOS 构建需要完整 Xcode、Apple Developer 帐号和签名；Android 构建需要 Android Studio/SDK，商店发布推荐生成签名 `.aab`。

@@ -17,7 +17,7 @@
 
 ### 2.2. 本地打包流程
 
-仓库已经安装 Capacitor 8 的核心、iOS、Android 与命令行依赖。生成原生工程前，必须先确定最终 App ID（Bundle ID / Application ID），并把 `capacitor.config.ts` 中的 `com.yourcompany.toolly` 替换掉。
+仓库已经安装 Capacitor 8 的核心、iOS、Android 与命令行依赖。最终 App ID（Bundle ID / Application ID）为 `com.xieshaomiao.toolly`。
 
 当前 Next.js 项目包含服务端 API，不能直接静态导出到 `out/`。因此需要先选定移动端方案：
 
@@ -56,7 +56,7 @@ npm run cap:sync
 
 ## 4. 当前阻塞项
 
-- App：需要最终 App ID，以及选择独立移动客户端还是 WebView 方案。
+- App：当前采用连接线上 Toolly 网站的 WebView 方案；提交商店前仍建议评估独立移动客户端，以降低审核风险并改善离线体验。
 - iOS：本机尚未安装完整 Xcode，且提交时需要 Apple Developer 帐号与签名。
 - Android：本机尚未安装 Android Studio，且提交时需要 Google Play 开发者帐号与签名密钥。
 - 广告：需要真实 AdSense Publisher ID 和广告单元 ID。
