@@ -57,8 +57,8 @@ npm run cap:sync
 ## 4. 当前阻塞项
 
 - App：当前采用连接线上 Toolly 网站的 WebView 方案；提交商店前仍建议评估独立移动客户端，以降低审核风险并改善离线体验。
-- iOS：本机尚未安装完整 Xcode，且提交时需要 Apple Developer 帐号与签名。
-- Android：本机尚未安装 Android Studio，且提交时需要 Google Play 开发者帐号与签名密钥。
+- iOS：Xcode 与 iOS 26.5 运行时已安装；提交时仍需要 Apple Developer 帐号、签名身份和描述文件。
+- Android：Android Studio、SDK 与构建工具已安装；提交时仍需要 Google Play 开发者帐号与上传签名密钥。
 - 广告：需要真实 AdSense Publisher ID 和广告单元 ID。
 - 会员账号：当前仍使用本地 JSON 文件，Vercel 上不能作为可靠的长期数据库；商用前应迁移到持久化数据库。
 
@@ -68,4 +68,6 @@ npm run cap:sync
 - `app/config/ad.ts` 已存在广告占位配置。
 - `DEPLOY_VERSEL.md`、`CAPACITOR_README.md` 已包含发布说明。
 - Next.js、React 与 Capacitor 已升级到当前安全版本，依赖审计为 0 个漏洞。
-- GitHub CI 会执行依赖安装、安全审计、类型检查和生产构建。
+- GitHub `main` 已连接 Vercel 自动部署。
+- Android 单元测试、调试 APK 与未签名 Release AAB 已构建通过。
+- iOS 模拟器 Debug 与真机 Release 无签名编译已通过；正式归档仍需 Apple Developer 签名身份。
