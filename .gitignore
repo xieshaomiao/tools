@@ -8,3 +8,4 @@ coverage/
 *.log
 *.tsbuildinfo
 .vercel
+wechat-mini-program/project.private.config.json

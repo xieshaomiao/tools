@@ -1,0 +1,24 @@
+<view class="page-shell">
+  <view class="about-hero card">
+    <view class="about-mark">T</view>
+    <view class="about-title">Toolly 工具箱</view>
+    <view class="about-version">微信小程序首版 · 1.0.0</view>
+  </view>
+
+  <view class="about-card card">
+    <view class="section-title">隐私说明</view>
+    <view class="paragraph">Toolly 的首版工具均在用户设备端处理。我们不收集、不上传、不保存用户输入的文本、密码或处理结果。</view>
+    <view class="paragraph">小程序不要求登录，不使用定位、通讯录、相册、麦克风或摄像头权限，也不包含广告与第三方统计 SDK。</view>
+  </view>
+
+  <view class="about-card card">
+    <view class="section-title">使用提示</view>
+    <view class="paragraph">密码生成结果仅用于辅助，请勿在多个账号中重复使用同一密码。涉及重要数据时，请自行核对转换结果。</view>
+  </view>
+
+  <view class="about-card card">
+    <view class="section-title">官方网站</view>
+    <view class="website" bindtap="copyWebsite">toolly-ruddy.vercel.app</view>
+    <view class="website-tip">点击复制网址</view>
+  </view>
+</view>

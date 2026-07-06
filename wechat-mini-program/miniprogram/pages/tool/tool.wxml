@@ -1,0 +1,70 @@
+<view class="page-shell">
+  <view class="intro card">
+    <view class="intro-badge">{{tool.badge}}</view>
+    <view class="intro-title">{{tool.title}}</view>
+    <view class="intro-copy">{{tool.description}}</view>
+    <view class="privacy-note">本工具在设备端处理，不上传输入内容</view>
+  </view>
+
+  <view class="workspace card">
+    <block wx:if="{{tool.custom === 'password'}}">
+      <view class="field-label">密码长度（6 - 64）</view>
+      <input class="text-input" type="number" value="{{passwordLength}}" bindinput="setPasswordLength" />
+      <view class="switch-row">
+        <text>包含特殊符号</text>
+        <switch checked="{{useSymbols}}" bindchange="setUseSymbols" color="#2563eb" />
+      </view>
+    </block>
+
+    <block wx:elif="{{tool.custom === 'number'}}">
+      <view class="field-label">段落数量（1 - 20）</view>
+      <input class="text-input" type="number" value="{{input}}" bindinput="setInput" placeholder="默认 2 段" />
+    </block>
+
+    <block wx:else>
+      <view wx:if="{{tool.options}}" class="option-block">
+        <view class="field-label">处理方式</view>
+        <picker range="{{tool.options}}" range-key="label" value="{{optionIndex}}" bindchange="setOption">
+          <view class="picker-field">{{tool.options[optionIndex].label}}<text>⌄</text></view>
+        </picker>
+      </view>
+
+      <view class="field-label">输入内容</view>
+      <textarea
+        class="text-area"
+        value="{{input}}"
+        bindinput="setInput"
+        placeholder="{{tool.placeholder}}"
+        auto-height="false"
+        maxlength="-1"
+      />
+
+      <block wx:if="{{tool.custom === 'dual'}}">
+        <view class="field-label second-label">对比内容</view>
+        <textarea
+          class="text-area"
+          value="{{secondInput}}"
+          bindinput="setSecondInput"
+          placeholder="{{tool.secondPlaceholder}}"
+          maxlength="-1"
+        />
+      </block>
+    </block>
+
+    <view class="action-row">
+      <button class="primary-button" bindtap="run">生成结果</button>
+      <button class="secondary-button" bindtap="clearAll">清空</button>
+    </view>
+  </view>
+
+  <view class="result card">
+    <view class="result-header">
+      <view>
+        <view class="result-title">处理结果</view>
+        <view class="result-copy">可长按选择，或一键复制</view>
+      </view>
+      <button class="copy-button" bindtap="copyOutput">复制</button>
+    </view>
+    <text class="result-content" user-select>{{output || '结果将在这里显示。'}}</text>
+  </view>
+</view>

@@ -1,0 +1,149 @@
+.intro {
+  padding: 34rpx;
+}
+
+.intro-badge {
+  display: inline-flex;
+  padding: 10rpx 18rpx;
+  border-radius: 14rpx;
+  background: #dbeafe;
+  color: #1d4ed8;
+  font-size: 22rpx;
+  font-weight: 700;
+}
+
+.intro-title {
+  margin-top: 22rpx;
+  font-size: 42rpx;
+  font-weight: 750;
+}
+
+.intro-copy {
+  margin-top: 14rpx;
+  color: #64748b;
+  font-size: 27rpx;
+  line-height: 1.7;
+}
+
+.privacy-note {
+  margin-top: 22rpx;
+  padding: 16rpx 20rpx;
+  border-radius: 16rpx;
+  background: #ecfdf5;
+  color: #047857;
+  font-size: 23rpx;
+}
+
+.workspace,
+.result {
+  margin-top: 24rpx;
+  padding: 32rpx;
+}
+
+.field-label {
+  margin-bottom: 14rpx;
+  color: #334155;
+  font-size: 25rpx;
+  font-weight: 600;
+}
+
+.second-label {
+  margin-top: 28rpx;
+}
+
+.text-input,
+.picker-field {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 88rpx;
+  padding: 24rpx;
+  border: 1rpx solid #cbd5e1;
+  border-radius: 20rpx;
+  background: #f8fafc;
+  font-size: 27rpx;
+}
+
+.picker-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.text-area {
+  box-sizing: border-box;
+  width: 100%;
+  height: 300rpx;
+  padding: 24rpx;
+  border: 1rpx solid #cbd5e1;
+  border-radius: 20rpx;
+  background: #f8fafc;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 25rpx;
+  line-height: 1.6;
+}
+
+.option-block {
+  margin-bottom: 28rpx;
+}
+
+.switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 26rpx;
+  color: #475569;
+  font-size: 26rpx;
+}
+
+.action-row {
+  display: grid;
+  grid-template-columns: 1fr 0.55fr;
+  gap: 18rpx;
+  margin-top: 30rpx;
+}
+
+.result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.result-title {
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.result-copy {
+  margin-top: 8rpx;
+  color: #94a3b8;
+  font-size: 22rpx;
+}
+
+.copy-button {
+  margin: 0;
+  padding: 0 26rpx;
+  border-radius: 999rpx;
+  background: #dbeafe;
+  color: #1d4ed8;
+  font-size: 24rpx;
+  line-height: 68rpx;
+}
+
+.copy-button::after {
+  border: 0;
+}
+
+.result-content {
+  display: block;
+  min-height: 180rpx;
+  margin-top: 26rpx;
+  padding: 24rpx;
+  border-radius: 20rpx;
+  background: #0f172a;
+  color: #e2e8f0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 24rpx;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-all;
+}

@@ -1,0 +1,56 @@
+.about-hero {
+  padding: 48rpx 34rpx;
+  text-align: center;
+}
+
+.about-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100rpx;
+  height: 100rpx;
+  margin: 0 auto;
+  border-radius: 28rpx;
+  background: linear-gradient(145deg, #1d4ed8, #0f172a);
+  color: #ffffff;
+  font-size: 48rpx;
+  font-weight: 800;
+}
+
+.about-title {
+  margin-top: 24rpx;
+  font-size: 40rpx;
+  font-weight: 750;
+}
+
+.about-version,
+.website-tip {
+  margin-top: 10rpx;
+  color: #94a3b8;
+  font-size: 23rpx;
+}
+
+.about-card {
+  margin-top: 24rpx;
+  padding: 34rpx;
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.paragraph {
+  margin-top: 18rpx;
+  color: #475569;
+  font-size: 26rpx;
+  line-height: 1.8;
+}
+
+.website {
+  margin-top: 18rpx;
+  color: #2563eb;
+  font-size: 28rpx;
+  font-weight: 600;
+  word-break: break-all;
+}

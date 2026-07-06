@@ -1,0 +1,16 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/tool/tool",
+    "pages/about/about"
+  ],
+  "window": {
+    "navigationBarTitleText": "Toolly 工具箱",
+    "navigationBarBackgroundColor": "#f8fafc",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#f1f5f9",
+    "backgroundTextStyle": "dark"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

@@ -1,0 +1,45 @@
+<view class="page-shell">
+  <view class="hero card">
+    <view class="hero-topline">TOOLLY · LOCAL FIRST</view>
+    <view class="hero-title">把常用小工具，装进口袋里</view>
+    <view class="hero-copy">文本、编码、时间与开发工具均在设备端处理，不上传你的输入。</view>
+    <view class="hero-actions">
+      <view class="metric"><text class="metric-number">{{tools.length}}</text><text>个可用工具</text></view>
+      <button class="about-button" bindtap="openAbout">隐私与说明</button>
+    </view>
+  </view>
+
+  <view class="search card">
+    <text class="search-icon">⌕</text>
+    <input value="{{keyword}}" bindinput="onSearch" placeholder="搜索工具" confirm-type="search" />
+  </view>
+
+  <scroll-view class="category-scroll" scroll-x enhanced show-scrollbar="false">
+    <view class="category-row">
+      <view
+        wx:for="{{categories}}"
+        wx:key="*this"
+        class="category-chip {{activeCategory === item ? 'category-chip-active' : ''}}"
+        data-category="{{item}}"
+        bindtap="chooseCategory"
+      >{{item}}</view>
+    </view>
+  </scroll-view>
+
+  <view class="section-title">全部工具</view>
+  <view wx:if="{{tools.length}}" class="tool-grid">
+    <view
+      wx:for="{{tools}}"
+      wx:key="key"
+      class="tool-card card"
+      data-key="{{item.key}}"
+      bindtap="openTool"
+    >
+      <view class="tool-badge">{{item.badge}}</view>
+      <view class="tool-title">{{item.title}}</view>
+      <view class="tool-description">{{item.description}}</view>
+      <view class="tool-footer"><text>{{item.category}}</text><text class="tool-arrow">→</text></view>
+    </view>
+  </view>
+  <view wx:else class="empty card">没有找到匹配的工具</view>
+</view>
