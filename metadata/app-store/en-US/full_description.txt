@@ -1,0 +1,8 @@
+Toolly helps creators and product teams craft better copy and improve SEO.
+
+- Generate titles, summaries, keywords and ads-ready copy quickly.
+- Multiple writing tools including translation and polishing.
+- Membership features to unlock premium tools.
+- Built-in ad placeholders and privacy guidance for easy monetization.
+
+Use the privacy policy URL in the store listing after deployment: https://yourdomain.com/privacy
