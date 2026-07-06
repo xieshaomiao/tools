@@ -71,3 +71,4 @@ npm run cap:sync
 - GitHub `main` 已连接 Vercel 自动部署。
 - Android 单元测试、调试 APK 与未签名 Release AAB 已构建通过。
 - iOS 模拟器 Debug 与真机 Release 无签名编译已通过；正式归档仍需 Apple Developer 签名身份。
+- iPhone 17 Pro（iOS 26.5）模拟器已实际安装并启动 Toolly，首页加载正常且未发现应用级运行错误。
