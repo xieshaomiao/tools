@@ -8,23 +8,32 @@ export default function AuthPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setSubmitting(true);
+    setMessage('');
     const endpoint = mode === 'login' ? '/api/auth/login' : '/api/auth/register';
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await response.json();
-    if (!data.success) {
-      setMessage(data.message || '操作失败');
-      return;
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.success) {
+        setMessage(data.message || '操作失败，请稍后重试。');
+        return;
+      }
+      router.push('/membership');
+      router.refresh();
+    } catch {
+      setMessage('网络请求失败，请检查网络后重试。');
+    } finally {
+      setSubmitting(false);
     }
-    document.cookie = `toolly_token=${data.token}; path=/; max-age=2592000`;
-    router.push('/membership');
   };
 
   return (
@@ -40,14 +49,14 @@ export default function AuthPage() {
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           <label className="block text-sm font-medium text-slate-700">
             邮箱
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="mt-2 w-full rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700" required />
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} maxLength={254} autoComplete="email" className="mt-2 w-full rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700" required />
           </label>
           <label className="block text-sm font-medium text-slate-700">
             密码
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="mt-2 w-full rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700" required />
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} minLength={8} maxLength={128} autoComplete={mode === 'login' ? 'current-password' : 'new-password'} className="mt-2 w-full rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700" required />
           </label>
-          <button type="submit" className="w-full rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-slate-800">
-            {mode === 'login' ? '登录' : '注册'}
+          <button type="submit" disabled={submitting} className="w-full rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60">
+            {submitting ? '处理中...' : mode === 'login' ? '登录' : '注册'}
           </button>
           {message ? <p className="text-sm text-red-600">{message}</p> : null}
         </form>
