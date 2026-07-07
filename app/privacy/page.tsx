@@ -3,6 +3,7 @@ import Link from 'next/link';
 export const metadata = {
   title: '隐私政策 - Toolly',
   description: 'Toolly 隐私政策与广告说明，解释我们如何使用 Cookie 与第三方广告服务。',
+  alternates: { canonical: '/privacy' },
 };
 
 export default function PrivacyPage() {

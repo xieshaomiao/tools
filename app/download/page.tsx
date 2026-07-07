@@ -3,6 +3,7 @@ import Link from 'next/link';
 export const metadata = {
   title: 'Toolly App 下载与会员计划 | 前半年免费体验',
   description: 'Toolly 移动 App 提供在线工具、SEO 与翻译功能，付费工具用户前半年免费体验。',
+  alternates: { canonical: '/download' },
 };
 
 const stores = [

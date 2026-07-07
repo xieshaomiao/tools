@@ -4,6 +4,7 @@ import MembershipPanel from '@/app/components/MembershipPanel';
 export const metadata = {
   title: 'Toolly 会员计划 | 半年免费体验与付费升级',
   description: 'Toolly 会员提供半年免费体验，高级 SEO、翻译和文案润色工具，帮助您获取更多流量和转化。',
+  alternates: { canonical: '/membership' },
 };
 
 export default function MembershipPage() {

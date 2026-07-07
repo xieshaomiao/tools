@@ -1,18 +1,34 @@
 import Link from 'next/link';
 import AdSlot from './components/AdSlot';
 import { toolList } from './tools/toolConfig';
+import { SITE_URL } from './lib/site';
 
 export const metadata = {
   title: 'Toolly - 免费体验半年会员的在线工具平台 | SEO、翻译、内容优化',
   description:
     'Toolly 提供真实可用的在线工具、SEO 内容优化、翻译服务和会员半年免费体验，适合流量转化与付费升级。',
+  alternates: {
+    canonical: '/',
+  },
 };
 
 const categories = Array.from(new Set(toolList.map((tool) => tool.category)));
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Toolly',
+  url: SITE_URL,
+  inLanguage: 'zh-CN',
+  description: '提供文本处理、编码转换、SEO 内容优化和开发者常用工具的在线工具箱。',
+};
 
 export default function HomePage() {
   return (
     <main className="mx-auto min-h-screen max-w-7xl px-6 py-10 lg:px-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+      />
       <header className="mb-12 rounded-[2rem] border border-slate-200 bg-slate-50 p-8 shadow-sm">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-3xl">

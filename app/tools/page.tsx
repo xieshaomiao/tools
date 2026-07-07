@@ -4,6 +4,7 @@ import { toolList } from '@/app/tools/toolConfig';
 export const metadata = {
   title: 'Toolly 工具目录 | 在线工具聚合',
   description: '浏览 Toolly 的全部在线工具目录，包括 PDF 转换、JSON 格式化、字数统计、图片压缩等。',
+  alternates: { canonical: '/tools' },
 };
 
 export default function ToolsPage() {

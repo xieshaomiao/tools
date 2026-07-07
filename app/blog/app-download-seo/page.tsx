@@ -3,6 +3,7 @@ import Link from 'next/link';
 export const metadata = {
   title: '移动 App 下载页优化技巧 | Toolly 博客',
   description: '为 iOS 和 Android 下载页面设计高转化结构，增加移动端用户留存和广告收益。',
+  alternates: { canonical: '/blog/app-download-seo' },
 };
 
 export default function AppDownloadSeo() {

@@ -4,6 +4,7 @@ import AdSlot from '@/app/components/AdSlot';
 export const metadata = {
   title: '什么是 JSON？| Toolly SEO 文章',
   description: '了解 JSON 的基本概念、用途与实践示例，帮助你在前端开发和内容创作中更好地应用此数据格式。',
+  alternates: { canonical: '/blog/what-is-json' },
 };
 
 export default function WhatIsJsonPage() {

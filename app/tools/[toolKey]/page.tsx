@@ -19,12 +19,22 @@ export async function generateMetadata({ params }: ToolPageProps) {
     return {
       title: '工具未找到 - Toolly',
       description: '所请求的工具页面不存在。返回首页查看可用工具列表。',
+      robots: { index: false, follow: false },
     };
   }
 
   return {
     title: `${tool.title} | Toolly`,
     description: tool.description,
+    alternates: {
+      canonical: tool.href,
+    },
+    openGraph: {
+      type: 'website',
+      title: `${tool.title} | Toolly`,
+      description: tool.description,
+      url: tool.href,
+    },
   };
 }
 

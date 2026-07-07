@@ -2,17 +2,44 @@ import './globals.css';
 import type { Metadata } from 'next';
 import AdSenseLoader from './components/AdSenseLoader';
 import Link from 'next/link';
+import { SITE_URL } from './lib/site';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
-  ?? (process.env.VERCEL_PROJECT_PRODUCTION_URL
-    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : 'http://localhost:3000');
+const defaultTitle = 'Toolly 在线工具箱 | 文本、编码、SEO 与开发工具';
+const defaultDescription = 'Toolly 提供 JSON 格式化、Base64 编码、字数统计、时间戳转换、SEO 内容优化等在线工具，打开即用。';
 
 export const metadata: Metadata = {
-  title: 'Toolly — 免费试用半年会员 | 在线工具、SEO 服务 与 App 下载',
-  description: 'Toolly 提供真实可用的在线工具、SEO 标题生成、关键词提取和翻译服务。所有付费工具用户前半年免费体验，适合流量变现与会员推广。',
+  title: defaultTitle,
+  description: defaultDescription,
   keywords: ['在线工具', 'SEO', '会员免费试用', '关键词提取', '翻译', '文案润色'],
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(SITE_URL),
+  applicationName: 'Toolly',
+  creator: 'Toolly',
+  publisher: 'Toolly',
+  category: 'technology',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+      'max-video-preview': -1,
+    },
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'zh_CN',
+    siteName: 'Toolly',
+    title: defaultTitle,
+    description: defaultDescription,
+    url: SITE_URL,
+  },
+  twitter: {
+    card: 'summary',
+    title: defaultTitle,
+    description: defaultDescription,
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -25,11 +52,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         <footer className="mt-12 border-t border-slate-100 bg-white py-8 text-sm text-slate-600">
           <div className="mx-auto max-w-7xl px-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <p>© {new Date().getFullYear()} Toolly</p>
-              <div className="flex items-center gap-4">
+              <nav aria-label="页脚导航" className="flex flex-wrap items-center gap-4">
+                <Link href="/tools" className="text-slate-600 underline">工具目录</Link>
+                <Link href="/blog" className="text-slate-600 underline">使用指南</Link>
+                <Link href="/download" className="text-slate-600 underline">下载</Link>
+                <Link href="/membership" className="text-slate-600 underline">会员</Link>
                 <Link href="/privacy" className="text-slate-600 underline">隐私政策</Link>
-              </div>
+              </nav>
             </div>
           </div>
         </footer>

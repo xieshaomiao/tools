@@ -3,6 +3,7 @@ import Link from 'next/link';
 export const metadata = {
   title: 'Toolly 博客 | SEO 文章与在线工具指南',
   description: '阅读 Toolly 的博客内容，了解在线工具使用技巧、SEO 优化策略和移动 App 下载指南。',
+  alternates: { canonical: '/blog' },
 };
 
 const articles = [
