@@ -4,9 +4,9 @@ import { toolList } from './tools/toolConfig';
 import { SITE_URL } from './lib/site';
 
 export const metadata = {
-  title: 'Toolly - 免费体验半年会员的在线工具平台 | SEO、翻译、内容优化',
+  title: 'Toolly 免费在线工具箱 | PDF 文档互转、图片与开发工具',
   description:
-    'Toolly 提供真实可用的在线工具、SEO 内容优化、翻译服务和会员半年免费体验，适合流量转化与付费升级。',
+    'Toolly 提供 PDF、Word、Excel、PPT 文档互转，以及图片压缩、JSON CSV、二维码、正则、UUID、哈希等免费在线工具。',
   alternates: {
     canonical: '/',
   },
@@ -19,7 +19,7 @@ const websiteJsonLd = {
   name: 'Toolly',
   url: SITE_URL,
   inLanguage: 'zh-CN',
-  description: '提供文本处理、编码转换、SEO 内容优化和开发者常用工具的在线工具箱。',
+  description: '提供文档格式互转、图片处理、文本、编码、SEO 和开发者常用工具的在线工具箱。',
 };
 
 export default function HomePage() {
@@ -34,14 +34,14 @@ export default function HomePage() {
           <div className="max-w-3xl">
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-500">Toolly • 在线工具聚合</p>
             <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
-              一键访问 15+ 实用工具，快速提升广告与流量收益
+              {toolList.length} 个真实在线工具，文档、图片与开发需求一站解决
             </h1>
             <p className="mt-5 text-lg leading-8 text-slate-600">
-              Toolly 聚合多种工具页面，覆盖文件转换、SEO 优化、翻译与内容增强功能，支持会员半年免费体验和后续付费升级。 
+              PDF、Word、Excel、PPT 常用文档互转，搭配图片压缩、二维码、JSON、CSV、正则、哈希等实用功能，结果可复制、可下载。
             </p>
             <div className="mt-6 max-w-2xl rounded-[1.75rem] border border-slate-200 bg-slate-50 p-6 text-sm text-slate-700">
-              <p className="font-medium text-slate-900">新用户福利</p>
-              <p className="mt-3">所有付费工具用户前半年免费体验，适合快速吸引注册与留存。</p>
+              <p className="font-medium text-slate-900">隐私优先</p>
+              <p className="mt-3">文档、图片和大多数文本工具直接在浏览器本地处理，无需上传个人文件。</p>
             </div>
             <div className="mt-6 flex flex-wrap gap-3">
               {categories.map((item) => (
@@ -74,12 +74,12 @@ export default function HomePage() {
           <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
             <h2 className="text-2xl font-semibold text-slate-900">热门工具</h2>
             <p className="mt-4 text-slate-600 leading-7">
-              你可以直接进入任一工具页，体验 SEO 内容优化、文件处理或移动扫码功能。每个工具页面都适合增加广告位与提高用户停留时间。
+              直接进入任一工具页完成处理。重点功能包括万能文档转换、图片格式转换、JSON CSV 互转和人民币金额大写。
             </p>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-            {toolList.slice(0, 6).map((tool) => (
+            {toolList.slice(0, 9).map((tool) => (
               <Link
                 key={tool.toolKey}
                 href={tool.href}
@@ -101,7 +101,7 @@ export default function HomePage() {
             <h2 className="text-2xl font-semibold text-slate-900">为什么选择 Toolly</h2>
             <ul className="mt-5 space-y-3 text-slate-600 leading-7">
               <li>• 首页简洁导航，可快速引导用户进入工具和下载页。</li>
-              <li>• 工具页支持功能占位与广告布局，适合流量变现。</li>
+              <li>• 所有工具提供真实输出，并支持复制或下载结果。</li>
               <li>• 博客与下载页联动，可提升移动端访问与留存。 </li>
             </ul>
           </div>

@@ -1,2 +1,6 @@
 declare module '*.css';
 declare module '*.module.css';
+declare module 'mammoth/mammoth.browser' {
+  export function convertToHtml(input: { arrayBuffer: ArrayBuffer }): Promise<{ value: string; messages: unknown[] }>;
+  export function extractRawText(input: { arrayBuffer: ArrayBuffer }): Promise<{ value: string; messages: unknown[] }>;
+}

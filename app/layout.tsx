@@ -4,13 +4,13 @@ import AdSenseLoader from './components/AdSenseLoader';
 import Link from 'next/link';
 import { SITE_URL } from './lib/site';
 
-const defaultTitle = 'Toolly 在线工具箱 | 文本、编码、SEO 与开发工具';
-const defaultDescription = 'Toolly 提供 JSON 格式化、Base64 编码、字数统计、时间戳转换、SEO 内容优化等在线工具，打开即用。';
+const defaultTitle = 'Toolly 在线工具箱 | PDF 文档转换、图片与开发工具';
+const defaultDescription = 'Toolly 提供 PDF、Word、Excel、PPT 文档互转，以及 JSON、CSV、二维码、图片压缩、正则、哈希等真实可用的免费在线工具。';
 
 export const metadata: Metadata = {
   title: defaultTitle,
   description: defaultDescription,
-  keywords: ['在线工具', 'SEO', '会员免费试用', '关键词提取', '翻译', '文案润色'],
+  keywords: ['在线工具', 'PDF 转 Word', 'Word 转 PDF', '文档转换', '图片转换', 'JSON CSV', '人民币大写', '正则测试', 'UUID 生成', 'Toolly'],
   metadataBase: new URL(SITE_URL),
   applicationName: 'Toolly',
   creator: 'Toolly',

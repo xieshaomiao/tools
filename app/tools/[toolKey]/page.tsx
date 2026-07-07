@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import AdSlot from '@/app/components/AdSlot';
 import ToolPanel from '@/app/components/ToolPanel';
 import { toolList, toolMap } from '@/app/tools/toolConfig';
+import { absoluteUrl } from '@/app/lib/site';
 
 export function generateStaticParams() {
   return toolList.map((tool) => ({ toolKey: tool.toolKey }));
@@ -26,6 +27,7 @@ export async function generateMetadata({ params }: ToolPageProps) {
   return {
     title: `${tool.title} | Toolly`,
     description: tool.description,
+    keywords: [tool.title, tool.badge, tool.category, '免费在线工具', 'Toolly'],
     alternates: {
       canonical: tool.href,
     },
@@ -45,8 +47,26 @@ export default async function ToolPage({ params }: ToolPageProps) {
     notFound();
   }
 
+  const softwareJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: tool.title,
+    description: tool.description,
+    url: absoluteUrl(tool.href),
+    applicationCategory: 'UtilitiesApplication',
+    operatingSystem: 'Any',
+    browserRequirements: 'Requires JavaScript and a modern browser',
+    inLanguage: 'zh-CN',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'CNY',
+    },
+  };
+
   return (
     <main className="mx-auto min-h-screen max-w-7xl px-6 py-10 lg:px-8">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareJsonLd).replace(/</g, '\\u003c') }} />
       <header className="mb-10 rounded-[2rem] border border-slate-200 bg-slate-50 p-8 shadow-sm">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
@@ -73,7 +93,7 @@ export default async function ToolPage({ params }: ToolPageProps) {
           <div className="rounded-[1.75rem] border border-slate-200 bg-slate-50 p-6 text-slate-600">
             <h2 className="text-lg font-semibold text-slate-900">工具页提示</h2>
             <p className="mt-4 text-sm leading-7">
-              本页面已支持动态工具渲染，可在后台继续拓展真实功能与广告位展示。 
+              本工具支持真实处理结果。文本结果可复制并下载，文件结果可直接保存到本机。
             </p>
           </div>
         </aside>

@@ -3,7 +3,7 @@ import { toolList } from '@/app/tools/toolConfig';
 
 export const metadata = {
   title: 'Toolly 工具目录 | 在线工具聚合',
-  description: '浏览 Toolly 的全部在线工具目录，包括 PDF 转换、JSON 格式化、字数统计、图片压缩等。',
+  description: '浏览 Toolly 的全部免费在线工具，包括 PDF 文档互转、JSON CSV、图片压缩、二维码、正则和人民币大写等。',
   alternates: { canonical: '/tools' },
 };
 
@@ -12,9 +12,9 @@ export default function ToolsPage() {
     <main className="mx-auto min-h-screen max-w-7xl px-6 py-10 lg:px-8">
       <header className="mb-10 rounded-[2rem] border border-slate-200 bg-slate-50 p-8 shadow-sm">
         <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-500">工具目录</p>
-        <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-950">15+ 实用工具，一站式访问</h1>
+        <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-950">{toolList.length} 个实用工具，一站式访问</h1>
         <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">
-          Toolly 提供多种在线工具，覆盖文件转换、内容优化、开发辅助、设计与广告变现场景。所有工具页面均可直接访问。
+          Toolly 覆盖文档互转、图片处理、中文办公、内容优化和开发辅助。所有工具均可直接使用，结果支持复制或下载。
         </p>
       </header>
 

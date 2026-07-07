@@ -1,8 +1,17 @@
 'use client';
 
-import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
+import DocumentConverterPanel from '@/app/components/DocumentConverterPanel';
 import { ToolMeta } from '@/app/tools/toolConfig';
+import {
+  convertJsonCsv,
+  convertYamlJson,
+  decodeJwt,
+  generateHash,
+  generateUuids,
+  numberToChineseRmb,
+  testRegex,
+} from '@/app/lib/utility-tools';
 
 const loremParagraph =
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.';
@@ -195,11 +204,13 @@ function diffText(a: string, b: string) {
   }));
 }
 
-function resultFileName(toolKey: string) {
+function resultFileName(toolKey: string, option = '') {
   const extensions: Record<string, string> = {
     'json-format': 'json',
     'markdown-html': 'html',
     'html-compress': 'html',
+    'json-csv': option === 'csv-to-json' ? 'json' : 'csv',
+    'yaml-json': option === 'json-to-yaml' ? 'yaml' : 'json',
   };
   return `toolly-${toolKey}.${extensions[toolKey] ?? 'txt'}`;
 }
@@ -234,35 +245,32 @@ async function compressImage(file: File) {
   return { blob, fileName: `${file.name.replace(/\.[^.]+$/, '')}-compressed.webp`, width, height };
 }
 
-async function extractPdfText(file: File) {
-  const pdfjs = await import('pdfjs-dist');
-  pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-    'pdfjs-dist/build/pdf.worker.min.mjs',
-    import.meta.url,
-  ).toString();
-  const data = new Uint8Array(await file.arrayBuffer());
-  const document = await pdfjs.getDocument({ data }).promise;
-  const pages: string[] = [];
-  for (let pageNumber = 1; pageNumber <= document.numPages; pageNumber += 1) {
-    const page = await document.getPage(pageNumber);
-    const content = await page.getTextContent();
-    const text = content.items
-      .map((item) => ('str' in item ? item.str : ''))
-      .join(' ')
-      .replace(/\s+/g, ' ')
-      .trim();
-    pages.push(`--- 第 ${pageNumber} 页 ---\n${text || '（本页没有可提取文本，可能是扫描图片）'}`);
+async function convertImageFormat(file: File, target: 'png' | 'jpeg' | 'webp') {
+  const bitmap = await createImageBitmap(file);
+  const canvas = document.createElement('canvas');
+  canvas.width = bitmap.width;
+  canvas.height = bitmap.height;
+  const context = canvas.getContext('2d');
+  if (!context) throw new Error('浏览器暂不支持图片转换。');
+  if (target === 'jpeg') {
+    context.fillStyle = '#ffffff';
+    context.fillRect(0, 0, canvas.width, canvas.height);
   }
-  const output = pages.join('\n\n');
-  return {
-    output,
-    blob: new Blob([output], { type: 'text/plain;charset=utf-8' }),
-    fileName: `${file.name.replace(/\.pdf$/i, '')}.txt`,
-    pageCount: document.numPages,
-  };
+  context.drawImage(bitmap, 0, 0);
+  bitmap.close();
+  const mimeType = `image/${target}`;
+  const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, mimeType, 0.9));
+  if (!blob) throw new Error('图片转换失败，请更换图片后重试。');
+  const extension = target === 'jpeg' ? 'jpg' : target;
+  return { blob, fileName: `${file.name.replace(/\.[^.]+$/, '')}.${extension}`, width: canvas.width, height: canvas.height };
 }
 
 export default function ToolPanel({ tool }: { tool: ToolMeta }) {
+  if (tool.toolKey === 'pdf-convert') return <DocumentConverterPanel tool={tool} />;
+  return <StandardToolPanel tool={tool} />;
+}
+
+function StandardToolPanel({ tool }: { tool: ToolMeta }) {
   const [valueA, setValueA] = useState('');
   const [valueB, setValueB] = useState('');
   const [output, setOutput] = useState('');
@@ -278,8 +286,9 @@ export default function ToolPanel({ tool }: { tool: ToolMeta }) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [qrValue, setQrValue] = useState('输入文本后生成二维码占位。');
   const [qrDataUrl, setQrDataUrl] = useState('');
+  const [uuidCount, setUuidCount] = useState(5);
+  const [imageTarget, setImageTarget] = useState<'png' | 'jpeg' | 'webp'>('webp');
   const [translateTarget, setTranslateTarget] = useState<'zh' | 'en'>('zh');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isMember, setIsMember] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
 
@@ -326,16 +335,19 @@ export default function ToolPanel({ tool }: { tool: ToolMeta }) {
       setTimeout(() => setCopyMessage(''), 2000);
       return;
     }
-    triggerDownload(new Blob([output], { type: 'text/plain;charset=utf-8' }), resultFileName(tool.toolKey));
+    triggerDownload(new Blob([output], { type: 'text/plain;charset=utf-8' }), resultFileName(tool.toolKey, valueB));
   };
 
   useEffect(() => {
+    if (!tool.premium) {
+      setAuthLoading(false);
+      return;
+    }
     async function loadAuthStatus() {
       try {
         const response = await fetch('/api/auth/status');
         if (!response.ok) return;
         const data = await response.json();
-        setIsAuthenticated(data.isAuthenticated);
         setIsMember(data.isMember);
       } catch {
         // Keep guest state when status lookup fails.
@@ -345,7 +357,7 @@ export default function ToolPanel({ tool }: { tool: ToolMeta }) {
     }
 
     loadAuthStatus();
-  }, []);
+  }, [tool.premium]);
 
   const handleAction = async () => {
     setCopyMessage('');
@@ -362,6 +374,71 @@ export default function ToolPanel({ tool }: { tool: ToolMeta }) {
         setOutput(JSON.stringify(parsed, null, 2));
       } catch {
         setOutput('JSON 语法错误，请检查输入内容。');
+      }
+      return;
+    }
+
+    if (tool.toolKey === 'json-csv') {
+      try {
+        setOutput(convertJsonCsv(valueA, valueB === 'csv-to-json' ? 'csv-to-json' : 'json-to-csv'));
+      } catch (error) {
+        setOutput(error instanceof Error ? error.message : 'JSON / CSV 转换失败，请检查输入。');
+      }
+      return;
+    }
+
+    if (tool.toolKey === 'yaml-json') {
+      setIsProcessing(true);
+      try {
+        setOutput(await convertYamlJson(valueA, valueB === 'json-to-yaml' ? 'json-to-yaml' : 'yaml-to-json'));
+      } catch (error) {
+        setOutput(error instanceof Error ? error.message : 'YAML / JSON 转换失败，请检查语法。');
+      } finally {
+        setIsProcessing(false);
+      }
+      return;
+    }
+
+    if (tool.toolKey === 'uuid-generator') {
+      setOutput(generateUuids(uuidCount));
+      return;
+    }
+
+    if (tool.toolKey === 'jwt-decoder') {
+      try {
+        setOutput(decodeJwt(valueA));
+      } catch (error) {
+        setOutput(error instanceof Error ? error.message : 'JWT 解码失败。');
+      }
+      return;
+    }
+
+    if (tool.toolKey === 'regex-tester') {
+      try {
+        setOutput(testRegex(valueA, valueB));
+      } catch (error) {
+        setOutput(error instanceof Error ? `正则表达式错误：${error.message}` : '正则表达式无效。');
+      }
+      return;
+    }
+
+    if (tool.toolKey === 'hash-generator') {
+      setIsProcessing(true);
+      try {
+        setOutput(await generateHash(valueA, valueB === 'SHA-512' ? 'SHA-512' : 'SHA-256'));
+      } catch {
+        setOutput('哈希生成失败，请更换浏览器后重试。');
+      } finally {
+        setIsProcessing(false);
+      }
+      return;
+    }
+
+    if (tool.toolKey === 'rmb-uppercase') {
+      try {
+        setOutput(numberToChineseRmb(valueA));
+      } catch (error) {
+        setOutput(error instanceof Error ? error.message : '金额转换失败。');
       }
       return;
     }
@@ -512,20 +589,21 @@ export default function ToolPanel({ tool }: { tool: ToolMeta }) {
       return;
     }
 
-    if (tool.toolKey === 'pdf-convert') {
+    if (tool.toolKey === 'image-convert') {
       if (!selectedFile) {
-        setOutput('请先选择 PDF 文件。');
+        setOutput('请先选择图片文件。');
         return;
       }
       setIsProcessing(true);
       try {
-        const converted = await extractPdfText(selectedFile);
-        setFileInfo(`转换完成：${converted.pageCount} 页，已生成可下载 TXT 文件。`);
-        setOutput(converted.output);
+        const converted = await convertImageFormat(selectedFile, imageTarget);
+        const sizeKB = Math.max(Math.round(converted.blob.size / 1024), 1);
+        setFileInfo(`转换完成：${converted.width} × ${converted.height}，输出约 ${sizeKB} KB`);
+        setOutput(`图片格式转换完成\n原始文件：${fileName}\n目标格式：${imageTarget === 'jpeg' ? 'JPG' : imageTarget.toUpperCase()}\n输出大小：${sizeKB} KB\n尺寸：${converted.width} × ${converted.height}`);
         setDownloadBlob(converted.blob);
         setDownloadName(converted.fileName);
-      } catch {
-        setOutput('PDF 转换失败。请确认文件未加密且格式有效。');
+      } catch (error) {
+        setOutput(error instanceof Error ? error.message : '图片格式转换失败。');
       } finally {
         setIsProcessing(false);
       }
@@ -538,11 +616,7 @@ export default function ToolPanel({ tool }: { tool: ToolMeta }) {
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    if (tool.toolKey === 'pdf-convert' && file.type !== 'application/pdf') {
-      setOutput('请选择有效的 PDF 文件。');
-      return;
-    }
-    if (tool.toolKey === 'image-compress' && !file.type.startsWith('image/')) {
+    if (['image-compress', 'image-convert'].includes(tool.toolKey) && !file.type.startsWith('image/')) {
       setOutput('请选择有效的图片文件。');
       return;
     }
@@ -569,11 +643,21 @@ export default function ToolPanel({ tool }: { tool: ToolMeta }) {
         ) : null}
       </div>
 
-      {tool.toolKey === 'image-compress' || tool.toolKey === 'pdf-convert' ? (
+      {tool.toolKey === 'image-compress' || tool.toolKey === 'image-convert' ? (
         <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
           <div className="space-y-4">
             <label className="block text-sm font-medium text-slate-700">选择文件</label>
-            <input type="file" accept={tool.toolKey === 'image-compress' ? 'image/*' : 'application/pdf'} onChange={handleFileSelect} className="w-full rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 text-sm" />
+            <input data-testid="image-file" type="file" accept="image/*" onChange={handleFileSelect} className="w-full rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 text-sm" />
+            {tool.toolKey === 'image-convert' ? (
+              <label className="block text-sm font-medium text-slate-700">
+                目标格式
+                <select data-testid="image-target" value={imageTarget} onChange={(event) => setImageTarget(event.target.value as 'png' | 'jpeg' | 'webp')} className="mt-2 w-full rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 text-sm">
+                  <option value="webp">WebP（推荐，体积较小）</option>
+                  <option value="jpeg">JPG（兼容性好）</option>
+                  <option value="png">PNG（支持透明）</option>
+                </select>
+              </label>
+            ) : null}
             <p className="text-sm text-slate-500">{fileInfo}</p>
             <div className="flex flex-wrap gap-3">
               <button disabled={isProcessing} onClick={handleAction} className="rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-wait disabled:opacity-60">
@@ -593,10 +677,12 @@ export default function ToolPanel({ tool }: { tool: ToolMeta }) {
       ) : (
         <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
           <div className="grid gap-6">
-            <div className="space-y-4">
-              <label className="block text-sm font-medium text-slate-700">输入内容</label>
-              <textarea value={valueA} onChange={(e) => setValueA(e.target.value)} rows={8} className="w-full rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700" placeholder="请输入文本内容..." />
-            </div>
+            {!['password-generator', 'lorem-ipsum', 'uuid-generator'].includes(tool.toolKey) ? (
+              <div className="space-y-4">
+                <label className="block text-sm font-medium text-slate-700">{tool.toolKey === 'regex-tester' ? '正则表达式' : '输入内容'}</label>
+                <textarea data-testid="primary-input" value={valueA} onChange={(e) => setValueA(e.target.value)} rows={8} className="w-full rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700" placeholder={tool.toolKey === 'regex-tester' ? '例如 /tool(ly)?/gi' : '请输入文本内容...'} />
+              </div>
+            ) : null}
 
             {tool.toolKey === 'text-translate' && (
               <div className="grid gap-3 sm:grid-cols-2">
@@ -607,6 +693,27 @@ export default function ToolPanel({ tool }: { tool: ToolMeta }) {
                     <option value="en">Translate to English</option>
                   </select>
                 </label>
+              </div>
+            )}
+
+            {tool.toolKey === 'json-csv' && (
+              <div className="grid gap-3 sm:grid-cols-2">
+                <button onClick={() => setValueB('json-to-csv')} className={`rounded-full px-4 py-3 text-sm font-semibold ${valueB !== 'csv-to-json' ? 'bg-slate-900 text-white' : 'border border-slate-200 bg-white text-slate-900'}`}>JSON → CSV</button>
+                <button onClick={() => setValueB('csv-to-json')} className={`rounded-full px-4 py-3 text-sm font-semibold ${valueB === 'csv-to-json' ? 'bg-slate-900 text-white' : 'border border-slate-200 bg-white text-slate-900'}`}>CSV → JSON</button>
+              </div>
+            )}
+
+            {tool.toolKey === 'yaml-json' && (
+              <div className="grid gap-3 sm:grid-cols-2">
+                <button onClick={() => setValueB('yaml-to-json')} className={`rounded-full px-4 py-3 text-sm font-semibold ${valueB !== 'json-to-yaml' ? 'bg-slate-900 text-white' : 'border border-slate-200 bg-white text-slate-900'}`}>YAML → JSON</button>
+                <button onClick={() => setValueB('json-to-yaml')} className={`rounded-full px-4 py-3 text-sm font-semibold ${valueB === 'json-to-yaml' ? 'bg-slate-900 text-white' : 'border border-slate-200 bg-white text-slate-900'}`}>JSON → YAML</button>
+              </div>
+            )}
+
+            {tool.toolKey === 'hash-generator' && (
+              <div className="grid gap-3 sm:grid-cols-2">
+                <button onClick={() => setValueB('SHA-256')} className={`rounded-full px-4 py-3 text-sm font-semibold ${valueB !== 'SHA-512' ? 'bg-slate-900 text-white' : 'border border-slate-200 bg-white text-slate-900'}`}>SHA-256</button>
+                <button onClick={() => setValueB('SHA-512')} className={`rounded-full px-4 py-3 text-sm font-semibold ${valueB === 'SHA-512' ? 'bg-slate-900 text-white' : 'border border-slate-200 bg-white text-slate-900'}`}>SHA-512</button>
               </div>
             )}
 
@@ -650,6 +757,13 @@ export default function ToolPanel({ tool }: { tool: ToolMeta }) {
               </div>
             )}
 
+            {tool.toolKey === 'uuid-generator' && (
+              <label className="block text-sm font-medium text-slate-700">
+                生成数量（1 - 100）
+                <input data-testid="uuid-count" type="number" value={uuidCount} min={1} max={100} onChange={(event) => setUuidCount(Math.min(Math.max(Number(event.target.value) || 1, 1), 100))} className="mt-2 w-full rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 text-sm" />
+              </label>
+            )}
+
             {tool.toolKey === 'lorem-ipsum' && (
               <label className="block text-sm font-medium text-slate-700">
                 段落数量
@@ -657,10 +771,10 @@ export default function ToolPanel({ tool }: { tool: ToolMeta }) {
               </label>
             )}
 
-            {tool.toolKey === 'text-diff' && (
+            {['text-diff', 'regex-tester'].includes(tool.toolKey) && (
               <div className="grid gap-4">
-                <label className="block text-sm font-medium text-slate-700">比较文本 B</label>
-                <textarea value={valueB} onChange={(e) => setValueB(e.target.value)} rows={4} className="w-full rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 text-sm" placeholder="输入第二个文本..." />
+                <label className="block text-sm font-medium text-slate-700">{tool.toolKey === 'regex-tester' ? '待测试文本' : '比较文本 B'}</label>
+                <textarea data-testid="secondary-input" value={valueB} onChange={(e) => setValueB(e.target.value)} rows={4} className="w-full rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 text-sm" placeholder={tool.toolKey === 'regex-tester' ? '输入需要匹配的文本…' : '输入第二个文本...'} />
               </div>
             )}
 
