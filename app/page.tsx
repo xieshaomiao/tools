@@ -9,6 +9,7 @@ export const metadata = {
     'Toolly 提供 PDF、Word、Excel、PPT 文档互转，以及图片压缩、JSON CSV、二维码、正则、UUID、哈希等免费在线工具。',
   alternates: {
     canonical: '/',
+    languages: { 'zh-CN': '/', en: '/en', 'x-default': '/' },
   },
 };
 
@@ -20,6 +21,11 @@ const websiteJsonLd = {
   url: SITE_URL,
   inLanguage: 'zh-CN',
   description: '提供文档格式互转、图片处理、文本、编码、SEO 和开发者常用工具的在线工具箱。',
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: `${SITE_URL}/tools?q={search_term_string}`,
+    'query-input': 'required name=search_term_string',
+  },
 };
 
 export default function HomePage() {
@@ -53,6 +59,13 @@ export default function HomePage() {
           </div>
 
           <div className="grid gap-3 sm:auto-cols-fr sm:grid-flow-col">
+            <Link
+              href="/en"
+              hrefLang="en"
+              className="rounded-full border border-slate-200 bg-white px-6 py-3 text-center text-sm font-semibold text-slate-900 transition hover:border-slate-900 hover:bg-slate-100"
+            >
+              English
+            </Link>
             <Link
               href="/tools"
               className="rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"

@@ -14,28 +14,28 @@ export async function generateMetadata({ params }: ToolPageProps) {
   const sourceTool = toolMap.get(toolKey);
   if (!sourceTool) {
     return {
-      title: '工具未找到 - Toolly',
-      description: '所请求的工具页面不存在。返回首页查看可用工具列表。',
+      title: 'Tool not found - Toolly',
+      description: 'The requested Toolly utility does not exist.',
       robots: { index: false, follow: false },
     };
   }
-  const tool = getLocalizedTool(sourceTool, 'zh-CN');
-  const seoDescription = `${tool.description}${tool.example}可直接在线操作，结果支持复制或下载。`.slice(0, 155);
+  const tool = getLocalizedTool(sourceTool, 'en');
+  const seoDescription = `${tool.description} ${tool.example}`.slice(0, 160);
   return {
-    title: `${tool.title} | 免费在线${tool.badge} - Toolly`,
+    title: `${tool.title} | Free Online ${tool.badge} - Toolly`,
     description: seoDescription,
-    keywords: tool.keywords,
+    keywords: [...tool.keywords, 'free online tool', 'Toolly'],
     alternates: {
-      canonical: tool.href,
-      languages: { 'zh-CN': tool.href, en: `/en${tool.href}`, 'x-default': tool.href },
+      canonical: tool.localHref,
+      languages: { 'zh-CN': tool.href, en: tool.localHref, 'x-default': tool.href },
     },
-    openGraph: { type: 'website', locale: 'zh_CN', title: `${tool.title} | Toolly`, description: seoDescription, url: tool.href },
+    openGraph: { type: 'website', locale: 'en_US', title: `${tool.title} | Toolly`, description: seoDescription, url: tool.localHref },
   };
 }
 
-export default async function ToolPage({ params }: ToolPageProps) {
+export default async function EnglishToolPage({ params }: ToolPageProps) {
   const { toolKey } = await params;
   const sourceTool = toolMap.get(toolKey);
   if (!sourceTool) notFound();
-  return <ToolPageView tool={getLocalizedTool(sourceTool, 'zh-CN')} locale="zh-CN" />;
+  return <ToolPageView tool={getLocalizedTool(sourceTool, 'en')} locale="en" />;
 }

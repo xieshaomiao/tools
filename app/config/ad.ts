@@ -1,10 +1,11 @@
+const publisherId = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID?.trim() ?? '';
+const defaultSlot = process.env.NEXT_PUBLIC_ADSENSE_DEFAULT_SLOT?.trim() ?? '';
+
 const adConfig = {
   ads: {
-    enabled: true,
-    // 占位 publisher id，部署到真实站点后请替换为你的 ca-pub-XXXXXXXX
-    publisherId: 'ca-pub-XXXXXXXXXXXXXXXX',
-    // 默认测试 ad unit id，部署后请替换为真实 ad unit id
-    sampleAdUnit: '1234567890',
+    enabled: /^ca-pub-\d+$/.test(publisherId) && /^\d+$/.test(defaultSlot),
+    publisherId,
+    sampleAdUnit: defaultSlot,
   },
 };
 

@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export const metadata = {
   title: 'Toolly App 下载与会员计划 | 前半年免费体验',
-  description: 'Toolly 移动 App 提供在线工具、SEO 与翻译功能，付费工具用户前半年免费体验。',
+  description: 'Toolly 移动端页面汇总在线文档、图片、SEO 与翻译工具入口，用户也可以直接使用网页版本获得可复制或下载的真实结果。',
   alternates: { canonical: '/download' },
 };
 

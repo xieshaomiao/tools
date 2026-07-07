@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export const metadata = {
   title: '如何通过工具页提升流量 | Toolly 博客',
-  description: '学习如何使用在线工具页面吸引长尾关键词和提升广告点击率。',
+  description: '学习如何用真实可操作的在线工具页面覆盖长尾搜索需求，通过清晰内容、内部链接和良好体验提升自然访问与合理广告收益。',
   alternates: { canonical: '/blog/how-tool-pages-work' },
 };
 

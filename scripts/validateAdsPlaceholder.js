@@ -7,11 +7,13 @@ if (!fs.existsSync(adConfigPath)) {
   process.exit(1);
 }
 
-const content = fs.readFileSync(adConfigPath, 'utf8');
-if (content.includes('XXXXXXXX')) {
-  console.warn('Ad config contains placeholder publisherId (ca-pub-XXXXXXXXXXXXXXXX). Replace with real publisherId after AdSense approval.');
+fs.readFileSync(adConfigPath, 'utf8');
+const publisher = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID || '';
+const slot = process.env.NEXT_PUBLIC_ADSENSE_DEFAULT_SLOT || '';
+if (!/^ca-pub-\d+$/.test(publisher) || !/^\d+$/.test(slot)) {
+  console.log('Ads are safely disabled until valid AdSense environment variables are configured.');
   process.exit(0);
 }
 
-console.log('Ad config looks OK');
+console.log('AdSense publisher and default slot formats are valid.');
 process.exit(0);

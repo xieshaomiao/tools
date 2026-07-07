@@ -14,22 +14,41 @@ const staticRoutes = [
   { path: '/privacy', priority: 0.3, changeFrequency: 'yearly' as const },
 ];
 
+const CONTENT_LAST_MODIFIED = new Date('2026-07-07T00:00:00.000Z');
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date();
   const toolRoutes = toolList.map((tool) => ({
     url: absoluteUrl(tool.href),
-    lastModified,
+    lastModified: CONTENT_LAST_MODIFIED,
     changeFrequency: 'monthly' as const,
     priority: 0.7,
+    alternates: { languages: { 'zh-CN': absoluteUrl(tool.href), en: absoluteUrl(`/en${tool.href}`) } },
   }));
+  const englishToolRoutes = toolList.map((tool) => ({
+    url: absoluteUrl(`/en${tool.href}`),
+    lastModified: CONTENT_LAST_MODIFIED,
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+    alternates: { languages: { 'zh-CN': absoluteUrl(tool.href), en: absoluteUrl(`/en${tool.href}`) } },
+  }));
+
+  const bilingualStaticRoutes = [
+    { url: absoluteUrl('/en'), lastModified: CONTENT_LAST_MODIFIED, changeFrequency: 'weekly' as const, priority: 0.9, alternates: { languages: { 'zh-CN': absoluteUrl('/'), en: absoluteUrl('/en') } } },
+    { url: absoluteUrl('/en/tools'), lastModified: CONTENT_LAST_MODIFIED, changeFrequency: 'weekly' as const, priority: 0.8, alternates: { languages: { 'zh-CN': absoluteUrl('/tools'), en: absoluteUrl('/en/tools') } } },
+  ];
 
   return [
     ...staticRoutes.map((route) => ({
       url: absoluteUrl(route.path),
-      lastModified,
+      lastModified: CONTENT_LAST_MODIFIED,
       changeFrequency: route.changeFrequency,
       priority: route.priority,
+      ...((route.path === '/' || route.path === '/tools') ? {
+        alternates: { languages: { 'zh-CN': absoluteUrl(route.path), en: absoluteUrl(route.path === '/' ? '/en' : '/en/tools') } },
+      } : {}),
     })),
+    ...bilingualStaticRoutes,
     ...toolRoutes,
+    ...englishToolRoutes,
   ];
 }

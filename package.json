@@ -13,7 +13,9 @@
     "cap:add-ios": "npx cap add ios",
     "cap:sync": "npx cap sync",
     "deploy:vercel": "vercel --prod",
-    "ad:validate": "node ./scripts/validateAdsPlaceholder.js"
+    "ad:validate": "node ./scripts/validateAdsPlaceholder.js",
+    "seo:audit": "node ./scripts/seoAudit.mjs",
+    "seo:submit-indexnow": "node ./scripts/submitIndexNow.mjs"
   },
   "keywords": [
     "online-tools",
@@ -65,6 +67,7 @@
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10.5.2",
+    "playwright-core": "^1.61.1",
     "postcss": "^8.5.16",
     "tailwindcss": "^3.4.13",
     "typescript": "^6.0.3"

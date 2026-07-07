@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import DocumentConverterPanel from '@/app/components/DocumentConverterPanel';
 import { ToolMeta } from '@/app/tools/toolConfig';
+import { SiteLocale } from '@/app/tools/toolContent';
 import {
   convertJsonCsv,
   convertYamlJson,
@@ -265,26 +266,67 @@ async function convertImageFormat(file: File, target: 'png' | 'jpeg' | 'webp') {
   return { blob, fileName: `${file.name.replace(/\.[^.]+$/, '')}.${extension}`, width: canvas.width, height: canvas.height };
 }
 
-export default function ToolPanel({ tool }: { tool: ToolMeta }) {
-  if (tool.toolKey === 'pdf-convert') return <DocumentConverterPanel tool={tool} />;
-  return <StandardToolPanel tool={tool} />;
+export default function ToolPanel({ tool, locale = 'zh-CN' }: { tool: ToolMeta; locale?: SiteLocale }) {
+  if (tool.toolKey === 'pdf-convert') return <DocumentConverterPanel tool={tool} locale={locale} />;
+  return <StandardToolPanel tool={tool} locale={locale} />;
 }
 
-function StandardToolPanel({ tool }: { tool: ToolMeta }) {
+function StandardToolPanel({ tool, locale }: { tool: ToolMeta; locale: SiteLocale }) {
+  const isEnglish = locale === 'en';
+  const ui = {
+    noFile: isEnglish ? 'No file selected' : '未选择文件',
+    fileHint: isEnglish ? 'Choose a file to see its estimated size.' : '请上传文件以查看预估信息。',
+    qrHint: isEnglish ? 'Enter text to generate a QR code.' : '输入文本后生成二维码占位。',
+    copyEmpty: isEnglish ? 'There is no result to copy.' : '暂无可复制结果',
+    copied: isEnglish ? 'Copied to the clipboard.' : '已复制到剪贴板',
+    copyFailed: isEnglish ? 'Copy failed. Select and copy the result manually.' : '复制失败，请长按结果手动复制',
+    resultFirst: isEnglish ? 'Generate a result first.' : '请先生成结果',
+    premiumTitle: isEnglish ? 'Membership tool' : '会员专享工具',
+    premiumBody: isEnglish ? 'This advanced utility requires a Toolly membership.' : '该工具属于高级会员服务，新用户可享半年免费体验。',
+    chooseFile: isEnglish ? 'Choose a file' : '选择文件',
+    targetFormat: isEnglish ? 'Output format' : '目标格式',
+    processing: isEnglish ? 'Processing…' : '处理中…',
+    generate: isEnglish ? 'Generate result' : '生成结果',
+    copy: isEnglish ? 'Copy result' : '复制结果',
+    download: isEnglish ? 'Download result' : '下载结果',
+    emptyResult: isEnglish ? 'The result will appear here.' : '结果将在这里显示。',
+    expression: isEnglish ? 'Regular expression' : '正则表达式',
+    input: isEnglish ? 'Input' : '输入内容',
+    inputPlaceholder: isEnglish ? 'Enter text…' : '请输入文本内容...',
+    translateTarget: isEnglish ? 'Translation target' : '翻译目标',
+    toChinese: isEnglish ? 'Translate to Chinese' : '翻译为中文',
+    encode: isEnglish ? 'Encode' : '编码',
+    decode: isEnglish ? 'Decode' : '解码',
+    uppercase: isEnglish ? 'UPPER CASE' : '全部大写',
+    lowercase: isEnglish ? 'lower case' : '全部小写',
+    capitalize: isEnglish ? 'Capitalize Words' : '首字母大写',
+    passwordLength: isEnglish ? 'Password length' : '密码长度',
+    symbols: isEnglish ? 'Include symbols' : '包含符号',
+    quantity: isEnglish ? 'Quantity (1 - 100)' : '生成数量（1 - 100）',
+    paragraphs: isEnglish ? 'Number of paragraphs' : '段落数量',
+    testText: isEnglish ? 'Test text' : '待测试文本',
+    compareB: isEnglish ? 'Comparison text B' : '比较文本 B',
+    secondaryPlaceholder: isEnglish ? 'Enter the second text…' : '输入第二个文本...',
+    qrContent: isEnglish ? 'Current QR code content:' : '当前二维码内容：',
+    run: isEnglish ? 'Run tool' : '执行工具',
+    output: isEnglish ? 'Result' : '结果输出',
+    outputPlaceholder: isEnglish ? 'The tool output will appear here.' : '操作结果将显示在这里。',
+    guide: isEnglish ? 'Usage notes' : '使用说明',
+  };
   const [valueA, setValueA] = useState('');
   const [valueB, setValueB] = useState('');
   const [output, setOutput] = useState('');
   const [copyMessage, setCopyMessage] = useState('');
   const [passwordLength, setPasswordLength] = useState(16);
   const [useSymbols, setUseSymbols] = useState(true);
-  const [fileName, setFileName] = useState('未选择文件');
+  const [fileName, setFileName] = useState(ui.noFile);
   const [fileSizeKB, setFileSizeKB] = useState(0);
-  const [fileInfo, setFileInfo] = useState('请上传文件以查看预估信息。');
+  const [fileInfo, setFileInfo] = useState(ui.fileHint);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [downloadBlob, setDownloadBlob] = useState<Blob | null>(null);
   const [downloadName, setDownloadName] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [qrValue, setQrValue] = useState('输入文本后生成二维码占位。');
+  const [qrValue, setQrValue] = useState(ui.qrHint);
   const [qrDataUrl, setQrDataUrl] = useState('');
   const [uuidCount, setUuidCount] = useState(5);
   const [imageTarget, setImageTarget] = useState<'png' | 'jpeg' | 'webp'>('webp');
@@ -302,7 +344,7 @@ function StandardToolPanel({ tool }: { tool: ToolMeta }) {
 
   const handleCopy = async (text: string) => {
     if (!text) {
-      setCopyMessage('暂无可复制结果');
+      setCopyMessage(ui.copyEmpty);
       return;
     }
     const textarea = document.createElement('textarea');
@@ -321,7 +363,7 @@ function StandardToolPanel({ tool }: { tool: ToolMeta }) {
         copied = false;
       }
     }
-    setCopyMessage(copied ? '已复制到剪贴板' : '复制失败，请长按结果手动复制');
+    setCopyMessage(copied ? ui.copied : ui.copyFailed);
     setTimeout(() => setCopyMessage(''), 2000);
   };
 
@@ -331,7 +373,7 @@ function StandardToolPanel({ tool }: { tool: ToolMeta }) {
       return;
     }
     if (!output) {
-      setCopyMessage('请先生成结果');
+      setCopyMessage(ui.resultFirst);
       setTimeout(() => setCopyMessage(''), 2000);
       return;
     }
@@ -364,7 +406,7 @@ function StandardToolPanel({ tool }: { tool: ToolMeta }) {
     setDownloadBlob(null);
     setDownloadName('');
     if (tool.premium && !authLoading && !isMember) {
-      setOutput('该工具仅限会员使用，请登录并升级会员后再试。');
+      setOutput(isEnglish ? 'This tool requires a Toolly membership. Sign in and upgrade to continue.' : '该工具仅限会员使用，请登录并升级会员后再试。');
       return;
     }
 
@@ -373,7 +415,7 @@ function StandardToolPanel({ tool }: { tool: ToolMeta }) {
         const parsed = JSON.parse(valueA);
         setOutput(JSON.stringify(parsed, null, 2));
       } catch {
-        setOutput('JSON 语法错误，请检查输入内容。');
+        setOutput(isEnglish ? 'Invalid JSON syntax. Check the input and try again.' : 'JSON 语法错误，请检查输入内容。');
       }
       return;
     }
@@ -444,7 +486,9 @@ function StandardToolPanel({ tool }: { tool: ToolMeta }) {
     }
 
     if (tool.toolKey === 'word-count') {
-      setOutput(`字符数：${wordStats.chars}\n单词数：${wordStats.words}\n段落数：${wordStats.paragraphs}\n阅读时间：约 ${wordStats.readingTime} 分钟`);
+      setOutput(isEnglish
+        ? `Characters: ${wordStats.chars}\nWords: ${wordStats.words}\nParagraphs: ${wordStats.paragraphs}\nReading time: about ${wordStats.readingTime} minute(s)`
+        : `字符数：${wordStats.chars}\n单词数：${wordStats.words}\n段落数：${wordStats.paragraphs}\n阅读时间：约 ${wordStats.readingTime} 分钟`);
       return;
     }
 
@@ -460,23 +504,23 @@ function StandardToolPanel({ tool }: { tool: ToolMeta }) {
 
     if (tool.toolKey === 'keyword-extract') {
       if (!valueA.trim()) {
-        setOutput('请输入文本以提取关键词。');
+        setOutput(isEnglish ? 'Enter text to extract keywords.' : '请输入文本以提取关键词。');
         return;
       }
       const keywords = extractKeywords(valueA);
       if (!keywords.length) {
-        setOutput('未能提取关键词，请输入更完整的内容。');
+        setOutput(isEnglish ? 'No useful keywords were found. Enter more complete content.' : '未能提取关键词，请输入更完整的内容。');
         return;
       }
       setOutput(
-        ['关键词 | 出现次数', '--------------------------', ...keywords.map(([word, count]) => `${word} | ${count}`)].join('\n')
+        [isEnglish ? 'Keyword | Count' : '关键词 | 出现次数', '--------------------------', ...keywords.map(([word, count]) => `${word} | ${count}`)].join('\n')
       );
       return;
     }
 
     if (tool.toolKey === 'seo-title-generator') {
       if (!valueA.trim()) {
-        setOutput('请输入文本以生成 SEO 标题。');
+        setOutput(isEnglish ? 'Enter text to generate an SEO title.' : '请输入文本以生成 SEO 标题。');
         return;
       }
       setOutput(generateSeoTitle(valueA));
@@ -525,7 +569,9 @@ function StandardToolPanel({ tool }: { tool: ToolMeta }) {
 
     if (tool.toolKey === 'text-diff') {
       const compared = diffText(valueA, valueB);
-      setOutput(compared.map((item, index) => `第 ${index + 1} 行\nA: ${item.a}\nB: ${item.b}\n是否相同：${item.same ? '是' : '否'}\n`).join('\n'));
+      setOutput(compared.map((item, index) => isEnglish
+        ? `Line ${index + 1}\nA: ${item.a}\nB: ${item.b}\nSame: ${item.same ? 'yes' : 'no'}\n`
+        : `第 ${index + 1} 行\nA: ${item.a}\nB: ${item.b}\n是否相同：${item.same ? '是' : '否'}\n`).join('\n'));
       return;
     }
 
@@ -547,7 +593,7 @@ function StandardToolPanel({ tool }: { tool: ToolMeta }) {
 
     if (tool.toolKey === 'qr-code') {
       if (!valueA.trim()) {
-        setOutput('请输入需要生成二维码的文本或网址。');
+        setOutput(isEnglish ? 'Enter text or a URL to generate a QR code.' : '请输入需要生成二维码的文本或网址。');
         return;
       }
       setIsProcessing(true);
@@ -570,7 +616,7 @@ function StandardToolPanel({ tool }: { tool: ToolMeta }) {
 
     if (tool.toolKey === 'image-compress') {
       if (!selectedFile) {
-        setOutput('请先选择图片文件。');
+        setOutput(isEnglish ? 'Choose an image file first.' : '请先选择图片文件。');
         return;
       }
       setIsProcessing(true);
@@ -591,7 +637,7 @@ function StandardToolPanel({ tool }: { tool: ToolMeta }) {
 
     if (tool.toolKey === 'image-convert') {
       if (!selectedFile) {
-        setOutput('请先选择图片文件。');
+        setOutput(isEnglish ? 'Choose an image file first.' : '请先选择图片文件。');
         return;
       }
       setIsProcessing(true);
@@ -610,14 +656,14 @@ function StandardToolPanel({ tool }: { tool: ToolMeta }) {
       return;
     }
 
-    setOutput('此工具当前为占位页，可继续扩展为完整功能。');
+    setOutput(isEnglish ? 'This utility is not available yet.' : '此工具当前为占位页，可继续扩展为完整功能。');
   };
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
     if (['image-compress', 'image-convert'].includes(tool.toolKey) && !file.type.startsWith('image/')) {
-      setOutput('请选择有效的图片文件。');
+      setOutput(isEnglish ? 'Choose a valid image file.' : '请选择有效的图片文件。');
       return;
     }
     const sizeKB = Math.max(Math.round(file.size / 1024), 1);
@@ -627,7 +673,7 @@ function StandardToolPanel({ tool }: { tool: ToolMeta }) {
     setDownloadBlob(null);
     setDownloadName('');
     setValueA(file.name);
-    setFileInfo(`已选择文件：${file.name}，大小约 ${sizeKB} KB`);
+    setFileInfo(isEnglish ? `Selected: ${file.name}, about ${sizeKB} KB` : `已选择文件：${file.name}，大小约 ${sizeKB} KB`);
   };
 
   return (
@@ -637,8 +683,8 @@ function StandardToolPanel({ tool }: { tool: ToolMeta }) {
         <p className="mt-4 text-slate-600 leading-7">{tool.placeholder}</p>
         {tool.premium ? (
           <div className="mt-4 rounded-[1.5rem] border border-amber-200 bg-amber-50 p-4 text-amber-900">
-            <p className="text-sm font-semibold">会员专享工具</p>
-            <p className="mt-2 text-sm">该工具属于高级会员服务，新用户可享半年免费体验。</p>
+            <p className="text-sm font-semibold">{ui.premiumTitle}</p>
+            <p className="mt-2 text-sm">{ui.premiumBody}</p>
           </div>
         ) : null}
       </div>
@@ -646,32 +692,32 @@ function StandardToolPanel({ tool }: { tool: ToolMeta }) {
       {tool.toolKey === 'image-compress' || tool.toolKey === 'image-convert' ? (
         <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
           <div className="space-y-4">
-            <label className="block text-sm font-medium text-slate-700">选择文件</label>
+            <label className="block text-sm font-medium text-slate-700">{ui.chooseFile}</label>
             <input data-testid="image-file" type="file" accept="image/*" onChange={handleFileSelect} className="w-full rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 text-sm" />
             {tool.toolKey === 'image-convert' ? (
               <label className="block text-sm font-medium text-slate-700">
-                目标格式
+                {ui.targetFormat}
                 <select data-testid="image-target" value={imageTarget} onChange={(event) => setImageTarget(event.target.value as 'png' | 'jpeg' | 'webp')} className="mt-2 w-full rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 text-sm">
-                  <option value="webp">WebP（推荐，体积较小）</option>
-                  <option value="jpeg">JPG（兼容性好）</option>
-                  <option value="png">PNG（支持透明）</option>
+                  <option value="webp">{isEnglish ? 'WebP (recommended, smaller)' : 'WebP（推荐，体积较小）'}</option>
+                  <option value="jpeg">{isEnglish ? 'JPG (widely compatible)' : 'JPG（兼容性好）'}</option>
+                  <option value="png">{isEnglish ? 'PNG (supports transparency)' : 'PNG（支持透明）'}</option>
                 </select>
               </label>
             ) : null}
             <p className="text-sm text-slate-500">{fileInfo}</p>
             <div className="flex flex-wrap gap-3">
               <button disabled={isProcessing} onClick={handleAction} className="rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-wait disabled:opacity-60">
-                {isProcessing ? '处理中…' : '生成结果'}
+                {isProcessing ? ui.processing : ui.generate}
               </button>
               <button onClick={() => handleCopy(output)} className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:border-slate-900">
-                复制结果
+                {ui.copy}
               </button>
               <button onClick={handleDownload} className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:border-slate-900">
-                下载结果
+                {ui.download}
               </button>
             </div>
             {copyMessage ? <p className="text-sm text-emerald-600" role="status">{copyMessage}</p> : null}
-            <pre className="mt-4 whitespace-pre-wrap rounded-[1.5rem] border border-slate-200 bg-slate-50 p-5 text-sm text-slate-700">{output || '结果将在这里显示。'}</pre>
+            <pre className="mt-4 whitespace-pre-wrap rounded-[1.5rem] border border-slate-200 bg-slate-50 p-5 text-sm text-slate-700">{output || ui.emptyResult}</pre>
           </div>
         </div>
       ) : (
@@ -679,17 +725,17 @@ function StandardToolPanel({ tool }: { tool: ToolMeta }) {
           <div className="grid gap-6">
             {!['password-generator', 'lorem-ipsum', 'uuid-generator'].includes(tool.toolKey) ? (
               <div className="space-y-4">
-                <label className="block text-sm font-medium text-slate-700">{tool.toolKey === 'regex-tester' ? '正则表达式' : '输入内容'}</label>
-                <textarea data-testid="primary-input" value={valueA} onChange={(e) => setValueA(e.target.value)} rows={8} className="w-full rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700" placeholder={tool.toolKey === 'regex-tester' ? '例如 /tool(ly)?/gi' : '请输入文本内容...'} />
+                <label className="block text-sm font-medium text-slate-700">{tool.toolKey === 'regex-tester' ? ui.expression : ui.input}</label>
+                <textarea data-testid="primary-input" value={valueA} onChange={(e) => setValueA(e.target.value)} rows={8} className="w-full rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700" placeholder={tool.toolKey === 'regex-tester' ? (isEnglish ? 'Example: /tool(ly)?/gi' : '例如 /tool(ly)?/gi') : ui.inputPlaceholder} />
               </div>
             ) : null}
 
             {tool.toolKey === 'text-translate' && (
               <div className="grid gap-3 sm:grid-cols-2">
                 <label className="block text-sm font-medium text-slate-700">
-                  翻译目标
+                  {ui.translateTarget}
                   <select value={translateTarget} onChange={(e) => setTranslateTarget(e.target.value as 'zh' | 'en')} className="mt-2 w-full rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
-                    <option value="zh">翻译为中文</option>
+                    <option value="zh">{ui.toChinese}</option>
                     <option value="en">Translate to English</option>
                   </select>
                 </label>
@@ -722,22 +768,22 @@ function StandardToolPanel({ tool }: { tool: ToolMeta }) {
                 {tool.toolKey === 'base64' || tool.toolKey === 'url-encode' ? (
                   <> 
                     <button onClick={() => setValueB('encode')} className={`rounded-full px-4 py-3 text-sm font-semibold ${valueB === 'encode' ? 'bg-slate-900 text-white' : 'border border-slate-200 text-slate-900 bg-white'}`}>
-                      编码
+                      {ui.encode}
                     </button>
                     <button onClick={() => setValueB('decode')} className={`rounded-full px-4 py-3 text-sm font-semibold ${valueB === 'decode' ? 'bg-slate-900 text-white' : 'border border-slate-200 text-slate-900 bg-white'}`}>
-                      解码
+                      {ui.decode}
                     </button>
                   </>
                 ) : (
                   <>
                     <button onClick={() => setValueB('upper')} className={`rounded-full px-4 py-3 text-sm font-semibold ${valueB === 'upper' ? 'bg-slate-900 text-white' : 'border border-slate-200 text-slate-900 bg-white'}`}>
-                      全部大写
+                      {ui.uppercase}
                     </button>
                     <button onClick={() => setValueB('lower')} className={`rounded-full px-4 py-3 text-sm font-semibold ${valueB === 'lower' ? 'bg-slate-900 text-white' : 'border border-slate-200 text-slate-900 bg-white'}`}>
-                      全部小写
+                      {ui.lowercase}
                     </button>
                     <button onClick={() => setValueB('capitalize')} className={`rounded-full px-4 py-3 text-sm font-semibold ${valueB === 'capitalize' ? 'bg-slate-900 text-white' : 'border border-slate-200 text-slate-900 bg-white'}`}>
-                      首字母大写
+                      {ui.capitalize}
                     </button>
                   </>
                 )}
@@ -747,61 +793,61 @@ function StandardToolPanel({ tool }: { tool: ToolMeta }) {
             {tool.toolKey === 'password-generator' && (
               <div className="grid gap-4 sm:grid-cols-2">
                 <label className="space-y-2 text-sm text-slate-700">
-                  密码长度
+                  {ui.passwordLength}
                   <input type="number" value={passwordLength} min={6} max={64} onChange={(e) => setPasswordLength(Number(e.target.value))} className="w-full rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 text-sm" />
                 </label>
                 <label className="flex items-center gap-3 rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
                   <input type="checkbox" checked={useSymbols} onChange={(e) => setUseSymbols(e.target.checked)} />
-                  包含符号
+                  {ui.symbols}
                 </label>
               </div>
             )}
 
             {tool.toolKey === 'uuid-generator' && (
               <label className="block text-sm font-medium text-slate-700">
-                生成数量（1 - 100）
+                {ui.quantity}
                 <input data-testid="uuid-count" type="number" value={uuidCount} min={1} max={100} onChange={(event) => setUuidCount(Math.min(Math.max(Number(event.target.value) || 1, 1), 100))} className="mt-2 w-full rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 text-sm" />
               </label>
             )}
 
             {tool.toolKey === 'lorem-ipsum' && (
               <label className="block text-sm font-medium text-slate-700">
-                段落数量
+                {ui.paragraphs}
                 <input type="number" value={valueB || '2'} onChange={(e) => setValueB(e.target.value)} className="mt-2 w-full rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 text-sm" placeholder="2" />
               </label>
             )}
 
             {['text-diff', 'regex-tester'].includes(tool.toolKey) && (
               <div className="grid gap-4">
-                <label className="block text-sm font-medium text-slate-700">{tool.toolKey === 'regex-tester' ? '待测试文本' : '比较文本 B'}</label>
-                <textarea data-testid="secondary-input" value={valueB} onChange={(e) => setValueB(e.target.value)} rows={4} className="w-full rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 text-sm" placeholder={tool.toolKey === 'regex-tester' ? '输入需要匹配的文本…' : '输入第二个文本...'} />
+                <label className="block text-sm font-medium text-slate-700">{tool.toolKey === 'regex-tester' ? ui.testText : ui.compareB}</label>
+                <textarea data-testid="secondary-input" value={valueB} onChange={(e) => setValueB(e.target.value)} rows={4} className="w-full rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 text-sm" placeholder={tool.toolKey === 'regex-tester' ? (isEnglish ? 'Enter text to test…' : '输入需要匹配的文本…') : ui.secondaryPlaceholder} />
               </div>
             )}
 
             {tool.toolKey === 'qr-code' && (
               <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-5 text-sm text-slate-700">
-                <p>当前二维码内容：</p>
+                <p>{ui.qrContent}</p>
                 <p className="mt-3 break-words text-slate-900">{qrValue}</p>
-                {qrDataUrl ? <img src={qrDataUrl} alt="生成的二维码" className="mt-4 h-56 w-56 rounded-2xl border border-slate-200 bg-white p-2" /> : null}
+                {qrDataUrl ? <img src={qrDataUrl} alt={isEnglish ? 'Generated QR code' : '生成的二维码'} className="mt-4 h-56 w-56 rounded-2xl border border-slate-200 bg-white p-2" /> : null}
               </div>
             )}
 
             <button disabled={isProcessing} onClick={handleAction} className="rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-wait disabled:opacity-60">
-              {isProcessing ? '处理中…' : '执行工具'}
+              {isProcessing ? ui.processing : ui.run}
             </button>
           </div>
 
           <div className="rounded-[2rem] border border-slate-200 bg-slate-50 p-6 text-slate-700">
-            <h3 className="text-lg font-semibold text-slate-900">结果输出</h3>
+            <h3 className="text-lg font-semibold text-slate-900">{ui.output}</h3>
             <pre className="mt-4 whitespace-pre-wrap rounded-[1.5rem] border border-slate-200 bg-white p-5 text-sm text-slate-700">
-              {output || '操作结果将显示在这里。'}
+              {output || ui.outputPlaceholder}
             </pre>
             <div className="mt-4 flex flex-wrap gap-3">
               <button onClick={() => handleCopy(output)} className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:border-slate-900">
-                复制结果
+                {ui.copy}
               </button>
               <button onClick={handleDownload} className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:border-slate-900">
-                下载结果
+                {ui.download}
               </button>
             </div>
             {copyMessage ? <p className="mt-3 text-sm text-emerald-600" role="status">{copyMessage}</p> : null}
@@ -810,11 +856,11 @@ function StandardToolPanel({ tool }: { tool: ToolMeta }) {
       )}
 
       <div className="rounded-[2rem] border border-slate-200 bg-slate-50 p-6 text-slate-600">
-        <h2 className="text-lg font-semibold text-slate-900">使用说明</h2>
+        <h2 className="text-lg font-semibold text-slate-900">{ui.guide}</h2>
         <ul className="mt-4 space-y-3 text-sm leading-7">
           <li>• {tool.description}</li>
-          <li>• 本页保留广告位和功能展示，适合做流量变现页面。</li>
-          <li>• 通过简单交互提升用户停留时间和转化效果。</li>
+          <li>• {isEnglish ? 'Most data processing runs in the current browser.' : '多数数据处理直接在当前浏览器中运行。'}</li>
+          <li>• {isEnglish ? 'Review important output before using it in production.' : '重要结果用于正式场景前，请再次检查。'}</li>
         </ul>
       </div>
     </div>
