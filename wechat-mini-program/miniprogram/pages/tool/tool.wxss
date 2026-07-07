@@ -129,6 +129,11 @@
   line-height: 68rpx;
 }
 
+.result-actions {
+  display: flex;
+  gap: 12rpx;
+}
+
 .copy-button::after {
   border: 0;
 }

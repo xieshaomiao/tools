@@ -13,13 +13,13 @@ export type ToolMeta = {
 export const toolList: ToolMeta[] = [
   {
     toolKey: 'pdf-convert',
-    title: 'PDF 转换',
-    description: '支持 PDF 文件占位转换，后续可扩展为 PDF 转 Word、图片、文本等功能。',
+    title: 'PDF 转文本',
+    description: '在浏览器中提取 PDF 文字并生成可下载的 TXT 文件，不上传原始文档。',
     href: '/tools/pdf-convert',
     badge: '文件工具',
     category: '文件工具',
     mode: 'file',
-    placeholder: '上传 PDF 后可将文件转换为多种格式，适合文档工具流量页。',
+    placeholder: '上传未加密的 PDF，提取每页文字并下载为 TXT 文件。扫描版 PDF 需先进行 OCR。',
   },
   {
     toolKey: 'json-format',
@@ -43,13 +43,13 @@ export const toolList: ToolMeta[] = [
   },
   {
     toolKey: 'image-compress',
-    title: '图片压缩占位',
-    description: '为站点预留图片压缩能力，后续可扩展为在线压缩体验。',
+    title: '图片压缩',
+    description: '在浏览器中压缩 JPG、PNG 等常见图片，并下载体积更小的 WebP 文件。',
     href: '/tools/image-compress',
     badge: '图片工具',
     category: '图片工具',
     mode: 'file',
-    placeholder: '上传图片并查看压缩预估，用于构建图片优化与广告变现页面。',
+    placeholder: '上传图片后在本地压缩为 WebP，处理完成即可下载，不上传原始图片。',
   },
   {
     toolKey: 'base64',
@@ -209,12 +209,12 @@ export const toolList: ToolMeta[] = [
   {
     toolKey: 'qr-code',
     title: 'QR 码生成',
-    description: '生成二维码文本占位，适合移动设备扫描和链接分享。',
+    description: '将文本或网址生成可扫描的二维码，并支持下载 PNG 图片。',
     href: '/tools/qr-code',
     badge: '移动工具',
     category: '站长工具',
     mode: 'generate',
-    placeholder: '输出二维码占位，适合链接分享与扫码体验页面。',
+    placeholder: '输入文本或网址，生成二维码后可复制内容或下载 PNG 图片。',
   },
 ];
 

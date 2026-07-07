@@ -60,6 +60,36 @@ Page({
     wx.setClipboardData({ data: this.data.output });
   },
 
+  exportOutput() {
+    if (!this.data.output) {
+      wx.showToast({ title: '暂无结果', icon: 'none' });
+      return;
+    }
+    const fileName = `toolly-${this.data.tool.key}-${Date.now()}.txt`;
+    const filePath = `${wx.env.USER_DATA_PATH}/${fileName}`;
+    wx.getFileSystemManager().writeFile({
+      filePath,
+      data: this.data.output,
+      encoding: 'utf8',
+      success: () => {
+        if (wx.shareFileMessage) {
+          wx.shareFileMessage({
+            filePath,
+            fileName,
+            fail: () => wx.showToast({ title: '导出已取消', icon: 'none' })
+          });
+          return;
+        }
+        wx.saveFile({
+          tempFilePath: filePath,
+          success: () => wx.showToast({ title: '文件已保存', icon: 'success' }),
+          fail: () => wx.showToast({ title: '保存失败', icon: 'none' })
+        });
+      },
+      fail: () => wx.showToast({ title: '导出失败', icon: 'none' })
+    });
+  },
+
   clearAll() {
     this.setData({ input: '', secondInput: '', output: '' });
   },

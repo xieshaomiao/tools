@@ -8,6 +8,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ translatedText: '翻译请求参数不完整。' }, { status: 400 });
   }
 
-  const translatedText = translateText(q, target);
+  const translatedText = await translateText(q, target);
   return NextResponse.json({ translatedText });
 }

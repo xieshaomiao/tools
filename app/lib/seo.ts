@@ -33,16 +33,54 @@ export function summarizeText(text: string) {
 }
 
 export function polishCopy(text: string) {
-  const normalized = normalizeText(text).replace(/\s+/g, ' ').trim();
+  const normalized = normalizeText(text)
+    .replace(/[ \t]+/g, ' ')
+    .replace(/\s*([，。！？；：,.!?;:])\s*/g, '$1')
+    .replace(/[!！]{2,}/g, '！')
+    .replace(/[?？]{2,}/g, '？')
+    .trim();
   if (!normalized) return '请输入文案以润色。';
-  return `${normalized} — 已优化为更简洁、吸引用户的文案，占位演示结果。`;
+  const sentences = normalized.split(/(?<=[。！？.!?])/).map((item) => item.trim()).filter(Boolean);
+  const polished = sentences
+    .map((sentence) => sentence
+      .replace(/非常非常|特别特别/g, '非常')
+      .replace(/能够/g, '能')
+      .replace(/进行/g, '')
+      .replace(/在这里/g, '')
+      .trim())
+    .join('');
+  return `润色版本\n${polished}\n\n优化说明\n• 已清理多余空格和重复标点\n• 已精简常见冗余表达\n• 保留原意，建议发布前结合品牌语气复核`;
 }
 
-export function translateText(text: string, target: 'zh' | 'en') {
+export async function translateText(text: string, target: 'zh' | 'en') {
   const normalized = normalizeText(text).trim();
   if (!normalized) return '请输入文本以翻译。';
-  if (target === 'zh') {
-    return `【后端翻译演示】${normalized} -> 这里显示中文翻译结果。`;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 10000);
+  try {
+    const params = new URLSearchParams({
+      client: 'gtx',
+      sl: 'auto',
+      tl: target,
+      dt: 't',
+      q: normalized,
+    });
+    const response = await fetch(`https://translate.googleapis.com/translate_a/single?${params}`, {
+      signal: controller.signal,
+      headers: { 'User-Agent': 'Toolly/1.0' },
+      cache: 'no-store',
+    });
+    if (!response.ok) throw new Error('Translation request failed');
+    const data = await response.json() as unknown;
+    if (!Array.isArray(data) || !Array.isArray(data[0])) throw new Error('Unexpected translation response');
+    const translated = data[0]
+      .map((part) => Array.isArray(part) && typeof part[0] === 'string' ? part[0] : '')
+      .join('')
+      .trim();
+    return translated || '翻译服务暂时不可用，请稍后重试。';
+  } catch {
+    return '翻译服务暂时不可用，请稍后重试。';
+  } finally {
+    clearTimeout(timeout);
   }
-  return `【后端翻译演示】${normalized} -> This is the English translation placeholder.`;
 }

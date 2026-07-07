@@ -63,7 +63,10 @@
         <view class="result-title">处理结果</view>
         <view class="result-copy">可长按选择，或一键复制</view>
       </view>
-      <button class="copy-button" bindtap="copyOutput">复制</button>
+      <view class="result-actions">
+        <button class="copy-button" bindtap="copyOutput">复制</button>
+        <button class="copy-button" bindtap="exportOutput">导出文件</button>
+      </view>
     </view>
     <text class="result-content" user-select>{{output || '结果将在这里显示。'}}</text>
   </view>
