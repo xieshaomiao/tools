@@ -14,7 +14,7 @@ export const toolList: ToolMeta[] = [
   {
     toolKey: 'pdf-convert',
     title: '万能文档转换',
-    description: '支持 PDF、Word、Excel、PPT、TXT、Markdown、HTML 与图片常用格式互转，全程在浏览器本地处理。',
+    description: '支持 PDF、Word、Excel、PPT、TXT、Markdown、HTML 与图片常用格式互转，优先浏览器本地处理；PDF 解析失败时启用兼容转换。',
     href: '/tools/pdf-convert',
     badge: '文件工具',
     category: '文件工具',

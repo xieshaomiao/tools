@@ -53,3 +53,17 @@
 - 上线地址：https://toolly-ruddy.vercel.app
 - GitHub：https://github.com/xieshaomiao/tools
 - 累计有效优化项：60 / 500（达到 500 后继续向 1000 推进）。
+
+## 2026-07-08 · PDF 服务器兼容转换兜底
+
+- 用户问题：线上真实浏览器仍可能出现“当前浏览器无法解析这个 PDF”，即使同一文件在自动化 Chrome/WebKit 中可以转换；需要保证用户点“开始转换”后能拿到 Word 下载结果。
+- 有效改进：5 项。
+  - 新增登录保护的 `/api/document/convert` 兼容转换接口，支持 PDF 转 Word、Excel、TXT 和 HTML。
+  - 前端 PDF 转换保留“优先浏览器本地处理”；一旦本地 PDF.js 解析失败，会自动切换到服务器兼容转换并继续生成文件。
+  - 服务器端 PDF.js 显式接入 worker、CMap、标准字体和 wasm，并在 Next/Vercel 打包配置中包含这些资源，避免部署后缺文件。
+  - PDF 工具说明更新为更诚实的隐私提示：优先本地处理；浏览器无法解析时启用兼容转换且不保存文件。
+  - 增加隐藏回归测试开关，可稳定模拟“本地解析失败”并验证前端自动 fallback 链路。
+- 验证证据：TypeScript 检查通过；生产构建通过；本地生产版直接调用兼容转换接口将 `/Users/xieshaomiao/Downloads/谢绍渺_完整版简历.pdf` 转成 Word，HTTP 200，预览和 DOCX 均检出“优势亮点/工作经历/项目经验”；强制前端本地失败后页面自动调用 `/api/document/convert`，状态显示“转换完成，文件可以下载”，下载 DOCX 含简历内容；正常浏览器本地转换不调用兼容接口且下载 DOCX 含内容；未登录工具入口隐藏、兼容接口返回 401；67 页本地 SEO 审计通过。
+- 上线地址：https://toolly-ruddy.vercel.app
+- GitHub：https://github.com/xieshaomiao/tools
+- 累计有效优化项：65 / 500（达到 500 后继续向 1000 推进）。

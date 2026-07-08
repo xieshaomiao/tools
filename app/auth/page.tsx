@@ -61,7 +61,7 @@ export default function AuthPage() {
           </button>
         </div>
         <p className="mt-4 leading-7 text-slate-600">
-          {isEnglish ? 'Sign in before using a tool. Your documents and images are still processed locally in the browser.' : '使用工具前需要先登录。文档和图片仍在浏览器本地处理，不会因为登录而上传服务器。'}
+          {isEnglish ? 'Sign in before using a tool. Files are processed locally first; PDF compatible conversion is used only when the browser cannot parse the file.' : '使用工具前需要先登录。文件优先在浏览器本地处理；只有浏览器无法解析 PDF 时才启用兼容转换。'}
         </p>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">

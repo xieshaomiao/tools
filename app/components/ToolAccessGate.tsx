@@ -55,7 +55,7 @@ export default function ToolAccessGate({ tool, locale }: { tool: ToolMeta; local
       <p className="mt-4 max-w-2xl leading-7 text-slate-600">
         {state === 'unavailable'
           ? (isEnglish ? 'The sign-in service is not responding right now. Refresh the page and try again shortly.' : '登录服务暂时没有响应，请稍后刷新页面重试。')
-          : (isEnglish ? 'Create a free account or sign in first. Files continue to be processed locally in your browser.' : '请先注册免费账号或登录。登录后文件仍然只在你的浏览器本地处理，不会上传服务器。')}
+          : (isEnglish ? 'Create a free account or sign in first. Files are processed locally first; PDF fallback conversion is used only when the browser cannot parse the file.' : '请先注册免费账号或登录。文件会优先在浏览器本地处理；只有浏览器无法解析 PDF 时才启用兼容转换。')}
       </p>
       {state === 'signed-out' ? (
         <div className="mt-6 flex flex-wrap gap-3">

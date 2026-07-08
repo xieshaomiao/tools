@@ -6,6 +6,7 @@ import { SiteLocale } from '@/app/tools/toolContent';
 import {
   convertDocument,
   DOCUMENT_ACCEPT,
+  DocumentConversionResult,
   DocumentOutputFormat,
   getDocumentOutputFormats,
   getDocumentSourceKind,
@@ -26,6 +27,50 @@ function downloadBlob(blob: Blob, fileName: string) {
   link.click();
   link.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function base64ToBlob(base64: string, mimeType: string) {
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
+  return new Blob([bytes], { type: mimeType });
+}
+
+async function convertDocumentWithServerFallback(file: File, outputFormat: DocumentOutputFormat): Promise<DocumentConversionResult> {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('output', outputFormat);
+  const response = await fetch('/api/document/convert', { method: 'POST', body: formData });
+  const data = await response.json() as {
+    success?: boolean;
+    message?: string;
+    fileName?: string;
+    mimeType?: string;
+    summary?: string;
+    preview?: string;
+    base64?: string;
+  };
+  if (!response.ok || !data.success || !data.base64 || !data.fileName || !data.mimeType) {
+    throw new Error(data.message || '兼容转换失败。');
+  }
+  return {
+    blob: base64ToBlob(data.base64, data.mimeType),
+    fileName: data.fileName,
+    summary: data.summary || '兼容转换完成。',
+    preview: data.preview || '',
+  };
+}
+
+function canUseServerPdfFallback(file: File, sourceKind: string | null, outputFormat: DocumentOutputFormat) {
+  return sourceKind === 'pdf' && file.name.toLowerCase().endsWith('.pdf') && ['docx', 'xlsx', 'txt', 'html'].includes(outputFormat);
+}
+
+function shouldForcePdfFallbackForTest() {
+  try {
+    return window.localStorage.getItem('toolly_force_pdf_fallback') === '1';
+  } catch {
+    return false;
+  }
 }
 
 async function copyText(text: string) {
@@ -71,7 +116,7 @@ function friendlyConversionError(error: unknown, file: File | null, isEnglish: b
 export default function DocumentConverterPanel({ tool, locale = 'zh-CN' }: { tool: ToolMeta; locale?: SiteLocale }) {
   const isEnglish = locale === 'en';
   const ui = {
-    privacy: isEnglish ? 'Files are processed in this browser and are not uploaded. Common office documents, web pages, text, images and PDFs are supported.' : '文件仅在当前浏览器中处理，不上传服务器。支持常用办公文档、网页、文本、图片与 PDF 互转。',
+    privacy: isEnglish ? 'Files are processed locally first. If this browser cannot parse a PDF, Toolly can use compatible conversion and does not store the file.' : '文件优先在当前浏览器本地处理；如果当前浏览器无法解析 PDF，Toolly 会启用兼容转换且不保存文件。',
     source: isEnglish ? '1. Choose source file' : '1. 选择源文件',
     output: isEnglish ? '2. Choose output format' : '2. 选择输出格式',
     selectFirst: isEnglish ? 'Choose a file first' : '请先选择文件',
@@ -83,6 +128,7 @@ export default function DocumentConverterPanel({ tool, locale = 'zh-CN' }: { too
     copy: isEnglish ? 'Copy result' : '复制结果',
     download: isEnglish ? 'Download converted file' : '下载转换文件',
     supported: isEnglish ? 'Supported conversions' : '已支持的真实转换',
+    fallback: isEnglish ? 'This browser could not parse the PDF locally. Starting compatible conversion…' : '当前浏览器本地解析 PDF 失败，正在启用兼容转换…',
   };
   const [file, setFile] = useState<File | null>(null);
   const [outputFormat, setOutputFormat] = useState<DocumentOutputFormat | ''>('');
@@ -126,7 +172,18 @@ export default function DocumentConverterPanel({ tool, locale = 'zh-CN' }: { too
     setStatus(ui.converting);
     setResultBlob(null);
     try {
-      const result = await convertDocument(file, outputFormat);
+      let result: DocumentConversionResult;
+      try {
+        if (canUseServerPdfFallback(file, sourceKind, outputFormat) && shouldForcePdfFallbackForTest()) {
+          throw new Error('Forced PDF fallback test.');
+        }
+        result = await convertDocument(file, outputFormat);
+      } catch (localError) {
+        if (!canUseServerPdfFallback(file, sourceKind, outputFormat)) throw localError;
+        console.warn('Toolly local PDF conversion failed, trying compatible conversion', localError);
+        setStatus(ui.fallback);
+        result = await convertDocumentWithServerFallback(file, outputFormat);
+      }
       setResultBlob(result.blob);
       setResultName(result.fileName);
       setSummary(result.summary);
@@ -156,6 +213,13 @@ export default function DocumentConverterPanel({ tool, locale = 'zh-CN' }: { too
       <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
         <h2 className="text-xl font-semibold text-slate-900">{tool.title}</h2>
         <p className="mt-3 leading-7 text-slate-600">{ui.privacy}</p>
+        {sourceKind === 'pdf' ? (
+          <p className="mt-2 text-xs leading-6 text-slate-500">
+            {isEnglish
+              ? 'PDFs are processed locally first. If this browser cannot parse a PDF, Toolly uses a compatible server conversion and does not store the file.'
+              : 'PDF 会优先在本浏览器本地处理；如果当前浏览器无法解析，Toolly 会启用兼容转换，不保存你的文件。'}
+          </p>
+        ) : null}
 
         <div className="mt-6 grid gap-5 md:grid-cols-2">
           <label className="block text-sm font-semibold text-slate-700">
