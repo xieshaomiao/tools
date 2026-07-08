@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import AdSlot from '@/app/components/AdSlot';
-import ToolPanel from '@/app/components/ToolPanel';
+import ToolAccessGate from '@/app/components/ToolAccessGate';
 import { absoluteUrl } from '@/app/lib/site';
 import { toolList } from '@/app/tools/toolConfig';
 import { getLocalizedTool, LocalizedTool, SiteLocale, toolFaq, toolSteps } from '@/app/tools/toolContent';
@@ -87,7 +87,7 @@ export default function ToolPageView({ tool, locale }: { tool: LocalizedTool; lo
 
       <section className="grid gap-8 lg:grid-cols-[1.4fr_0.8fr]">
         <div className="space-y-6">
-          <ToolPanel tool={tool} locale={locale} />
+          <ToolAccessGate tool={tool} locale={locale} />
         </div>
         <aside className="space-y-6">
           <AdSlot />

@@ -94,9 +94,69 @@ function markdownToHtml(markdown: string) {
 }
 
 async function getPdfDocument(file: File) {
-  const pdfjs = await import('pdfjs-dist');
-  pdfjs.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
-  return pdfjs.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
+  // The legacy build includes the Promise/Set/Array polyfills required by
+  // Safari and older WebViews. The modern build can fail on real PDFs that
+  // contain named destinations with "undefined is not a function".
+  const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
+  pdfjs.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/legacy/build/pdf.worker.min.mjs', import.meta.url).toString();
+  return pdfjs.getDocument({
+    data: new Uint8Array(await file.arrayBuffer()),
+    cMapUrl: '/pdfjs/cmaps/',
+    cMapPacked: true,
+    standardFontDataUrl: '/pdfjs/standard_fonts/',
+    wasmUrl: '/pdfjs/wasm/',
+  }).promise;
+}
+
+type PdfTextItem = {
+  str: string;
+  transform: number[];
+  width: number;
+  hasEOL?: boolean;
+};
+
+function pdfItemsToText(items: unknown[]) {
+  const textItems = items.filter((item): item is PdfTextItem => {
+    if (!item || typeof item !== 'object') return false;
+    const candidate = item as Partial<PdfTextItem>;
+    return typeof candidate.str === 'string' && Array.isArray(candidate.transform);
+  });
+  const lines: Array<{ y: number; items: PdfTextItem[] }> = [];
+
+  for (const item of textItems) {
+    const y = item.transform[5] ?? 0;
+    let line = lines.find((candidate) => Math.abs(candidate.y - y) <= 2.5);
+    if (!line) {
+      line = { y, items: [] };
+      lines.push(line);
+    }
+    line.items.push(item);
+  }
+
+  return lines
+    .sort((a, b) => b.y - a.y)
+    .map((line) => {
+      const ordered = line.items.sort((a, b) => (a.transform[4] ?? 0) - (b.transform[4] ?? 0));
+      let result = '';
+      let previousEnd: number | null = null;
+      for (const item of ordered) {
+        const x = item.transform[4] ?? 0;
+        if (previousEnd !== null && x - previousEnd > 3 && result && !result.endsWith(' ')) result += ' ';
+        result += item.str;
+        previousEnd = x + (item.width || 0);
+      }
+      return result.trim();
+    })
+    .filter(Boolean)
+    .join('\n');
+}
+
+function pageIsOnlyNoTextNotice(page: string) {
+  return page.includes('本页没有可提取文本');
+}
+
+function hasExtractablePdfText(pages: string[]) {
+  return pages.some((page) => page.trim() && !pageIsOnlyNoTextNotice(page));
 }
 
 async function extractPdfPages(file: File) {
@@ -105,11 +165,7 @@ async function extractPdfPages(file: File) {
   for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
     const page = await pdf.getPage(pageNumber);
     const content = await page.getTextContent();
-    const text = content.items
-      .map((item) => ('str' in item ? item.str : ''))
-      .join(' ')
-      .replace(/\s+/g, ' ')
-      .trim();
+    const text = pdfItemsToText(content.items);
     pages.push(text || '（本页没有可提取文本，可能是扫描图片）');
   }
   return pages;
@@ -140,6 +196,20 @@ async function textToDocx(text: string) {
     children: [new TextRun({ text: line || ' ', font: 'Arial' })],
     spacing: { after: 120 },
   }));
+  const documentFile = new Document({ sections: [{ children: paragraphs }] });
+  return Packer.toBlob(documentFile);
+}
+
+async function pdfPagesToDocx(pages: string[]) {
+  const { Document, Packer, Paragraph, TextRun } = await import('docx');
+  const paragraphs = pages.flatMap((page, pageIndex) => {
+    const lines = page.split(/\r?\n/).filter((line) => line.trim());
+    return (lines.length ? lines : ['（本页没有可提取文本，可能是扫描图片）']).map((line, lineIndex) => new Paragraph({
+      pageBreakBefore: pageIndex > 0 && lineIndex === 0,
+      children: [new TextRun({ text: line, font: 'Arial' })],
+      spacing: { after: 90, line: 300 },
+    }));
+  });
   const documentFile = new Document({ sections: [{ children: paragraphs }] });
   return Packer.toBlob(documentFile);
 }
@@ -321,16 +391,20 @@ async function convertPdf(file: File, output: DocumentOutputFormat): Promise<Doc
   }
   const pages = await extractPdfPages(file);
   const fullText = pages.map((page, index) => `第 ${index + 1} 页\n${page}`).join('\n\n');
-  if (output === 'docx') return { blob: await textToDocx(fullText), fileName: `${name}.docx`, summary: `已提取 ${pages.length} 页文字并生成 Word。`, preview: fullText };
+  const extractedText = hasExtractablePdfText(pages);
+  const extractionNote = extractedText
+    ? `已提取 ${pages.length} 页文字`
+    : `已读取 ${pages.length} 页，但没有发现可编辑文字；这通常是扫描图片版 PDF，需要 OCR 后才能转成真正可编辑文字`;
+  if (output === 'docx') return { blob: await pdfPagesToDocx(pages), fileName: `${name}.docx`, summary: `${extractionNote}并生成 Word，保留原 PDF 的分页和文本行。`, preview: fullText };
   if (output === 'xlsx') {
     const rows = [['页码', '提取文字'], ...pages.map((page, index) => [String(index + 1), page])];
-    return { blob: await createXlsx(rows, 'PDF文字'), fileName: `${name}.xlsx`, summary: `已将 ${pages.length} 页文字写入 Excel。`, preview: rowsToCsv(rows) };
+    return { blob: await createXlsx(rows, 'PDF文字'), fileName: `${name}.xlsx`, summary: `${extractionNote}并写入 Excel。`, preview: rowsToCsv(rows) };
   }
   if (output === 'html') {
     const html = pages.map((page, index) => `<section><h2>第 ${index + 1} 页</h2><p>${escapeHtml(page)}</p></section>`).join('');
-    return { blob: new Blob([`<!doctype html><meta charset="utf-8"><title>${escapeHtml(name)}</title>${html}`], { type: 'text/html;charset=utf-8' }), fileName: `${name}.html`, summary: `已将 ${pages.length} 页 PDF 转换为 HTML。`, preview: fullText };
+    return { blob: new Blob([`<!doctype html><meta charset="utf-8"><title>${escapeHtml(name)}</title>${html}`], { type: 'text/html;charset=utf-8' }), fileName: `${name}.html`, summary: `${extractionNote}并转换为 HTML。`, preview: fullText };
   }
-  return { blob: new Blob([fullText], { type: 'text/plain;charset=utf-8' }), fileName: `${name}.txt`, summary: `已从 PDF 提取 ${pages.length} 页文字。`, preview: fullText };
+  return { blob: new Blob([fullText], { type: 'text/plain;charset=utf-8' }), fileName: `${name}.txt`, summary: `${extractionNote}。`, preview: fullText };
 }
 
 export async function convertDocument(file: File, output: DocumentOutputFormat): Promise<DocumentConversionResult> {

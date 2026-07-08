@@ -5,8 +5,11 @@ dist/
 .env
 .DS_Store
 coverage/
+.playwright-cli/
+output/
 *.log
 *.tsbuildinfo
 .vercel
 wechat-mini-program/project.private.config.json
 .env*.local
+public/pdfjs/

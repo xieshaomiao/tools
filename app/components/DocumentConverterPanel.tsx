@@ -47,6 +47,27 @@ async function copyText(text: string) {
   return copied;
 }
 
+function friendlyConversionError(error: unknown, file: File | null, isEnglish: boolean) {
+  const message = error instanceof Error ? error.message : '';
+  const smallPdfHint = file?.name.toLowerCase().endsWith('.pdf') && file.size < 12 * 1024;
+  if (/password|encrypted/i.test(message)) {
+    return isEnglish ? 'This PDF is password-protected. Remove the password and try again.' : '该 PDF 带有密码保护，请先解除密码后再转换。';
+  }
+  if (/cmap|font|standardfont/i.test(message)) {
+    return isEnglish ? 'This PDF uses embedded or custom fonts. Refresh the page and try again; if it still fails, export the PDF again from the original app.' : '该 PDF 使用了特殊字体映射。请刷新页面后重试；如果仍失败，请从原软件重新导出 PDF。';
+  }
+  if (/invalid pdf|missing pdf|unexpected response|format error/i.test(message)) {
+    return isEnglish ? 'The PDF is damaged or uses an unsupported structure. Open and export it as a new PDF, then try again.' : '该 PDF 文件可能损坏或结构异常，请先用“打印/导出为 PDF”生成新文件后重试。';
+  }
+  if (/undefined is not a function|withresolvers|intersection|not a function/i.test(message)) {
+    if (smallPdfHint) {
+      return isEnglish ? 'This small PDF uses a structure that the current browser could not parse. Refresh the page or re-export the PDF, then try again.' : '这个小 PDF 使用了当前浏览器不容易解析的结构。请刷新页面后重试；如果仍失败，请从原软件重新导出 PDF。';
+    }
+    return isEnglish ? 'This browser could not parse the PDF. Refresh the page or update the browser, then try again.' : '当前浏览器无法解析这个 PDF。请刷新页面或升级浏览器后重试。';
+  }
+  return isEnglish ? 'Conversion failed. Check the source file and try again.' : '转换失败，请检查源文件后重试。';
+}
+
 export default function DocumentConverterPanel({ tool, locale = 'zh-CN' }: { tool: ToolMeta; locale?: SiteLocale }) {
   const isEnglish = locale === 'en';
   const ui = {
@@ -112,9 +133,10 @@ export default function DocumentConverterPanel({ tool, locale = 'zh-CN' }: { too
       setPreview(result.preview);
       setStatus(isEnglish ? 'Conversion complete. The file is ready to download.' : '转换完成，文件可以下载。');
     } catch (error) {
+      console.error('Toolly document conversion failed', error);
       setSummary('');
       setPreview('');
-      setStatus(error instanceof Error ? error.message : (isEnglish ? 'Conversion failed. Check the file and try again.' : '转换失败，请检查文件后重试。'));
+      setStatus(friendlyConversionError(error, file, isEnglish));
     } finally {
       setProcessing(false);
     }

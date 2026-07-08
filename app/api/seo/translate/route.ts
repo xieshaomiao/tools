@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import { translateText } from '@/app/lib/seo';
+import { requireApiUser, unauthorizedApiResponse } from '@/app/lib/api-auth';
 
 export async function POST(request: Request) {
+  if (!await requireApiUser()) return unauthorizedApiResponse();
   const body = await request.json();
   const { q, target } = body as { q: string; target: 'zh' | 'en' };
   if (!q || !target) {

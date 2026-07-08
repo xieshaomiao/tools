@@ -1,15 +1,10 @@
 'use client';
 
-import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import ToolPanel from '@/app/components/ToolPanel';
 import { ToolMeta } from '@/app/tools/toolConfig';
 import { SiteLocale } from '@/app/tools/toolContent';
-
-const ToolPanel = dynamic(() => import('@/app/components/ToolPanel'), {
-  ssr: false,
-  loading: () => <div className="rounded-[2rem] border border-slate-200 bg-white p-8 text-slate-600 shadow-sm">正在加载工具…</div>,
-});
 
 type AccessState = 'loading' | 'authenticated' | 'signed-out' | 'unavailable';
 
@@ -18,10 +13,6 @@ export default function ToolAccessGate({ tool, locale }: { tool: ToolMeta; local
   const isEnglish = locale === 'en';
 
   useEffect(() => {
-    if (!tool.premium) {
-      setState('authenticated');
-      return;
-    }
     const controller = new AbortController();
     async function checkAccess() {
       try {
@@ -38,7 +29,7 @@ export default function ToolAccessGate({ tool, locale }: { tool: ToolMeta; local
     }
     checkAccess();
     return () => controller.abort();
-  }, [tool.premium]);
+  }, []);
 
   if (state === 'authenticated') return <ToolPanel tool={tool} locale={locale} />;
 

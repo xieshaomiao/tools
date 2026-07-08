@@ -33,3 +33,23 @@
 - 上线地址：https://toolly-ruddy.vercel.app
 - GitHub：https://github.com/xieshaomiao/tools
 - 累计有效优化项：49 / 500（达到 500 后继续向 1000 推进）。
+
+## 2026-07-08 · 登录门槛与中文 PDF 转 Word 修复
+
+- 用户问题：用户页面未登录也能使用工具；登录/注册入口不够明显；用户上传 4.7KB ReportLab 中文 PDF 转 Word 时报“当前浏览器无法解析这个 PDF”；需要确认转换结果可以复制和下载，同时不能伤害网站可搜索性。
+- 有效改进：11 项。
+  - 全站增加统一 Toolly 顶部导航，提供工具目录、登录/注册、已登录邮箱和退出入口。
+  - 工具交互区统一改为登录后可用；未登录时隐藏文件上传和执行按钮，但保留工具说明、FAQ、相关工具和结构化内容给搜索引擎抓取。
+  - 登录页支持从任意工具页携带返回路径，登录或注册成功后回到原工具。
+  - 登录/注册页增加中英文自适应说明，明确文件仍在浏览器本地处理。
+  - 登录页设置 noindex，避免搜索结果进入账号页而不是工具页。
+  - SEO 文案类后台接口增加登录校验，未登录直接调用返回 401。
+  - PDF 解析库切换到兼容性更高的 legacy 版本，降低 Safari/WebKit 老环境出现 `undefined is not a function` 的概率。
+  - 构建时自动准备 PDF.js CMap、标准字体和 wasm 静态资源，修复 ReportLab/中文字体 PDF 在浏览器端无法正确提取文字的问题。
+  - PDF 转 Word 改为按页和文本行生成 DOCX，保留分页结构和更清晰的换行。
+  - PDF 转 Excel/HTML/TXT 增加可提取文字判断；扫描图像版 PDF 会给出需要 OCR 的诚实提示。
+  - 转换失败提示改为用户能理解的原因，覆盖密码保护、损坏文件、特殊字体映射和浏览器兼容问题。
+- 验证证据：TypeScript 检查通过；生产构建通过；本地生产版未登录访问 `/tools/pdf-convert` 时文件上传入口为 0 且 SEO 正文仍可见；登录后上传入口为 1，退出后重新隐藏；未登录 POST `/api/seo/title` 返回 401；4.7KB ReportLab 中文 PDF 在 Chrome 转 Word、WebKit 转 Word、Chrome 转 Excel 均显示“转换完成，文件可以下载”，预览和下载文件内均检出中文内容；复制按钮返回“结果已复制到剪贴板”；338KB 完整 PDF 转 Word 通过；67 页本地 SEO 审计通过。
+- 上线地址：https://toolly-ruddy.vercel.app
+- GitHub：https://github.com/xieshaomiao/tools
+- 累计有效优化项：60 / 500（达到 500 后继续向 1000 推进）。
