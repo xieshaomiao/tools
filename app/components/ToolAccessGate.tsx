@@ -45,28 +45,52 @@ export default function ToolAccessGate({ tool, locale }: { tool: ToolMeta; local
 
   const next = encodeURIComponent('localHref' in tool ? String(tool.localHref) : tool.href);
   return (
-    <section className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm" aria-labelledby="tool-access-title">
-      <p className="text-sm font-semibold uppercase tracking-[0.25em] text-slate-500">{isEnglish ? 'Account required' : '需要账号'}</p>
-      <h2 id="tool-access-title" className="mt-3 text-2xl font-semibold text-slate-950">
-        {state === 'unavailable'
-          ? (isEnglish ? 'Sign-in service is temporarily unavailable' : '登录服务暂时不可用')
-          : (isEnglish ? `Sign in to use ${tool.title}` : `登录后免费使用${tool.title}`)}
-      </h2>
-      <p className="mt-4 max-w-2xl leading-7 text-slate-600">
-        {state === 'unavailable'
-          ? (isEnglish ? 'The sign-in service is not responding right now. Refresh the page and try again shortly.' : '登录服务暂时没有响应，请稍后刷新页面重试。')
-          : (isEnglish ? 'Create a free account or sign in first. Files are processed locally first; PDF fallback conversion is used only when the browser cannot parse the file.' : '请先注册免费账号或登录。文件会优先在浏览器本地处理；只有浏览器无法解析 PDF 时才启用兼容转换。')}
-      </p>
+    <section className="overflow-hidden rounded-[2.35rem] border border-blue-100 bg-white shadow-sm" aria-labelledby="tool-access-title">
+      <div className="bg-gradient-to-br from-blue-600 to-indigo-700 p-8 text-white">
+        <p className="text-sm font-black uppercase tracking-[0.25em] text-blue-100">{isEnglish ? 'Free account' : '免费账号'}</p>
+        <h2 id="tool-access-title" className="mt-3 text-3xl font-black tracking-tight">
+          {state === 'unavailable'
+            ? (isEnglish ? 'Sign-in service is temporarily unavailable' : '登录服务暂时不可用')
+            : (isEnglish ? `Sign in to use ${tool.title}` : `登录后免费使用 ${tool.title}`)}
+        </h2>
+        <p className="mt-4 max-w-2xl leading-8 text-blue-50">
+          {state === 'unavailable'
+            ? (isEnglish ? 'The sign-in service is not responding right now. Refresh the page and try again shortly.' : '登录服务暂时没有响应，请稍后刷新页面重试。')
+            : (isEnglish ? 'Create a free account or sign in first. Toolly keeps the result path clear: process, preview, copy or download.' : '请先注册免费账号或登录。Toolly 会把处理、预览、复制和下载路径完整展示出来。')}
+        </p>
+      </div>
+
+      <div className="p-8">
+        <div className="grid gap-4 sm:grid-cols-3">
+          {(isEnglish
+            ? [
+              ['Fast start', 'No desktop install is required.'],
+              ['Real results', 'Copy text or download generated files.'],
+              ['Privacy-aware', 'Local processing first whenever possible.'],
+            ]
+            : [
+              ['快速开始', '无需下载安装桌面软件。'],
+              ['真实结果', '文本可复制，文件可下载。'],
+              ['隐私优先', '能本地处理的优先在浏览器完成。'],
+            ]).map(([title, text]) => (
+            <div key={title} className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-5">
+              <p className="font-black text-slate-950">{title}</p>
+              <p className="mt-2 text-sm leading-6 text-slate-600">{text}</p>
+            </div>
+          ))}
+        </div>
+
       {state === 'signed-out' ? (
         <div className="mt-6 flex flex-wrap gap-3">
-          <Link href={`/auth?next=${next}`} className="rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-slate-800">
-            {isEnglish ? 'Sign in' : '登录'}
-          </Link>
-          <Link href={`/auth?mode=register&next=${next}`} className="rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-900 transition hover:border-slate-900">
+          <Link href={`/auth?mode=register&next=${next}`} className="rounded-full bg-slate-950 px-7 py-4 text-sm font-black text-white shadow-lg shadow-slate-950/15 transition hover:-translate-y-0.5 hover:bg-blue-700">
             {isEnglish ? 'Create free account' : '免费注册'}
+          </Link>
+          <Link href={`/auth?next=${next}`} className="rounded-full border border-slate-200 bg-white px-7 py-4 text-sm font-black text-slate-900 transition hover:-translate-y-0.5 hover:border-blue-200 hover:text-blue-700">
+            {isEnglish ? 'I already have an account' : '已有账号登录'}
           </Link>
         </div>
       ) : null}
+      </div>
     </section>
   );
 }

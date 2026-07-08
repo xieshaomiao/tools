@@ -84,3 +84,21 @@
 - 上线地址：https://toolly-ruddy.vercel.app
 - GitHub：https://github.com/xieshaomiao/tools
 - 累计有效优化项：73 / 500（达到 500 后继续向 1000 推进）。
+
+## 2026-07-08 · 多 Skill 工具目录与详情页体验审计
+
+- 用户问题：新版首页已具备较强视觉质感，但工具目录和详情页仍是旧版样式；目录文案声称“所有工具均可直接使用”，与实际登录要求不一致；搜索无结果时缺少明确下一步；未登录门槛没有清楚说明注册后能获得什么。
+- 有效改进：8 项。
+  - 中文工具目录升级为与新版首页一致的蓝紫渐变、玻璃卡和高对比度工具卡视觉。
+  - 英文工具目录同步升级，保证全球搜索入口与中文站体验一致。
+  - 将目录中的“所有工具均可直接使用”纠正为“注册或登录后处理真实结果”，消除信任冲突。
+  - 搜索结果页增加“清除搜索，查看全部工具”，减少用户被困在单次查询中。
+  - 搜索空结果增加全部工具入口和热门查询建议，提供可执行的恢复路径。
+  - 工具详情页新增三步任务路径、真实输出、复制/下载和隐私说明，强化首屏信息层级。
+  - 未登录门槛改为“免费注册优先 + 已有账号登录”，并明确快速开始、真实结果和隐私优先三项价值。
+  - 修复工具卡“进入/Open”文字对比度不足问题，将 Lighthouse Accessibility 从 0.96 提升到 1.00。
+- 验证证据：TypeScript 检查通过；Next.js 生产构建通过；67 个公开页面 SEO 审查通过；Playwright 验证 28 个工具卡、PDF 搜索结果、空结果恢复入口、未登录注册入口和上传框隐藏；英文目录正常；手机 390px 无横向溢出；Lighthouse Performance 0.97、Accessibility 1.00、Best Practices 1.00、SEO 1.00。
+- Skill 追踪：新增 `SKILL_ITERATION_LOG.md`，本轮完成 `product-design:audit`、`frontend-testing-debugging`、`react-best-practices` 各 1 / 100。
+- 上线地址：https://toolly-ruddy.vercel.app
+- GitHub：https://github.com/xieshaomiao/tools
+- 累计有效优化项：81 / 500（达到 500 后继续向 1000 推进）。

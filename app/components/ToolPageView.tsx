@@ -54,55 +54,91 @@ export default function ToolPageView({ tool, locale }: { tool: LocalizedTool; lo
   };
 
   return (
-    <main lang={isEnglish ? 'en' : 'zh-CN'} className="mx-auto min-h-screen max-w-7xl px-6 py-10 lg:px-8">
+    <main lang={isEnglish ? 'en' : 'zh-CN'} className="relative isolate overflow-hidden bg-[#f7fbff] text-slate-950">
       {[softwareJsonLd, breadcrumbJsonLd, faqJsonLd].map((value, index) => (
         <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(value) }} />
       ))}
+      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px] bg-[radial-gradient(circle_at_12%_10%,rgba(59,130,246,0.17),transparent_34%),radial-gradient(circle_at_88%_6%,rgba(124,58,237,0.14),transparent_30%),linear-gradient(180deg,#f8fbff_0%,#ffffff_78%)]" />
 
-      <nav aria-label={isEnglish ? 'Breadcrumb' : '面包屑导航'} className="mb-6 flex flex-wrap items-center gap-2 text-sm text-slate-600">
-        <Link href={homeHref} className="underline hover:text-slate-950">{isEnglish ? 'Home' : '首页'}</Link>
-        <span aria-hidden="true">/</span>
-        <Link href={directoryHref} className="underline hover:text-slate-950">{isEnglish ? 'Tools' : '工具目录'}</Link>
-        <span aria-hidden="true">/</span>
-        <span aria-current="page" className="text-slate-900">{tool.title}</span>
-      </nav>
+      <div className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
+        <nav aria-label={isEnglish ? 'Breadcrumb' : '面包屑导航'} className="mb-6 flex flex-wrap items-center gap-2 text-sm font-semibold text-slate-600">
+          <Link href={homeHref} className="underline underline-offset-4 transition hover:text-blue-700">{isEnglish ? 'Home' : '首页'}</Link>
+          <span aria-hidden="true">/</span>
+          <Link href={directoryHref} className="underline underline-offset-4 transition hover:text-blue-700">{isEnglish ? 'Tools' : '工具目录'}</Link>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page" className="text-slate-900">{tool.title}</span>
+        </nav>
 
-      <header className="mb-10 rounded-[2rem] border border-slate-200 bg-slate-50 p-8 shadow-sm">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-500">{tool.badge}</p>
-            <h1 className="mt-3 text-3xl font-semibold text-slate-900 sm:text-4xl">{tool.title}</h1>
-            <p className="mt-4 max-w-3xl text-slate-600 leading-7">{tool.description}</p>
+        <header className="mb-10 overflow-hidden rounded-[2.5rem] border border-white/80 bg-white/80 p-8 shadow-[0_24px_90px_rgba(15,23,42,0.08)] backdrop-blur lg:p-10">
+          <div className="grid gap-8 lg:grid-cols-[1fr_0.72fr] lg:items-center">
+            <div>
+              <p className="text-sm font-black uppercase tracking-[0.3em] text-blue-600">{tool.badge}</p>
+              <h1 className="mt-4 max-w-4xl text-4xl font-black tracking-tight text-slate-950 sm:text-5xl">{tool.title}</h1>
+              <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">{tool.description}</p>
+              <div className="mt-7 flex flex-wrap gap-3">
+                <Link href="#tool-workspace" className="rounded-full bg-blue-600 px-7 py-4 text-sm font-black text-white shadow-xl shadow-blue-600/20 transition hover:-translate-y-0.5 hover:bg-blue-700">
+                  {isEnglish ? 'Start after signing in' : '登录后开始使用'}
+                </Link>
+                <Link href={directoryHref} className="rounded-full border border-slate-200 bg-white px-7 py-4 text-sm font-black text-slate-900 transition hover:-translate-y-0.5 hover:border-blue-200 hover:text-blue-700">
+                  {isEnglish ? 'Browse all tools' : '查看全部工具'}
+                </Link>
+              </div>
+              <div className="mt-6 flex flex-wrap gap-2">
+                {(isEnglish ? ['Real output', 'Copy or download', 'Privacy-aware processing'] : ['真实输出', '复制或下载', '隐私优先处理']).map((item) => (
+                  <span key={item} className="rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-sm font-bold text-blue-700">{item}</span>
+                ))}
+              </div>
+            </div>
+            <div className="rounded-[2rem] border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-6">
+              <p className="text-sm font-black uppercase tracking-[0.25em] text-slate-400">{isEnglish ? 'Tool path' : '使用路径'}</p>
+              <div className="mt-5 space-y-3">
+                {(isEnglish
+                  ? ['Choose source content', 'Run the browser workflow', 'Copy preview or download file']
+                  : ['选择文件或输入内容', '在浏览器中处理任务', '复制预览或下载文件']).map((item, index) => (
+                  <div key={item} className="flex items-center gap-3 rounded-[1.25rem] bg-white p-4 shadow-sm">
+                    <span className="grid h-8 w-8 place-items-center rounded-full bg-slate-950 text-xs font-black text-white">{index + 1}</span>
+                    <span className="text-sm font-bold text-slate-700">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-          <div className="flex flex-wrap gap-3">
-            <Link href={isEnglish ? tool.href : `/en${tool.href}`} hrefLang={isEnglish ? 'zh-CN' : 'en'} className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:border-slate-900 hover:bg-slate-100">
+          <div className="mt-8 flex flex-wrap gap-3 border-t border-slate-100 pt-6">
+            <Link href={isEnglish ? tool.href : `/en${tool.href}`} hrefLang={isEnglish ? 'zh-CN' : 'en'} className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-900 transition hover:border-blue-200 hover:text-blue-700">
               {isEnglish ? '中文' : 'English'}
             </Link>
-            <Link href={directoryHref} className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:border-slate-900 hover:bg-slate-100">
-              {isEnglish ? 'All tools' : '全部工具'}
-            </Link>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <section className="grid gap-8 lg:grid-cols-[1.4fr_0.8fr]">
-        <div className="space-y-6">
+        <section id="tool-workspace" className="grid gap-8 scroll-mt-28 lg:grid-cols-[1.4fr_0.8fr]">
           <ToolAccessGate tool={tool} locale={locale} />
-        </div>
-        <aside className="space-y-6">
-          <AdSlot />
-          <div className="rounded-[1.75rem] border border-slate-200 bg-slate-50 p-6 text-slate-600">
-            <h2 className="text-lg font-semibold text-slate-900">{isEnglish ? 'Privacy and output' : '隐私与结果'}</h2>
-            <p className="mt-4 text-sm leading-7">
-              {isEnglish
-                ? 'This tool produces real output. Text can be copied or downloaded, and generated files can be saved directly to your device.'
-                : '本工具提供真实处理结果。文本结果可以复制或下载，生成的文件可以直接保存到本机。'}
-            </p>
-          </div>
-        </aside>
-      </section>
+          <aside className="space-y-6">
+            <AdSlot />
+            <div className="rounded-[2rem] border border-blue-100 bg-white p-6 text-slate-600 shadow-sm">
+              <h2 className="text-xl font-black text-slate-950">{isEnglish ? 'Privacy and output' : '隐私与结果'}</h2>
+              <ul className="mt-5 space-y-4 text-sm leading-7">
+                {(isEnglish
+                  ? [
+                    'This page is built for real output, not a demo-only preview.',
+                    'Text results can be copied or downloaded after processing.',
+                    'File tools use local processing first and compatible PDF conversion only when needed.',
+                  ]
+                  : [
+                    '这个页面提供真实处理结果，不是演示预览。',
+                    '文本结果可复制或下载，文件结果可保存到本机。',
+                    '文件工具优先本地处理，仅在 PDF 无法解析时启用兼容转换。',
+                  ]).map((item) => (
+                  <li key={item} className="flex gap-3">
+                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-blue-500" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </aside>
+        </section>
 
-      <section className="mt-10 rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
+      <section className="mt-10 rounded-[2.35rem] border border-slate-200 bg-white p-8 shadow-sm">
         <h2 className="text-2xl font-semibold text-slate-900">{isEnglish ? `How to use ${tool.title}` : `${tool.title}怎么用`}</h2>
         <p className="mt-4 max-w-4xl leading-8 text-slate-600">
           {isEnglish
@@ -152,6 +188,7 @@ export default function ToolPageView({ tool, locale }: { tool: LocalizedTool; lo
           ))}
         </div>
       </section>
+      </div>
     </main>
   );
 }
