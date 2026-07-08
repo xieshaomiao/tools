@@ -1,7 +1,8 @@
 import Link from 'next/link';
-import { toolList } from '@/app/tools/toolConfig';
-import { getLocalizedTool } from '@/app/tools/toolContent';
 import { absoluteUrl } from '@/app/lib/site';
+import { groupLocalizedTools, zhPopularSearches } from '@/app/lib/tool-discovery';
+import { getLocalizedTool } from '@/app/tools/toolContent';
+import { toolList } from '@/app/tools/toolConfig';
 
 export const metadata = {
   title: 'Toolly 工具目录 | 28个免费在线文档、图片与开发工具',
@@ -17,6 +18,7 @@ export default async function ToolsPage({ searchParams }: ToolsPageProps) {
   const results = query
     ? localizedTools.filter((tool) => [tool.title, tool.description, tool.category, tool.badge, ...tool.keywords].join(' ').toLowerCase().includes(query))
     : localizedTools;
+  const groupedTools = groupLocalizedTools(results);
   const collectionJsonLd = {
     '@context': 'https://schema.org', '@type': 'CollectionPage', name: 'Toolly 工具目录', url: absoluteUrl('/tools'), inLanguage: 'zh-CN',
     mainEntity: { '@type': 'ItemList', numberOfItems: localizedTools.length, itemListElement: localizedTools.map((tool, index) => ({ '@type': 'ListItem', position: index + 1, name: tool.title, url: absoluteUrl(tool.href) })) },
@@ -37,22 +39,72 @@ export default async function ToolsPage({ searchParams }: ToolsPageProps) {
           <input id="tool-search" name="q" defaultValue={query} placeholder="搜索 PDF、图片、JSON、二维码…" className="min-w-0 flex-1 rounded-full border border-slate-300 bg-white px-5 py-3 text-slate-900 outline-none focus:border-slate-900" />
           <button type="submit" className="rounded-full bg-slate-900 px-6 py-3 font-semibold text-white hover:bg-slate-800">搜索工具</button>
         </form>
+        <div className="mt-4 flex flex-wrap gap-3">
+          {zhPopularSearches.map((item) => (
+            <Link
+              key={item.label}
+              href={`/tools?q=${encodeURIComponent(item.query)}`}
+              className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 transition hover:border-slate-900"
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
       </header>
 
       <p className="mb-5 text-sm text-slate-600" aria-live="polite">{query ? `“${query}”找到 ${results.length} 个工具` : `显示全部 ${results.length} 个工具`}</p>
       {results.length ? (
-        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-          {results.map((tool) => (
-            <Link key={tool.toolKey} href={tool.href} className="group rounded-[1.75rem] border border-slate-200 bg-white p-6 transition duration-300 hover:-translate-y-1 hover:border-slate-900 hover:shadow-xl">
-              <div className="flex items-center justify-between gap-3">
-                <p className="rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">{tool.badge}</p>
-                <span className="text-xs font-medium uppercase tracking-[0.2em] text-slate-400">访问工具</span>
-              </div>
-              <h2 className="mt-5 text-xl font-semibold text-slate-900 group-hover:text-slate-800">{tool.title}</h2>
-              <p className="mt-3 text-sm leading-7 text-slate-600">{tool.description}</p>
-            </Link>
-          ))}
-        </div>
+        query ? (
+          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            {results.map((tool) => (
+              <Link key={tool.toolKey} href={tool.href} className="group rounded-[1.75rem] border border-slate-200 bg-white p-6 transition duration-300 hover:-translate-y-1 hover:border-slate-900 hover:shadow-xl">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">{tool.badge}</p>
+                  <span className="text-xs font-medium uppercase tracking-[0.2em] text-slate-400">访问工具</span>
+                </div>
+                <h2 className="mt-5 text-xl font-semibold text-slate-900 group-hover:text-slate-800">{tool.title}</h2>
+                <p className="mt-3 text-sm leading-7 text-slate-600">{tool.description}</p>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-10">
+            <nav aria-label="分类导航" className="flex flex-wrap gap-3">
+              {groupedTools.map(([category, items]) => (
+                <Link
+                  key={category}
+                  href={`#${encodeURIComponent(category)}`}
+                  className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 transition hover:border-slate-900"
+                >
+                  {category}（{items.length}）
+                </Link>
+              ))}
+            </nav>
+            {groupedTools.map(([category, items]) => (
+              <section key={category} id={encodeURIComponent(category)} className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm scroll-mt-24">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                  <div>
+                    <h2 className="text-2xl font-semibold text-slate-900">{category}</h2>
+                    <p className="mt-2 text-sm leading-6 text-slate-600">这一组工具支持真实处理结果，适合直接在浏览器完成常见任务。</p>
+                  </div>
+                  <p className="text-sm text-slate-500">{items.length} 个工具</p>
+                </div>
+                <div className="mt-6 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                  {items.map((tool) => (
+                    <Link key={tool.toolKey} href={tool.href} className="group rounded-[1.75rem] border border-slate-200 bg-slate-50 p-6 transition duration-300 hover:-translate-y-1 hover:border-slate-900 hover:bg-white hover:shadow-xl">
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">{tool.badge}</p>
+                        <span className="text-xs font-medium uppercase tracking-[0.2em] text-slate-400">访问工具</span>
+                      </div>
+                      <h3 className="mt-5 text-xl font-semibold text-slate-900 group-hover:text-slate-800">{tool.title}</h3>
+                      <p className="mt-3 text-sm leading-7 text-slate-600">{tool.description}</p>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
+        )
       ) : (
         <div className="rounded-[2rem] border border-slate-200 bg-slate-50 p-8 text-slate-700">没有找到匹配工具。可尝试“PDF”“图片”“JSON”或“文本”。</div>
       )}

@@ -71,14 +71,53 @@ function decodeBase64(text: string) {
   }
 }
 
-function formatDate(timestamp: string) {
-  const value = Number(timestamp);
-  if (!Number.isNaN(value)) {
-    const date = new Date(value * 1000);
-    return date.toISOString();
+function formatReadableDate(date: Date, locale: SiteLocale) {
+  const language = locale === 'en' ? 'en-US' : 'zh-CN';
+  return new Intl.DateTimeFormat(language, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    timeZoneName: 'short',
+  }).format(date);
+}
+
+function convertTimestampValue(input: string, direction: 'timestamp-to-date' | 'date-to-timestamp', locale: SiteLocale) {
+  if (!input.trim()) return locale === 'en' ? 'Enter a timestamp or date first.' : '请先输入时间戳或日期。';
+
+  if (direction === 'date-to-timestamp') {
+    const date = new Date(input);
+    if (Number.isNaN(date.getTime())) return locale === 'en' ? 'Invalid date format. Try ISO, YYYY-MM-DD or a full date and time.' : '无效日期格式。可尝试 ISO、YYYY-MM-DD 或完整日期时间。';
+    return [
+      locale === 'en' ? 'Unix timestamp' : 'Unix 时间戳',
+      Math.floor(date.getTime() / 1000).toString(),
+      '',
+      locale === 'en' ? 'Milliseconds' : '毫秒时间戳',
+      date.getTime().toString(),
+      '',
+      locale === 'en' ? 'UTC' : 'UTC 时间',
+      date.toISOString(),
+    ].join('\n');
   }
-  const date = new Date(timestamp);
-  return Number.isNaN(date.getTime()) ? '无效日期格式' : Math.floor(date.getTime() / 1000).toString();
+
+  const normalized = input.trim();
+  const numeric = Number(normalized);
+  if (!Number.isFinite(numeric)) return locale === 'en' ? 'Invalid Unix timestamp. Enter seconds such as 1704067200.' : '无效 Unix 时间戳。请输入如 1704067200 这样的秒级时间戳。';
+  const seconds = normalized.length > 10 ? numeric / 1000 : numeric;
+  const date = new Date(seconds * 1000);
+  if (Number.isNaN(date.getTime())) return locale === 'en' ? 'Invalid Unix timestamp. Check the value and try again.' : '无效 Unix 时间戳，请检查输入后重试。';
+  return [
+    locale === 'en' ? 'ISO 8601' : 'ISO 8601',
+    date.toISOString(),
+    '',
+    locale === 'en' ? 'Local time' : '本地时间',
+    formatReadableDate(date, locale),
+    '',
+    locale === 'en' ? 'Unix milliseconds' : 'Unix 毫秒',
+    date.getTime().toString(),
+  ].join('\n');
 }
 
 function urlEncode(text: string) {
@@ -273,6 +312,15 @@ export default function ToolPanel({ tool, locale = 'zh-CN' }: { tool: ToolMeta; 
 
 function StandardToolPanel({ tool, locale }: { tool: ToolMeta; locale: SiteLocale }) {
   const isEnglish = locale === 'en';
+  const defaultOptionByToolKey: Partial<Record<ToolMeta['toolKey'], string>> = {
+    base64: 'encode',
+    timestamp: 'timestamp-to-date',
+    'url-encode': 'encode',
+    'text-case': 'capitalize',
+    'json-csv': 'json-to-csv',
+    'yaml-json': 'yaml-to-json',
+    'hash-generator': 'SHA-256',
+  };
   const ui = {
     noFile: isEnglish ? 'No file selected' : '未选择文件',
     fileHint: isEnglish ? 'Choose a file to see its estimated size.' : '请上传文件以查看预估信息。',
@@ -297,6 +345,9 @@ function StandardToolPanel({ tool, locale }: { tool: ToolMeta; locale: SiteLocal
     toChinese: isEnglish ? 'Translate to Chinese' : '翻译为中文',
     encode: isEnglish ? 'Encode' : '编码',
     decode: isEnglish ? 'Decode' : '解码',
+    timestampToDate: isEnglish ? 'Timestamp → Date' : '时间戳 → 日期',
+    dateToTimestamp: isEnglish ? 'Date → Timestamp' : '日期 → 时间戳',
+    timestampHint: isEnglish ? 'Examples: 1704067200, 1704067200000, 2024-01-01 08:00:00' : '示例：1704067200、1704067200000、2024-01-01 08:00:00',
     uppercase: isEnglish ? 'UPPER CASE' : '全部大写',
     lowercase: isEnglish ? 'lower case' : '全部小写',
     capitalize: isEnglish ? 'Capitalize Words' : '首字母大写',
@@ -379,6 +430,15 @@ function StandardToolPanel({ tool, locale }: { tool: ToolMeta; locale: SiteLocal
     }
     triggerDownload(new Blob([output], { type: 'text/plain;charset=utf-8' }), resultFileName(tool.toolKey, valueB));
   };
+
+  useEffect(() => {
+    const defaultValue = defaultOptionByToolKey[tool.toolKey];
+    setValueB(defaultValue ?? '');
+    setOutput('');
+    setCopyMessage('');
+    setDownloadBlob(null);
+    setDownloadName('');
+  }, [tool.toolKey]);
 
   useEffect(() => {
     if (!tool.premium) {
@@ -498,7 +558,7 @@ function StandardToolPanel({ tool, locale }: { tool: ToolMeta; locale: SiteLocal
     }
 
     if (tool.toolKey === 'timestamp') {
-      setOutput(formatDate(valueA));
+      setOutput(convertTimestampValue(valueA, valueB === 'date-to-timestamp' ? 'date-to-timestamp' : 'timestamp-to-date', locale));
       return;
     }
 
@@ -760,6 +820,20 @@ function StandardToolPanel({ tool, locale }: { tool: ToolMeta; locale: SiteLocal
               <div className="grid gap-3 sm:grid-cols-2">
                 <button onClick={() => setValueB('SHA-256')} className={`rounded-full px-4 py-3 text-sm font-semibold ${valueB !== 'SHA-512' ? 'bg-slate-900 text-white' : 'border border-slate-200 bg-white text-slate-900'}`}>SHA-256</button>
                 <button onClick={() => setValueB('SHA-512')} className={`rounded-full px-4 py-3 text-sm font-semibold ${valueB === 'SHA-512' ? 'bg-slate-900 text-white' : 'border border-slate-200 bg-white text-slate-900'}`}>SHA-512</button>
+              </div>
+            )}
+
+            {tool.toolKey === 'timestamp' && (
+              <div className="space-y-3">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <button onClick={() => setValueB('timestamp-to-date')} className={`rounded-full px-4 py-3 text-sm font-semibold ${valueB !== 'date-to-timestamp' ? 'bg-slate-900 text-white' : 'border border-slate-200 text-slate-900 bg-white'}`}>
+                    {ui.timestampToDate}
+                  </button>
+                  <button onClick={() => setValueB('date-to-timestamp')} className={`rounded-full px-4 py-3 text-sm font-semibold ${valueB === 'date-to-timestamp' ? 'bg-slate-900 text-white' : 'border border-slate-200 text-slate-900 bg-white'}`}>
+                    {ui.dateToTimestamp}
+                  </button>
+                </div>
+                <p className="text-sm text-slate-500">{ui.timestampHint}</p>
               </div>
             )}
 

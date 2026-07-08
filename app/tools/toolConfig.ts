@@ -120,7 +120,6 @@ export const toolList: ToolMeta[] = [
     category: '内容工具',
     mode: 'text',
     placeholder: '输入内容后提取高频词，帮助您进行关键词分析与标题优化。',
-    premium: true,
   },
   {
     toolKey: 'seo-title-generator',
@@ -131,7 +130,6 @@ export const toolList: ToolMeta[] = [
     category: '内容工具',
     mode: 'text',
     placeholder: '输入文章或页面摘要，快速生成符合搜索引擎的优化标题。',
-    premium: true,
   },
   {
     toolKey: 'text-translate',
@@ -153,7 +151,6 @@ export const toolList: ToolMeta[] = [
     category: '内容工具',
     mode: 'text',
     placeholder: '输入营销文案，获取更简洁清晰的优化建议。',
-    premium: true,
   },
   {
     toolKey: 'content-summarizer',
@@ -164,7 +161,6 @@ export const toolList: ToolMeta[] = [
     category: '内容工具',
     mode: 'text',
     placeholder: '输入文章或页面内容，快速生成简明摘要。',
-    premium: true,
   },
   {
     toolKey: 'text-diff',

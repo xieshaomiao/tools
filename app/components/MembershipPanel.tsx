@@ -12,13 +12,6 @@ type AuthStatus = {
   loading: boolean;
 };
 
-type UpgradeResult = {
-  success: boolean;
-  message: string;
-  expiresAt?: string | null;
-  remainingDays?: number;
-};
-
 export default function MembershipPanel() {
   const [status, setStatus] = useState<AuthStatus>({
     isAuthenticated: false,
@@ -28,8 +21,6 @@ export default function MembershipPanel() {
     remainingDays: 0,
     loading: true,
   });
-  const [message, setMessage] = useState('');
-  const [upgradeLoading, setUpgradeLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -51,38 +42,6 @@ export default function MembershipPanel() {
     loadStatus();
   }, []);
 
-  const handleUpgrade = async (plan: 'monthly' | 'yearly') => {
-    setUpgradeLoading(true);
-    setMessage('');
-
-    try {
-      const response = await fetch('/api/auth/upgrade', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan }),
-      });
-      const result: UpgradeResult = await response.json();
-
-      if (!response.ok || !result.success) {
-        setMessage(result.message || '升级失败，请稍后重试。');
-        return;
-      }
-
-      setStatus((current) => ({
-        ...current,
-        isAuthenticated: true,
-        isMember: true,
-        expiresAt: result.expiresAt ?? current.expiresAt,
-        remainingDays: result.remainingDays ?? current.remainingDays,
-      }));
-      setMessage('会员升级成功，可立即使用所有高级工具。');
-    } catch {
-      setMessage('升级请求失败，请检查网络后重试。');
-    } finally {
-      setUpgradeLoading(false);
-    }
-  };
-
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
     router.push('/');
@@ -90,7 +49,7 @@ export default function MembershipPanel() {
 
   return (
     <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
-      <h2 className="text-2xl font-semibold text-slate-900">会员状态</h2>
+      <h2 className="text-2xl font-semibold text-slate-900">当前账号状态</h2>
       <div className="mt-5 space-y-4 text-slate-600">
         {status.loading ? (
           <p>正在加载会员信息，请稍候...</p>
@@ -98,21 +57,23 @@ export default function MembershipPanel() {
           <>
             <p>登录邮箱：{status.email}</p>
             <p>
-              当前会员状态：
+              当前翻译体验状态：
               <span className="font-semibold text-slate-900">
-                {status.isMember ? `有效，剩余 ${status.remainingDays} 天` : '未激活会员'}
+                {status.isMember ? `有效，剩余 ${status.remainingDays} 天` : '未激活'}
               </span>
             </p>
             {status.isMember && status.expiresAt ? (
-              <p>有效期至：{new Date(status.expiresAt).toLocaleDateString()}</p>
-            ) : null}
+              <p>体验有效期至：{new Date(status.expiresAt).toLocaleDateString()}</p>
+            ) : (
+              <p>真实续费尚未开放，到期后请等待正式支付上线。</p>
+            )}
             <div className="flex flex-wrap gap-3">
               <button
                 type="button"
-                onClick={() => router.push('/tools')}
+                onClick={() => router.push('/tools/text-translate')}
                 className="rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
               >
-                访问工具目录
+                使用翻译工具
               </button>
               <button
                 type="button"
@@ -125,7 +86,7 @@ export default function MembershipPanel() {
           </>
         ) : (
           <>
-            <p>尚未登录，注册后可获得前半年免费会员体验。</p>
+            <p>尚未登录。免费本地工具可以直接使用；若需要在线翻译，请先注册或登录。</p>
             <div className="flex flex-wrap gap-3">
               <button
                 type="button"
@@ -139,33 +100,11 @@ export default function MembershipPanel() {
         )}
       </div>
 
-      <div className="mt-8 rounded-[1.75rem] bg-slate-50 p-6 text-slate-700">
-        <p className="font-semibold text-slate-900">付费升级方案</p>
-        <div className="mt-4 space-y-4 text-sm leading-7">
-          <p>试用期结束后，可通过以下方案升级会员，继续使用所有付费工具。</p>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <button
-              type="button"
-              onClick={() => handleUpgrade('monthly')}
-              disabled={upgradeLoading || status.loading}
-              className="rounded-full bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              30 天续费
-            </button>
-            <button
-              type="button"
-              onClick={() => handleUpgrade('yearly')}
-              disabled={upgradeLoading || status.loading}
-              className="rounded-full bg-emerald-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              365 天续费
-            </button>
-          </div>
-          <p className="text-slate-500">付费方案当前为本地演示流程，后续可接入真实支付网关。</p>
-        </div>
+      <div className="mt-8 rounded-[1.75rem] bg-slate-50 p-6 text-sm leading-7 text-slate-700">
+        <p className="font-semibold text-slate-900">真实支付状态</p>
+        <p className="mt-3">Toolly 当前未开放真实支付，因此这里不会展示任何“立即续费”或“立即付款”的按钮。</p>
+        <p className="mt-3">如果你只需要关键词提取、SEO 标题、文案润色或摘要生成，可直接回到工具目录免费使用。</p>
       </div>
-
-      {message ? <p className="mt-6 rounded-[1.5rem] border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">{message}</p> : null}
     </div>
   );
 }
