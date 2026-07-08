@@ -99,7 +99,70 @@ function hasExtractablePdfText(pages: string[]) {
   return pages.some((page) => page.trim() && !pageIsOnlyNoTextNotice(page));
 }
 
+function ensurePdfJsNodePolyfills() {
+  const globalScope = globalThis as typeof globalThis & {
+    DOMMatrix?: typeof DOMMatrix;
+    ImageData?: typeof ImageData;
+    Path2D?: typeof Path2D;
+  };
+
+  if (!globalScope.DOMMatrix) {
+    class ToollyDOMMatrix {
+      a = 1;
+      b = 0;
+      c = 0;
+      d = 1;
+      e = 0;
+      f = 0;
+
+      constructor(init?: number[] | string) {
+        if (Array.isArray(init)) {
+          [this.a, this.b, this.c, this.d, this.e, this.f] = [
+            init[0] ?? 1,
+            init[1] ?? 0,
+            init[2] ?? 0,
+            init[3] ?? 1,
+            init[4] ?? 0,
+            init[5] ?? 0,
+          ];
+        }
+      }
+
+      multiplySelf() { return this; }
+      preMultiplySelf() { return this; }
+      translate() { return this; }
+      scale() { return this; }
+      invertSelf() { return this; }
+    }
+    globalScope.DOMMatrix = ToollyDOMMatrix as unknown as typeof DOMMatrix;
+  }
+  if (!globalScope.ImageData) {
+    globalScope.ImageData = class ToollyImageData {
+      data: Uint8ClampedArray;
+      width: number;
+      height: number;
+      constructor(dataOrWidth: Uint8ClampedArray | number, widthOrHeight: number, height?: number) {
+        if (typeof dataOrWidth === 'number') {
+          this.width = dataOrWidth;
+          this.height = widthOrHeight;
+          this.data = new Uint8ClampedArray(this.width * this.height * 4);
+        } else {
+          this.data = dataOrWidth;
+          this.width = widthOrHeight;
+          this.height = height ?? 0;
+        }
+      }
+    } as unknown as typeof ImageData;
+  }
+  if (!globalScope.Path2D) {
+    globalScope.Path2D = class ToollyPath2D {
+      addPath() {}
+    } as unknown as typeof Path2D;
+  }
+}
+
 async function extractPdfPages(file: File) {
+  ensurePdfJsNodePolyfills();
   const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
   pdfjs.GlobalWorkerOptions.workerSrc = pathToFileURL(join(pdfjsRoot, 'legacy', 'build', 'pdf.worker.mjs')).href;
   const data = new Uint8Array(await file.arrayBuffer());
