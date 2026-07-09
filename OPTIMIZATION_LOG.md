@@ -176,7 +176,7 @@
   - 首屏新增四个高频工具展示卡，直接链接 PDF 转 Word、图片压缩、JSON 格式化和二维码生成，减少用户寻找成本。
   - 将在线工具数、复制结果、下载结果提前到首屏，强化“这不是演示页，能产出结果”的信任感。
   - 针对移动端 LCP 压短首屏说明文字并收紧行高，避免视觉升级拖慢手机首屏。
-- 验证证据：参考页 `https://motionsites.ai` 已截图到 `/tmp/toolly-visual-round-20260709/reference-motionsites.ai.png`，仅借鉴结构气质，不复制文案与素材；`npm run check` 通过；`npm run build` 通过；67 页本地 SEO 审计通过；Playwright 截图保存在 `/tmp/toolly-visual-round-20260709-after2/`，桌面和手机首页均正常；本地首页 Lighthouse 桌面 Performance / Accessibility / Best Practices / SEO 为 96 / 100 / 100 / 100，移动端为 98 / 100 / 100 / 100，移动端 LCP 为 2.3 秒，CLS 为 0。
+- 验证证据：参考页 `https://motionsites.ai` 已截图到 `/tmp/toolly-visual-round-20260709/reference-motionsites.ai.png`，仅借鉴结构气质，不复制文案与素材；`npm run check` 通过；`npm run build` 通过；67 页本地 SEO 审计通过；Playwright 截图保存在 `/tmp/toolly-visual-round-20260709-after2/`，桌面和手机首页均正常；本地首页 Lighthouse 桌面 Performance / Accessibility / Best Practices / SEO 为 96 / 100 / 100 / 100，移动端为 98 / 100 / 100 / 100，移动端 LCP 为 2.3 秒，CLS 为 0；生产站 `https://toolly-ruddy.vercel.app` 已部署，线上 SEO 审计 67 页通过，线上首页 Lighthouse 桌面为 98 / 100 / 100 / 100，移动端为 99 / 100 / 100 / 100，生产截图保存在 `/tmp/toolly-prod-visual-round-20260709/`。
 - 上线地址：https://toolly-ruddy.vercel.app
 - GitHub：https://github.com/xieshaomiao/tools
 - 累计有效优化项：114 / 500（达到 500 后继续向 1000 推进）。
