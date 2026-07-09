@@ -13,9 +13,9 @@
 
 | Skill | 已完成 | 目标 | 本轮证据 |
 | --- | ---: | ---: | --- |
-| `product-design:audit` | 6 | 100 | 目录页审计发现分类数不准、缺热门任务直达与 FAQ；截图保存在 `/tmp/toolly-directory-audit-20260709/` 与 `/tmp/toolly-directory-after2-20260709/` |
-| `build-web-apps:frontend-testing-debugging` | 6 | 100 | 工具目录 Playwright 验证 8 分类、热门任务、FAQPage、搜索页不重复热门任务、手机无横向溢出；Lighthouse 桌面 100/100/100/100，移动端 94/100/100/100 |
-| `build-web-apps:react-best-practices` | 6 | 100 | 目录增强保持服务端静态渲染，分类数从 `toolList` 派生，热门任务和 FAQ 无新增客户端状态；`npm run check` 与 `npm run build` 通过 |
+| `product-design:audit` | 6 | 100 | 目录页审计发现分类数不准、缺热门任务直达与 FAQ；补强可见 FAQ 语义标记；截图保存在 `/tmp/toolly-directory-audit-20260709/`、`/tmp/toolly-directory-after2-20260709/` 与 `/tmp/toolly-prod-directory-20260709/` |
+| `build-web-apps:frontend-testing-debugging` | 6 | 100 | 工具目录 Playwright 验证 8 分类、热门任务、可见 FAQ、FAQPage、搜索页不重复热门任务、手机无横向溢出；线上 SEO 67 页通过；线上 Lighthouse 桌面 96/100/100/100，移动端复测 95/100/100/100 |
+| `build-web-apps:react-best-practices` | 6 | 100 | 目录增强保持服务端静态渲染，分类数从 `toolList` 派生，热门任务、FAQ 与 FAQ 语义标记无新增客户端状态；`npm run check` 与 `npm run build` 通过 |
 | `github:github` | 1 | 100 | GitHub CLI 未登录无法改远端 Topics；已增强 README 高频关键词入口和 `package.json` 搜索关键词，准备后续补齐仓库 Topics |
 
 ## 未计数记录

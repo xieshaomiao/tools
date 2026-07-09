@@ -224,8 +224,8 @@ export default async function EnglishToolsPage({ searchParams }: ToolsPageProps)
           </ol>
         </section>
 
-        <section className="mt-8 rounded-[2.35rem] border border-white/80 bg-white/80 p-8 shadow-sm backdrop-blur">
-          <h2 className="text-3xl font-black tracking-tight text-slate-950">Frequently asked questions</h2>
+        <section aria-labelledby="directory-faq-heading-en" className="mt-8 rounded-[2.35rem] border border-white/80 bg-white/80 p-6 shadow-sm backdrop-blur sm:p-8">
+          <h2 id="directory-faq-heading-en" className="text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">Frequently asked questions</h2>
           <div className="mt-6 grid gap-4 md:grid-cols-2">
             {directoryFaqs.map((item) => (
               <article key={item.question} className="rounded-[1.5rem] border border-slate-200 bg-white p-5">
