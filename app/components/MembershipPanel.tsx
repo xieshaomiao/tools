@@ -49,23 +49,27 @@ export default function MembershipPanel() {
 
   return (
     <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
-      <h2 className="text-2xl font-semibold text-slate-900">当前账号状态</h2>
+      <p className="text-sm font-black uppercase tracking-[0.2em] text-blue-700">你的账号</p>
+      <h2 className="mt-3 text-2xl font-black text-slate-950">当前使用状态</h2>
       <div className="mt-5 space-y-4 text-slate-600">
         {status.loading ? (
-          <p>正在加载会员信息，请稍候...</p>
+          <p role="status">正在加载账号信息，请稍候…</p>
         ) : status.isAuthenticated ? (
           <>
-            <p>登录邮箱：{status.email}</p>
+            <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4 text-emerald-900">
+              <p className="font-black">已登录，可进入工具操作区</p>
+              <p className="mt-1 break-all text-sm">{status.email}</p>
+            </div>
             <p>
-              当前翻译体验状态：
+              在线翻译体验：
               <span className="font-semibold text-slate-900">
-                {status.isMember ? `有效，剩余 ${status.remainingDays} 天` : '未激活'}
+                {status.isMember ? `有效，剩余 ${status.remainingDays} 天` : '当前未激活'}
               </span>
             </p>
             {status.isMember && status.expiresAt ? (
               <p>体验有效期至：{new Date(status.expiresAt).toLocaleDateString()}</p>
             ) : (
-              <p>真实续费尚未开放，到期后请等待正式支付上线。</p>
+              <p>翻译体验到期不影响其他工具；真实续费尚未开放。</p>
             )}
             <div className="flex flex-wrap gap-3">
               <button
@@ -86,7 +90,7 @@ export default function MembershipPanel() {
           </>
         ) : (
           <>
-            <p>尚未登录。免费本地工具可以直接使用；若需要在线翻译，请先注册或登录。</p>
+            <p>尚未登录。请先创建免费账号或登录，再进入工具操作区。</p>
             <div className="flex flex-wrap gap-3">
               <button
                 type="button"
@@ -101,9 +105,9 @@ export default function MembershipPanel() {
       </div>
 
       <div className="mt-8 rounded-[1.75rem] bg-slate-50 p-6 text-sm leading-7 text-slate-700">
-        <p className="font-semibold text-slate-900">真实支付状态</p>
+        <p className="font-semibold text-slate-900">支付状态说明</p>
         <p className="mt-3">Toolly 当前未开放真实支付，因此这里不会展示任何“立即续费”或“立即付款”的按钮。</p>
-        <p className="mt-3">如果你只需要关键词提取、SEO 标题、文案润色或摘要生成，可直接回到工具目录免费使用。</p>
+        <p className="mt-3">创建免费账号不需要付款。登录后可以从工具目录进入完整操作区。</p>
       </div>
     </div>
   );

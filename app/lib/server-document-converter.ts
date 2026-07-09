@@ -1,5 +1,4 @@
 import { join } from 'node:path';
-import { pathToFileURL } from 'node:url';
 
 export type ServerDocumentOutputFormat = 'docx' | 'xlsx' | 'txt' | 'html';
 
@@ -20,7 +19,7 @@ type PdfTextItem = {
 const pdfjsRoot = join(process.cwd(), 'node_modules', 'pdfjs-dist');
 
 function assetUrl(path: string) {
-  return `${pathToFileURL(path).href}/`;
+  return path.endsWith('/') ? path : `${path}/`;
 }
 
 function baseName(fileName: string) {
@@ -164,7 +163,7 @@ function ensurePdfJsNodePolyfills() {
 async function extractPdfPages(file: File) {
   ensurePdfJsNodePolyfills();
   const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
-  pdfjs.GlobalWorkerOptions.workerSrc = pathToFileURL(join(pdfjsRoot, 'legacy', 'build', 'pdf.worker.mjs')).href;
+  pdfjs.GlobalWorkerOptions.workerSrc = join(pdfjsRoot, 'legacy', 'build', 'pdf.worker.mjs');
   const data = new Uint8Array(await file.arrayBuffer());
   const loadingTask = pdfjs.getDocument({
     data,

@@ -102,3 +102,22 @@
 - 上线地址：https://toolly-ruddy.vercel.app
 - GitHub：https://github.com/xieshaomiao/tools
 - 累计有效优化项：81 / 500（达到 500 后继续向 1000 推进）。
+
+## 2026-07-09 · 登录注册体验与 PDF 转 Word 可靠性
+
+- 用户问题：登录/注册页不够像正式产品入口，英文登录状态和失败提示不一致；账号页仍需更清楚解释登录后才能使用工具；真实 PDF 转 Word 需要在浏览器解析失败、中文字体映射和扫描/无文字层 PDF 场景下都能给用户可下载结果。
+- 有效改进：10 项。
+  - 登录/注册页升级为双栏产品化界面，突出“回到刚才任务、真实结果、隐私优先”，减少用户进入工具前的不安感。
+  - 登录/注册增加客户端内联校验、密码显示/隐藏按钮、明确的 8–128 位密码提示和可访问错误关联。
+  - 注册模式同步到 URL `mode=register`，便于从工具页或外部入口直接进入注册状态。
+  - 登录与注册接口支持英文 locale，英文路径下的错误提示、成功提示和登录失败提示不再混用中文。
+  - 全局头部和页脚在 `/auth?next=/en/...` 场景下正确切换英文，并移除登录页顶部指向自身的登录按钮。
+  - 账号说明页改为“免费账号、登录后使用工具、当前未开放真实支付”的诚实说明，并补足 meta description 以通过 SEO 审计。
+  - 会员面板文案统一为“登录后进入工具操作区”，消除“无需注册/直接使用免费工具”的旧口径冲突。
+  - 隐私页移除上架前占位邮箱，改为 GitHub Issues 联系入口并提醒不要公开敏感信息。
+  - PDF 转 Word 增加无文字层/扫描型 PDF 的图片版 Word 输出：无法提取文字时将页面图像嵌入 DOCX，保证仍能下载可打开文件。
+  - 服务器兼容转换将 PDF.js CMap、标准字体和 wasm 改为真实文件系统路径，修复中文 PDF fallback 抽不到文字的问题。
+- 验证证据：`npm run check` 通过；`npm run build` 通过；本地生产版登录/注册 Playwright 验证 20 项通过，截图在 `/tmp/toolly-auth-qa-20260709/`；测试账号全部清理；`/Users/xieshaomiao/Downloads/谢绍渺_简历1.pdf` 本地浏览器转 Word 成功，预览可复制且下载 DOCX 内检出“谢绍渺”；强制本地解析失败时页面自动走兼容转换并下载含中文文字的 DOCX；无文字层临时 PDF 转 Word 下载包包含 `word/media/` 图片；67 页本地 SEO 审计通过；Lighthouse 首页桌面 Performance 0.65 / Accessibility 0.96 / Best Practices 1.00 / SEO 1.00，PDF 工具页移动端 Performance 0.84 / Accessibility 1.00 / Best Practices 1.00 / SEO 1.00。
+- 上线地址：https://toolly-ruddy.vercel.app
+- GitHub：https://github.com/xieshaomiao/tools
+- 累计有效优化项：91 / 500（达到 500 后继续向 1000 推进）。

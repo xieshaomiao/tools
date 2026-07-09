@@ -27,7 +27,11 @@ export default function PrivacyPage() {
         </p>
 
         <h2 className="text-xl font-semibold">4. 联系方式</h2>
-        <p>如需隐私问题或数据删除请求，请通过项目仓库的 Issue 或在网站上联系支持邮箱（请在上架前替换为你的联系邮箱）。</p>
+        <p>
+          如需咨询隐私问题或申请删除账号数据，请在
+          <Link href="https://github.com/xieshaomiao/tools/issues" className="mx-1 font-semibold text-blue-700 underline underline-offset-4">Toolly GitHub 项目</Link>
+          提交 Issue。请勿在公开 Issue 中填写密码、身份证号或其他敏感信息。
+        </p>
 
         <div className="mt-8">
           <Link href="/" className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white">返回首页</Link>

@@ -171,9 +171,11 @@ async function extractPdfPages(file: File) {
   return pages;
 }
 
+type PdfPageImage = { blob: Blob; dataUrl: string; width: number; height: number };
+
 async function renderPdfPages(file: File) {
   const pdf = await getPdfDocument(file);
-  const images: Array<{ blob: Blob; dataUrl: string }> = [];
+  const images: PdfPageImage[] = [];
   for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
     const page = await pdf.getPage(pageNumber);
     const viewport = page.getViewport({ scale: 1.5 });
@@ -185,7 +187,7 @@ async function renderPdfPages(file: File) {
     await page.render({ canvas, canvasContext: context, viewport }).promise;
     const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
     if (!blob) throw new Error(`PDF 第 ${pageNumber} 页渲染失败。`);
-    images.push({ blob, dataUrl: canvas.toDataURL('image/png') });
+    images.push({ blob, dataUrl: canvas.toDataURL('image/png'), width: canvas.width, height: canvas.height });
   }
   return images;
 }
@@ -211,6 +213,45 @@ async function pdfPagesToDocx(pages: string[]) {
     }));
   });
   const documentFile = new Document({ sections: [{ children: paragraphs }] });
+  return Packer.toBlob(documentFile);
+}
+
+function fitPdfPageImage(image: PdfPageImage) {
+  const maxWidth = 560;
+  const maxHeight = 760;
+  const scale = Math.min(maxWidth / image.width, maxHeight / image.height, 1);
+  return {
+    width: Math.max(Math.round(image.width * scale), 1),
+    height: Math.max(Math.round(image.height * scale), 1),
+  };
+}
+
+async function pdfPageImagesToDocx(images: PdfPageImage[]) {
+  const { AlignmentType, Document, ImageRun, Packer, Paragraph, TextRun } = await import('docx');
+  const children = [];
+  for (let index = 0; index < images.length; index += 1) {
+    const image = images[index];
+    children.push(new Paragraph({
+      pageBreakBefore: index > 0,
+      children: [new TextRun({ text: `第 ${index + 1} 页（图片版）`, bold: true, font: 'Arial' })],
+      spacing: { after: 120 },
+    }));
+    children.push(new Paragraph({
+      alignment: AlignmentType.CENTER,
+      children: [new ImageRun({
+        data: await image.blob.arrayBuffer(),
+        type: 'png',
+        transformation: fitPdfPageImage(image),
+        altText: {
+          title: `PDF page ${index + 1}`,
+          description: `Rendered PDF page ${index + 1}`,
+          name: `pdf-page-${index + 1}`,
+        },
+      })],
+      spacing: { after: 180 },
+    }));
+  }
+  const documentFile = new Document({ sections: [{ children }] });
   return Packer.toBlob(documentFile);
 }
 
@@ -395,7 +436,18 @@ async function convertPdf(file: File, output: DocumentOutputFormat): Promise<Doc
   const extractionNote = extractedText
     ? `已提取 ${pages.length} 页文字`
     : `已读取 ${pages.length} 页，但没有发现可编辑文字；这通常是扫描图片版 PDF，需要 OCR 后才能转成真正可编辑文字`;
-  if (output === 'docx') return { blob: await pdfPagesToDocx(pages), fileName: `${name}.docx`, summary: `${extractionNote}并生成 Word，保留原 PDF 的分页和文本行。`, preview: fullText };
+  if (output === 'docx') {
+    if (!extractedText) {
+      const images = await renderPdfPages(file);
+      return {
+        blob: await pdfPageImagesToDocx(images),
+        fileName: `${name}.docx`,
+        summary: `已读取 ${pages.length} 页，但没有发现可编辑文字；已生成图片版 Word，保留原 PDF 页面外观。如需可编辑文字，请先使用 OCR。`,
+        preview: images.map((_, index) => `第 ${index + 1} 页\n已作为图片嵌入 Word。`).join('\n\n'),
+      };
+    }
+    return { blob: await pdfPagesToDocx(pages), fileName: `${name}.docx`, summary: `${extractionNote}并生成 Word，保留原 PDF 的分页和文本行。`, preview: fullText };
+  }
   if (output === 'xlsx') {
     const rows = [['页码', '提取文字'], ...pages.map((page, index) => [String(index + 1), page])];
     return { blob: await createXlsx(rows, 'PDF文字'), fileName: `${name}.xlsx`, summary: `${extractionNote}并写入 Excel。`, preview: rowsToCsv(rows) };

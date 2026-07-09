@@ -1,12 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
+import { useSiteLocale } from '@/app/hooks/useSiteLocale';
 
 export default function SiteFooter() {
-  const pathname = usePathname();
-  const isEnglish = pathname === '/en' || pathname.startsWith('/en/');
+  const isEnglish = useSiteLocale();
 
   useEffect(() => {
     document.documentElement.lang = isEnglish ? 'en' : 'zh-CN';

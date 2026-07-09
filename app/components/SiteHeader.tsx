@@ -3,13 +3,14 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useSiteLocale } from '@/app/hooks/useSiteLocale';
 
 type HeaderStatus = { loaded: boolean; isAuthenticated: boolean; email: string | null };
 
 export default function SiteHeader() {
   const pathname = usePathname();
   const router = useRouter();
-  const isEnglish = pathname === '/en' || pathname.startsWith('/en/');
+  const isEnglish = useSiteLocale();
   const [status, setStatus] = useState<HeaderStatus>({ loaded: false, isAuthenticated: false, email: null });
 
   useEffect(() => {
@@ -47,9 +48,9 @@ export default function SiteHeader() {
               <Link href="/membership" className="hidden max-w-52 truncate rounded-full border border-slate-200 bg-white/70 px-4 py-2 text-sm font-semibold text-slate-600 shadow-sm sm:block" title={status.email ?? ''}>{status.email}</Link>
               <button type="button" onClick={logout} className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-900 shadow-sm transition hover:border-blue-200 hover:text-blue-700">{isEnglish ? 'Sign out' : '退出'}</button>
             </>
-          ) : (
+          ) : pathname !== '/auth' ? (
             <Link href={`/auth?next=${encodeURIComponent(pathname)}`} className="rounded-full bg-slate-950 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-slate-950/15 transition hover:-translate-y-0.5 hover:bg-blue-700">{isEnglish ? 'Sign in / Register' : '登录 / 注册'}</Link>
-          )}
+          ) : null}
         </nav>
       </div>
     </header>

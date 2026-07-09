@@ -13,10 +13,10 @@
 
 | Skill | 已完成 | 目标 | 本轮证据 |
 | --- | ---: | ---: | --- |
-| `product-design:audit` | 1 | 100 | 目录、空结果、详情页和手机端审计；截图和笔记保存在 `/tmp/toolly-taste-audit-after-local/` |
-| `build-web-apps:frontend-testing-debugging` | 1 | 100 | 搜索、空结果、登录门槛、桌面/手机 Playwright 回归通过 |
-| `build-web-apps:react-best-practices` | 1 | 100 | 服务端页面静态数据保持模块级，客户端门槛组件保持轻量，构建通过 |
+| `product-design:audit` | 2 | 100 | 登录/注册、账号说明、PDF 结果区和手机端体验审计；截图保存在 `/tmp/toolly-auth-qa-20260709/` 与 `/tmp/toolly-pdf-convert-qa/` |
+| `build-web-apps:frontend-testing-debugging` | 2 | 100 | 登录注册、英文错误、手机无横向溢出、PDF 转 Word 下载、兼容兜底、SEO 与 Lighthouse 回归通过 |
+| `build-web-apps:react-best-practices` | 2 | 100 | 账号页静态文案模块级管理、语言判断 hook 复用、PDF 转换分支拆分为独立函数，构建通过 |
 
 ## 未计数记录
 
-- `browser:control-in-app-browser`：本轮已连接成功，但读取工具目录时超时并重置；改用已获授权的常规 Playwright 完成验证，因此本轮不计为完成。
+- `browser:control-in-app-browser`：本轮已连接成功并读取完整文档，但 DOM 快照接口报 `incrementalAriaSnapshot` 兼容错误；改用已获授权的常规 Playwright 完成验证，因此本轮不计为完成。
