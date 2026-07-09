@@ -137,3 +137,16 @@
 - 上线地址：https://toolly-ruddy.vercel.app
 - GitHub：https://github.com/xieshaomiao/tools
 - 累计有效优化项：98 / 500（达到 500 后继续向 1000 推进）。
+
+## 2026-07-09 · GitHub 开源发现与关键词入口增强
+
+- 用户问题：希望网站和 GitHub 仓库更容易被搜索到；当前 GitHub CLI 未登录，无法直接修改仓库 Topics，需要先做可被 GitHub 搜索索引的 README 与项目元数据增强。
+- 有效改进：4 项。
+  - README 增加“高频搜索入口”表格，覆盖 PDF 转 Word、图片压缩、JSON 格式化、二维码生成、人民币大写等中英文关键词。
+  - README 高频入口直接链接到线上工具页，降低从 GitHub 到网站工具页的跳转成本。
+  - README 补充建议 GitHub Topics，方便后续登录 GitHub 后一键补齐仓库主题。
+  - `package.json` 扩展关键词，增加 `pdf-to-word`、`online-pdf-converter`、`image-compressor`、`json-formatter`、`chinese-office-tools` 等长尾搜索词。
+- 验证证据：`gh auth status` 确认当前 GitHub CLI 未登录，未擅自修改远端 Topics；`rg` 检出 README 和 `package.json` 中新增关键词；`npm run check` 通过；`npm run build` 通过。
+- 上线地址：https://toolly-ruddy.vercel.app
+- GitHub：https://github.com/xieshaomiao/tools
+- 累计有效优化项：102 / 500（达到 500 后继续向 1000 推进）。

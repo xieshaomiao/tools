@@ -21,11 +21,17 @@
   "keywords": [
     "online-tools",
     "pdf-converter",
-    "document-converter",
+    "pdf-to-word",
     "word-to-pdf",
+    "document-converter",
+    "online-pdf-converter",
+    "image-compressor",
+    "image-converter",
+    "json-formatter",
     "json-csv",
     "image-tools",
     "developer-tools",
+    "chinese-office-tools",
     "nextjs",
     "toolly"
   ],
