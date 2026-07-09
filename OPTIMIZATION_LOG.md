@@ -121,3 +121,19 @@
 - 上线地址：https://toolly-ruddy.vercel.app
 - GitHub：https://github.com/xieshaomiao/tools
 - 累计有效优化项：91 / 500（达到 500 后继续向 1000 推进）。
+
+## 2026-07-09 · 官网首页首屏性能与可访问性优化
+
+- 用户问题：官网首页视觉升级后首屏偏重，Lighthouse 桌面 Performance 仅 0.65，LCP 为 4.7 秒；同时可访问性分数停在 0.96，浅灰小字和 PDF 色块存在对比度不足。
+- 有效改进：7 项。
+  - 首页中英文首屏背景由多层动态径向渐变改为静态轻量渐变，减少首次绘制负担。
+  - 移除首屏漂浮卡片、光球动画和对应全局 CSS，避免动画影响 LCP 与主线程稳定性。
+  - 将 LCP 标题中的渐变透明文字改为高对比纯色强调，降低标题渲染成本并保持品牌色。
+  - 搜索框、热门标签、统计卡和信任模块移除首屏毛玻璃效果，改为白底轻阴影，视觉更稳也更快。
+  - 右侧转换演示卡减轻大阴影并缩短首屏高度，让移动端和桌面端更快展示核心内容。
+  - 修复站点头部小字、浮层标签和 PDF 色块的颜色对比度问题，将 Accessibility 提升到 1.00。
+  - 保留首页搜索、PDF 入口、分类入口和登录入口，确保性能优化没有牺牲转化路径。
+- 验证证据：`npm run check` 通过；`npm run build` 通过；67 页本地 SEO 审计通过；内置浏览器可打开本地首页并检出 5 个 PDF 工具入口，但 DOM 快照接口仍报 `incrementalAriaSnapshot` 兼容错误，故本轮不计入 browser skill；Playwright 截图保存在 `/tmp/toolly-home-perf-qa-20260709/`，桌面首页、手机首页和手机 PDF 搜索页均正常；手机 `/tools?q=pdf` 检出 1 个 PDF 工具结果；Lighthouse 首页桌面 Performance / Accessibility / Best Practices / SEO 从 65 / 96 / 100 / 100 提升到 100 / 100 / 100 / 100，LCP 从 4.7 秒降到 0.6 秒；移动端 Lighthouse 为 Performance 92 / Accessibility 100 / Best Practices 100 / SEO 100，LCP 2.5 秒。
+- 上线地址：https://toolly-ruddy.vercel.app
+- GitHub：https://github.com/xieshaomiao/tools
+- 累计有效优化项：98 / 500（达到 500 后继续向 1000 推进）。

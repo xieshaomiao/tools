@@ -105,21 +105,21 @@ export default function HomePage() {
     <main className="relative isolate overflow-hidden bg-[#f7fbff] text-slate-950">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd).replace(/</g, '\\u003c') }} />
 
-      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[720px] bg-[radial-gradient(circle_at_15%_15%,rgba(59,130,246,0.22),transparent_34%),radial-gradient(circle_at_82%_10%,rgba(124,58,237,0.2),transparent_30%),linear-gradient(180deg,#f8fbff_0%,#ffffff_72%)]" />
-      <div className="toolly-orb pointer-events-none absolute right-[-10rem] top-24 -z-10 h-96 w-96 rounded-full bg-blue-300/30 blur-3xl" />
-      <div className="toolly-orb-delay pointer-events-none absolute left-[-8rem] top-[38rem] -z-10 h-80 w-80 rounded-full bg-cyan-200/40 blur-3xl" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[660px] bg-[linear-gradient(180deg,#eef6ff_0%,#ffffff_74%)]" />
+      <div className="pointer-events-none absolute right-[-8rem] top-28 -z-10 h-72 w-72 rounded-full bg-blue-200/45 blur-2xl" />
+      <div className="pointer-events-none absolute left-[-7rem] top-[36rem] -z-10 h-64 w-64 rounded-full bg-cyan-100/70 blur-2xl" />
 
       <section className="mx-auto grid max-w-7xl items-center gap-12 px-6 pb-16 pt-12 lg:grid-cols-[1fr_0.92fr] lg:px-8 lg:pb-24 lg:pt-16">
         <div>
           <h1 className="max-w-4xl text-4xl font-black tracking-tight text-slate-950 sm:text-6xl lg:text-7xl">
             把日常文件、图片和文本处理变得
-            <span className="inline-block whitespace-nowrap bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 bg-clip-text text-transparent">轻松漂亮</span>
+            <span className="inline-block whitespace-nowrap text-blue-700">轻松漂亮</span>
           </h1>
           <p className="mt-7 max-w-2xl text-lg leading-9 text-slate-600 sm:text-xl">
             PDF 转 Word、图片压缩、JSON 格式化、字数统计、二维码生成等常用工具集中在一个清爽入口。登录后即可获得可复制、可下载的真实结果。
           </p>
 
-          <form action="/tools" method="get" role="search" className="mt-8 flex max-w-3xl flex-col gap-3 rounded-[2rem] border border-white/80 bg-white/80 p-2 shadow-[0_24px_80px_rgba(30,64,175,0.12)] backdrop-blur sm:flex-row">
+          <form action="/tools" method="get" role="search" className="mt-8 flex max-w-3xl flex-col gap-3 rounded-[2rem] border border-blue-100 bg-white p-2 shadow-xl shadow-blue-950/5 sm:flex-row">
             <label htmlFor="home-tool-search" className="sr-only">搜索工具</label>
             <input
               id="home-tool-search"
@@ -140,7 +140,7 @@ export default function HomePage() {
               <Link
                 key={item.label}
                 href={`/tools?q=${encodeURIComponent(item.query)}`}
-                className="rounded-full border border-white/80 bg-white/70 px-4 py-2 text-sm font-medium text-slate-700 shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:border-blue-200 hover:text-blue-700"
+                className="rounded-full border border-blue-100 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:text-blue-700"
               >
                 {item.label}
               </Link>
@@ -163,23 +163,23 @@ export default function HomePage() {
           </div>
 
           <div className="mt-9 grid max-w-2xl grid-cols-3 gap-3 text-center">
-            <div className="rounded-[1.25rem] border border-white/80 bg-white/70 p-4 shadow-sm backdrop-blur">
+            <div className="rounded-[1.25rem] border border-blue-100 bg-white p-4 shadow-sm">
               <p className="text-2xl font-black text-slate-950">{toolList.length}+</p>
               <p className="mt-1 text-xs font-semibold text-slate-500">在线工具</p>
             </div>
-            <div className="rounded-[1.25rem] border border-white/80 bg-white/70 p-4 shadow-sm backdrop-blur">
+            <div className="rounded-[1.25rem] border border-blue-100 bg-white p-4 shadow-sm">
               <p className="text-2xl font-black text-slate-950">复制</p>
               <p className="mt-1 text-xs font-semibold text-slate-500">文本结果</p>
             </div>
-            <div className="rounded-[1.25rem] border border-white/80 bg-white/70 p-4 shadow-sm backdrop-blur">
+            <div className="rounded-[1.25rem] border border-blue-100 bg-white p-4 shadow-sm">
               <p className="text-2xl font-black text-slate-950">下载</p>
               <p className="mt-1 text-xs font-semibold text-slate-500">文件结果</p>
             </div>
           </div>
         </div>
 
-        <div className="relative min-h-[520px]">
-          <div className="toolly-float absolute right-0 top-4 w-full max-w-[560px] rounded-[2.5rem] border border-white/80 bg-white/90 p-6 shadow-[0_40px_120px_rgba(37,99,235,0.2)] backdrop-blur-xl">
+        <div className="relative min-h-[460px]">
+          <div className="absolute right-0 top-4 w-full max-w-[560px] rounded-[2.5rem] border border-blue-100 bg-white p-6 shadow-2xl shadow-blue-950/10">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-lg font-black text-white shadow-lg shadow-blue-500/30">T</div>
@@ -193,7 +193,7 @@ export default function HomePage() {
 
             <div className="mt-8 grid items-center gap-4 rounded-[2rem] border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-6 sm:grid-cols-[1fr_auto_1fr]">
               <div className="rounded-[1.5rem] bg-white p-5 text-center shadow-sm">
-                <div className="mx-auto grid h-16 w-14 place-items-center rounded-2xl bg-rose-500 text-sm font-black text-white">PDF</div>
+                <div className="mx-auto grid h-16 w-14 place-items-center rounded-2xl bg-rose-700 text-sm font-black text-white">PDF</div>
                 <p className="mt-4 text-sm font-bold text-slate-900">简历.pdf</p>
                 <p className="mt-1 text-xs text-slate-500">331 KB</p>
               </div>
@@ -225,22 +225,22 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="toolly-float-delay pointer-events-none absolute left-0 top-28 hidden rounded-3xl border border-white/80 bg-white/90 p-4 shadow-2xl shadow-cyan-500/10 backdrop-blur md:block">
-            <p className="text-xs font-bold uppercase tracking-[0.25em] text-slate-400">Image</p>
+          <div className="pointer-events-none absolute left-0 top-28 hidden rounded-3xl border border-blue-100 bg-white p-4 shadow-xl shadow-cyan-500/10 md:block">
+            <p className="text-xs font-bold uppercase tracking-[0.25em] text-slate-500">Image</p>
             <p className="mt-2 text-sm font-black text-slate-950">图片压缩 -68%</p>
           </div>
-          <div className="toolly-float-slow pointer-events-none absolute bottom-10 left-12 hidden rounded-3xl border border-white/80 bg-white/90 p-4 shadow-2xl shadow-violet-500/10 backdrop-blur lg:block">
-            <p className="text-xs font-bold uppercase tracking-[0.25em] text-slate-400">JSON</p>
+          <div className="pointer-events-none absolute bottom-10 left-12 hidden rounded-3xl border border-blue-100 bg-white p-4 shadow-xl shadow-violet-500/10 lg:block">
+            <p className="text-xs font-bold uppercase tracking-[0.25em] text-slate-500">JSON</p>
             <p className="mt-2 text-sm font-black text-slate-950">格式化完成</p>
           </div>
-          <div className="toolly-float pointer-events-none absolute bottom-4 right-10 hidden rounded-[2rem] bg-gradient-to-br from-violet-600 to-blue-600 p-5 text-white shadow-2xl shadow-blue-500/20 sm:block">
+          <div className="pointer-events-none absolute bottom-4 right-10 hidden rounded-[2rem] bg-gradient-to-br from-violet-600 to-blue-600 p-5 text-white shadow-xl shadow-blue-500/20 sm:block">
             <p className="text-3xl font-black">{'{ }'}</p>
           </div>
         </div>
       </section>
 
       <section className="mx-auto max-w-7xl px-6 pb-10 lg:px-8">
-        <div className="rounded-[2.5rem] border border-white/80 bg-white/80 p-6 shadow-[0_24px_90px_rgba(15,23,42,0.08)] backdrop-blur">
+        <div className="rounded-[2.5rem] border border-blue-100 bg-white p-6 shadow-xl shadow-slate-950/5">
           <div className="grid gap-4 md:grid-cols-4">
             {trustItems.map((item) => (
               <div key={item.title} className="rounded-[1.75rem] border border-slate-100 bg-gradient-to-b from-white to-slate-50 p-6">

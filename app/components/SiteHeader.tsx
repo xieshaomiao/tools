@@ -38,7 +38,7 @@ export default function SiteHeader() {
           <span className="grid h-10 w-10 place-items-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-base text-white shadow-lg shadow-blue-500/20 transition group-hover:-translate-y-0.5">T</span>
           <span>
             Toolly
-            <span className="ml-2 hidden text-xs font-bold text-slate-400 sm:inline">{isEnglish ? 'Online tools' : '在线工具箱'}</span>
+            <span className="ml-2 hidden text-xs font-bold text-slate-500 sm:inline">{isEnglish ? 'Online tools' : '在线工具箱'}</span>
           </span>
         </Link>
         <nav aria-label={isEnglish ? 'Primary navigation' : '主导航'} className="flex flex-wrap items-center gap-2 sm:gap-3">

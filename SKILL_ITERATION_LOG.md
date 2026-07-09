@@ -13,10 +13,10 @@
 
 | Skill | 已完成 | 目标 | 本轮证据 |
 | --- | ---: | ---: | --- |
-| `product-design:audit` | 2 | 100 | 登录/注册、账号说明、PDF 结果区和手机端体验审计；截图保存在 `/tmp/toolly-auth-qa-20260709/` 与 `/tmp/toolly-pdf-convert-qa/` |
-| `build-web-apps:frontend-testing-debugging` | 2 | 100 | 登录注册、英文错误、手机无横向溢出、PDF 转 Word 下载、兼容兜底、SEO 与 Lighthouse 回归通过 |
-| `build-web-apps:react-best-practices` | 2 | 100 | 账号页静态文案模块级管理、语言判断 hook 复用、PDF 转换分支拆分为独立函数，构建通过 |
+| `product-design:audit` | 3 | 100 | 首页首屏审计出动态渐变、毛玻璃、漂浮动画和对比度问题；截图保存在 `/tmp/toolly-home-perf-qa-20260709/` |
+| `build-web-apps:frontend-testing-debugging` | 3 | 100 | 首页桌面 Lighthouse 65/96/100/100 → 100/100/100/100，移动端 92/100/100/100；SEO、搜索和截图回归通过 |
+| `build-web-apps:react-best-practices` | 3 | 100 | 首页中英文组件保持静态服务端渲染，移除无必要动画 CSS 和首屏昂贵视觉效果，`npm run check` 与 `npm run build` 通过 |
 
 ## 未计数记录
 
-- `browser:control-in-app-browser`：本轮已连接成功并读取完整文档，但 DOM 快照接口报 `incrementalAriaSnapshot` 兼容错误；改用已获授权的常规 Playwright 完成验证，因此本轮不计为完成。
+- `browser:control-in-app-browser`：本轮和上一轮均可连接并打开页面，但 DOM 快照接口报 `incrementalAriaSnapshot` 兼容错误；改用已获授权的常规 Playwright 完成验证，因此仍不计为完成。
