@@ -58,7 +58,8 @@ export default function ToolPageView({ tool, locale }: { tool: LocalizedTool; lo
       {[softwareJsonLd, breadcrumbJsonLd, faqJsonLd].map((value, index) => (
         <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(value) }} />
       ))}
-      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px] bg-[radial-gradient(circle_at_12%_10%,rgba(59,130,246,0.17),transparent_34%),radial-gradient(circle_at_88%_6%,rgba(124,58,237,0.14),transparent_30%),linear-gradient(180deg,#f8fbff_0%,#ffffff_78%)]" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[500px] bg-[linear-gradient(180deg,#eef6ff_0%,#ffffff_78%)]" />
+      <div className="pointer-events-none absolute right-[-8rem] top-24 -z-10 h-72 w-72 rounded-full bg-blue-100/70 blur-2xl" />
 
       <div className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
         <nav aria-label={isEnglish ? 'Breadcrumb' : '面包屑导航'} className="mb-6 flex flex-wrap items-center gap-2 text-sm font-semibold text-slate-600">
@@ -69,12 +70,12 @@ export default function ToolPageView({ tool, locale }: { tool: LocalizedTool; lo
           <span aria-current="page" className="text-slate-900">{tool.title}</span>
         </nav>
 
-        <header className="mb-10 overflow-hidden rounded-[2.5rem] border border-white/80 bg-white/80 p-8 shadow-[0_24px_90px_rgba(15,23,42,0.08)] backdrop-blur lg:p-10">
+        <header className="mb-10 overflow-hidden rounded-[2.5rem] border border-blue-100 bg-white p-6 shadow-xl shadow-blue-950/5 sm:p-8 lg:p-10">
           <div className="grid gap-8 lg:grid-cols-[1fr_0.72fr] lg:items-center">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.3em] text-blue-600">{tool.badge}</p>
-              <h1 className="mt-4 max-w-4xl text-4xl font-black tracking-tight text-slate-950 sm:text-5xl">{tool.title}</h1>
-              <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">{tool.description}</p>
+              <h1 className="mt-4 max-w-4xl text-3xl font-black tracking-tight text-slate-950 sm:text-5xl">{tool.title}</h1>
+              <p className="mt-5 max-w-3xl text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">{tool.description}</p>
               <div className="mt-7 flex flex-wrap gap-3">
                 <Link href="#tool-workspace" className="rounded-full bg-blue-600 px-7 py-4 text-sm font-black text-white shadow-xl shadow-blue-600/20 transition hover:-translate-y-0.5 hover:bg-blue-700">
                   {isEnglish ? 'Start after signing in' : '登录后开始使用'}
@@ -90,7 +91,7 @@ export default function ToolPageView({ tool, locale }: { tool: LocalizedTool; lo
               </div>
             </div>
             <div className="rounded-[2rem] border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-6">
-              <p className="text-sm font-black uppercase tracking-[0.25em] text-slate-400">{isEnglish ? 'Tool path' : '使用路径'}</p>
+              <p className="text-sm font-black uppercase tracking-[0.25em] text-slate-500">{isEnglish ? 'Tool path' : '使用路径'}</p>
               <div className="mt-5 space-y-3">
                 {(isEnglish
                   ? ['Choose source content', 'Run the browser workflow', 'Copy preview or download file']

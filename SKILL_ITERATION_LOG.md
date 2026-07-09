@@ -13,9 +13,9 @@
 
 | Skill | 已完成 | 目标 | 本轮证据 |
 | --- | ---: | ---: | --- |
-| `product-design:audit` | 3 | 100 | 首页首屏审计出动态渐变、毛玻璃、漂浮动画和对比度问题；截图保存在 `/tmp/toolly-home-perf-qa-20260709/` |
-| `build-web-apps:frontend-testing-debugging` | 3 | 100 | 首页桌面 Lighthouse 65/96/100/100 → 100/100/100/100，移动端 92/100/100/100；SEO、搜索和截图回归通过 |
-| `build-web-apps:react-best-practices` | 3 | 100 | 首页中英文组件保持静态服务端渲染，移除无必要动画 CSS 和首屏昂贵视觉效果，`npm run check` 与 `npm run build` 通过 |
+| `product-design:audit` | 4 | 100 | 工具页移动端审计出首屏描述区偏高、加载态不够解释性；截图保存在 `/tmp/toolly-toolpage-gate-qa-20260709-final/` |
+| `build-web-apps:frontend-testing-debugging` | 4 | 100 | PDF 工具页移动端 Lighthouse 89/100/100/100 → 93/100/100/100；加载态和免费注册入口 Playwright 回归通过 |
+| `build-web-apps:react-best-practices` | 4 | 100 | 工具页保持服务端静态内容，客户端登录门禁仅处理状态切换；加载态文案轻量化，`npm run check` 与 `npm run build` 通过 |
 | `github:github` | 1 | 100 | GitHub CLI 未登录无法改远端 Topics；已增强 README 高频关键词入口和 `package.json` 搜索关键词，准备后续补齐仓库 Topics |
 
 ## 未计数记录

@@ -35,10 +35,28 @@ export default function ToolAccessGate({ tool, locale }: { tool: ToolMeta; local
 
   if (state === 'loading') {
     return (
-      <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm" aria-live="polite">
-        <div className="h-6 w-40 animate-pulse rounded bg-slate-200" />
-        <div className="mt-5 h-4 max-w-xl animate-pulse rounded bg-slate-100" />
-        <p className="mt-5 text-sm text-slate-500">{isEnglish ? 'Checking sign-in status…' : '正在检查登录状态…'}</p>
+      <div className="rounded-[2rem] border border-blue-100 bg-white p-8 shadow-sm" aria-busy="true" aria-live="polite">
+        <p className="text-sm font-black uppercase tracking-[0.25em] text-blue-600">{isEnglish ? 'Tool workspace' : '工具工作区'}</p>
+        <h2 className="mt-3 text-2xl font-black tracking-tight text-slate-950">
+          {isEnglish ? 'Preparing your tool entry' : '正在准备工具入口'}
+        </h2>
+        <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-600">
+          {isEnglish
+            ? 'Signed-in users will enter the workspace automatically. New visitors will see the free account options in a moment.'
+            : '已登录用户会自动进入工作区；未登录用户稍后会看到免费注册和登录入口。'}
+        </p>
+        <div className="mt-5 flex flex-wrap gap-2">
+          {(isEnglish
+            ? ['Checking account', 'Real output', 'Privacy-aware']
+            : ['检查账号', '真实输出', '隐私优先']).map((item) => (
+            <span key={item} className="rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-sm font-bold text-blue-700">
+              {item}
+            </span>
+          ))}
+        </div>
+        <div className="mt-6 h-3 overflow-hidden rounded-full bg-blue-50">
+          <div className="h-full w-2/3 animate-pulse rounded-full bg-blue-600" />
+        </div>
       </div>
     );
   }
