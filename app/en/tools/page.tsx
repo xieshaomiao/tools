@@ -12,10 +12,29 @@ export const metadata = {
 
 type ToolsPageProps = { searchParams: Promise<{ q?: string }> };
 
+const categoryCount = new Set(toolList.map((tool) => tool.category)).size;
 const directoryStats = [
   { value: `${toolList.length}+`, label: 'real tools' },
-  { value: '7', label: 'task groups' },
+  { value: String(categoryCount), label: 'task groups' },
   { value: 'Copy/Save', label: 'result exits' },
+];
+
+const popularTaskLinks = [
+  { title: 'PDF to Word', text: 'Turn resumes, contracts and source PDFs into editable Word files.', href: '/en/tools/pdf-convert', tag: 'Office' },
+  { title: 'Word to PDF', text: 'Export Word, Markdown, HTML and other documents to PDF.', href: '/en/tools/pdf-convert', tag: 'Documents' },
+  { title: 'Compress images', text: 'Compress JPG and PNG files, then download smaller WebP output.', href: '/en/tools/image-compress', tag: 'Images' },
+  { title: 'Convert images', text: 'Convert JPG, PNG and WebP formats locally in the browser.', href: '/en/tools/image-convert', tag: 'Formats' },
+  { title: 'Format JSON', text: 'Validate, indent and copy API responses or config snippets.', href: '/en/tools/json-format', tag: 'Developer' },
+  { title: 'Generate QR codes', text: 'Create downloadable PNG QR codes from links or text.', href: '/en/tools/qr-code', tag: 'Webmaster' },
+  { title: 'RMB uppercase', text: 'Convert numbers into formal Chinese RMB wording.', href: '/en/tools/rmb-uppercase', tag: 'China office' },
+  { title: 'Test regex', text: 'Check matches, capture groups and indexes online.', href: '/en/tools/regex-tester', tag: 'Developer' },
+];
+
+const directoryFaqs = [
+  { question: 'Which high-demand tools are in the Toolly directory?', answer: 'Toolly currently includes document conversion, image compression, image format conversion, JSON CSV conversion, QR code generation, regex testing, timestamps and Chinese RMB uppercase conversion.' },
+  { question: 'Where are PDF to Word and Word to PDF?', answer: 'Search for PDF in the tool directory or open Universal Document Converter. It supports PDF, Word, Excel, PowerPoint, TXT, Markdown, HTML and common image formats.' },
+  { question: 'Is Toolly free to use?', answer: 'The directory and tool pages can be accessed for free. Users register or sign in to enter the real processing area and keep a clear task path.' },
+  { question: 'Can I download converted files?', answer: 'Yes. Toolly focuses on real copyable or downloadable output. Text tools support copying, and file tools provide downloads after processing.' },
 ];
 
 function ToolCard({ tool }: { tool: LocalizedTool }) {
@@ -57,22 +76,33 @@ export default async function EnglishToolsPage({ searchParams }: ToolsPageProps)
       itemListElement: localizedTools.map((tool, index) => ({ '@type': 'ListItem', position: index + 1, name: tool.title, url: absoluteUrl(tool.localHref) })),
     },
   };
+  const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    inLanguage: 'en',
+    mainEntity: directoryFaqs.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: { '@type': 'Answer', text: item.answer },
+    })),
+  };
 
   return (
     <main lang="en" className="relative isolate overflow-hidden bg-[#f7fbff] text-slate-950">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd).replace(/</g, '\\u003c') }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd).replace(/</g, '\\u003c') }} />
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[540px] bg-[radial-gradient(circle_at_18%_12%,rgba(59,130,246,0.18),transparent_34%),radial-gradient(circle_at_88%_4%,rgba(124,58,237,0.16),transparent_30%),linear-gradient(180deg,#f8fbff_0%,#ffffff_78%)]" />
 
       <section className="mx-auto max-w-7xl px-6 pb-10 pt-10 lg:px-8">
-        <header className="rounded-[2.5rem] border border-white/80 bg-white/80 p-8 shadow-[0_24px_90px_rgba(15,23,42,0.08)] backdrop-blur lg:p-10">
+        <header className="rounded-[2.5rem] border border-white/80 bg-white/80 p-6 shadow-[0_24px_90px_rgba(15,23,42,0.08)] backdrop-blur sm:p-8 lg:p-10">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <p className="text-sm font-black uppercase tracking-[0.3em] text-blue-600">Tool directory</p>
             <Link href="/tools" hrefLang="zh-CN" className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-900 transition hover:-translate-y-0.5 hover:border-blue-200 hover:text-blue-700">中文</Link>
           </div>
           <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_0.72fr] lg:items-end">
             <div>
-              <h1 className="max-w-4xl text-4xl font-black tracking-tight text-slate-950 sm:text-5xl">Search once, land on the tool that finishes the job</h1>
-              <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">
+              <h1 className="max-w-4xl text-3xl font-black tracking-tight text-slate-950 sm:text-5xl">Search once, land on the tool that finishes the job</h1>
+              <p className="mt-5 max-w-3xl text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
                 Toolly groups document conversion, image work, office helpers, content utilities and developer tasks. Sign in to process real output, copy text or download generated files.
               </p>
             </div>
@@ -108,6 +138,29 @@ export default async function EnglishToolsPage({ searchParams }: ToolsPageProps)
       </section>
 
       <section className="mx-auto max-w-7xl px-6 pb-16 lg:px-8">
+        {!query ? (
+          <section aria-labelledby="popular-task-heading-en" className="mb-8 rounded-[2.35rem] border border-white/80 bg-white/80 p-6 shadow-sm backdrop-blur lg:p-8">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-sm font-black uppercase tracking-[0.24em] text-blue-600">Popular tasks</p>
+                <h2 id="popular-task-heading-en" className="mt-3 text-3xl font-black tracking-tight text-slate-950">Jump straight into high-intent tools</h2>
+                <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600">The most searched document, image, China-office and developer tasks sit at the top so new visitors do not need to understand every category first.</p>
+              </div>
+              <Link href="/en/tools/pdf-convert" className="rounded-full bg-slate-950 px-5 py-3 text-sm font-black text-white transition hover:bg-blue-700">Try PDF conversion</Link>
+            </div>
+            <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {popularTaskLinks.map((item) => (
+                <Link key={item.title} href={item.href} className="group rounded-[1.6rem] border border-slate-200 bg-gradient-to-b from-white to-slate-50 p-5 transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-xl">
+                  <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-black text-blue-700">{item.tag}</span>
+                  <h3 className="mt-5 text-lg font-black text-slate-950">{item.title}</h3>
+                  <p className="mt-3 text-sm leading-7 text-slate-600">{item.text}</p>
+                  <span className="mt-5 inline-flex text-sm font-black text-blue-700 group-hover:translate-x-1">Open →</span>
+                </Link>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm font-semibold text-slate-600" aria-live="polite">
             {query ? `${results.length} tools found for “${query}”` : `Showing all ${results.length} tools`}
@@ -169,6 +222,18 @@ export default async function EnglishToolsPage({ searchParams }: ToolsPageProps)
             <li className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5 leading-7 text-slate-200"><span className="font-black text-white">2. </span>Register or sign in, then enter text or choose a file by following the page instructions.</li>
             <li className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5 leading-7 text-slate-200"><span className="font-black text-white">3. </span>Review the real output, then copy text or download the generated file.</li>
           </ol>
+        </section>
+
+        <section className="mt-8 rounded-[2.35rem] border border-white/80 bg-white/80 p-8 shadow-sm backdrop-blur">
+          <h2 className="text-3xl font-black tracking-tight text-slate-950">Frequently asked questions</h2>
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
+            {directoryFaqs.map((item) => (
+              <article key={item.question} className="rounded-[1.5rem] border border-slate-200 bg-white p-5">
+                <h3 className="text-lg font-black text-slate-950">{item.question}</h3>
+                <p className="mt-3 text-sm leading-7 text-slate-600">{item.answer}</p>
+              </article>
+            ))}
+          </div>
         </section>
       </section>
     </main>

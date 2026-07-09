@@ -180,3 +180,19 @@
 - 上线地址：https://toolly-ruddy.vercel.app
 - GitHub：https://github.com/xieshaomiao/tools
 - 累计有效优化项：114 / 500（达到 500 后继续向 1000 推进）。
+
+## 2026-07-09 · 工具目录热门任务与 FAQ 搜索增强
+
+- 用户问题：工具目录页是搜索流量和用户找工具的关键入口，但线上显示“7 高频分类”与实际 8 个分类不一致；新用户需要更快找到 PDF 转 Word、图片压缩、JSON、二维码等高频任务；目录页缺少 FAQ 内容和结构化数据来解释工具范围、下载结果和登录要求。
+- 有效改进：7 项。
+  - 工具目录统计中的分类数改为从真实 `toolList` 自动计算，修复“7 高频分类”与实际 8 个分类不一致的问题。
+  - 中文目录新增“热门任务”模块，直达 PDF 转 Word、Word 转 PDF、图片压缩、图片格式转换、JSON 格式化、二维码、人民币大写和正则测试。
+  - 英文目录同步新增 Popular tasks 模块，覆盖英文搜索场景和全球用户常见任务。
+  - 新增中文目录 FAQ，解释 Toolly 有哪些高频工具、PDF 转换入口、是否付费和结果能否下载。
+  - 新增英文目录 FAQ，保持中英文内容结构一致。
+  - 为中英文工具目录增加 FAQPage 结构化数据，帮助搜索引擎理解目录页问题与答案。
+  - 移动端目录首屏标题、说明和内边距压缩，降低 LCP，同时保留搜索、热门标签和统计信息。
+- 验证证据：Product Design 审计截图保存在 `/tmp/toolly-directory-audit-20260709/`；`npm run check` 通过；`npm run build` 通过；67 页本地 SEO 审计通过；本地生产版 Playwright 截图保存在 `/tmp/toolly-directory-after2-20260709/`，验证分类统计包含 8、热门任务链接 9 个、FAQ 问题 4 个、JSON-LD 包含 `CollectionPage` 与 `FAQPage`、搜索 `pdf` 结果页不重复热门任务、移动端无横向溢出；本地目录页 Lighthouse 桌面 Performance / Accessibility / Best Practices / SEO 为 100 / 100 / 100 / 100，移动端为 94 / 100 / 100 / 100，移动端 LCP 从 3.1 秒降到 2.4 秒。
+- 上线地址：https://toolly-ruddy.vercel.app
+- GitHub：https://github.com/xieshaomiao/tools
+- 累计有效优化项：121 / 500（达到 500 后继续向 1000 推进）。
