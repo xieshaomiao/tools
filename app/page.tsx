@@ -100,141 +100,147 @@ const workflowSteps = [
   },
 ];
 
+const heroStats = [
+  { value: `${toolList.length}+`, label: '在线工具' },
+  { value: '复制', label: '文本结果' },
+  { value: '下载', label: '文件结果' },
+];
+
+const heroShowcase = [
+  { title: 'PDF 转 Word', meta: '简历.pdf → 简历.docx', tone: 'from-rose-500 to-orange-400', href: '/tools/pdf-convert' },
+  { title: '图片压缩', meta: 'JPG / PNG / WebP', tone: 'from-emerald-400 to-cyan-400', href: '/tools/image-compress' },
+  { title: 'JSON 格式化', meta: '校验、缩进、复制', tone: 'from-violet-400 to-fuchsia-400', href: '/tools/json-format' },
+  { title: '二维码生成', meta: '文本 / 链接 / PNG', tone: 'from-blue-400 to-indigo-400', href: '/tools/qr-code' },
+];
+
 export default function HomePage() {
   return (
     <main className="relative isolate overflow-hidden bg-[#f7fbff] text-slate-950">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd).replace(/</g, '\\u003c') }} />
 
-      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[660px] bg-[linear-gradient(180deg,#eef6ff_0%,#ffffff_74%)]" />
-      <div className="pointer-events-none absolute right-[-8rem] top-28 -z-10 h-72 w-72 rounded-full bg-blue-200/45 blur-2xl" />
-      <div className="pointer-events-none absolute left-[-7rem] top-[36rem] -z-10 h-64 w-64 rounded-full bg-cyan-100/70 blur-2xl" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[740px] bg-[linear-gradient(180deg,#eaf3ff_0%,#f7fbff_72%)]" />
 
-      <section className="mx-auto grid max-w-7xl items-center gap-12 px-6 pb-16 pt-12 lg:grid-cols-[1fr_0.92fr] lg:px-8 lg:pb-24 lg:pt-16">
-        <div>
-          <h1 className="max-w-4xl text-4xl font-black tracking-tight text-slate-950 sm:text-6xl lg:text-7xl">
-            把日常文件、图片和文本处理变得
-            <span className="inline-block whitespace-nowrap text-blue-700">轻松漂亮</span>
-          </h1>
-          <p className="mt-7 max-w-2xl text-lg leading-9 text-slate-600 sm:text-xl">
-            PDF 转 Word、图片压缩、JSON 格式化、字数统计、二维码生成等常用工具集中在一个清爽入口。登录后即可获得可复制、可下载的真实结果。
-          </p>
+      <section className="px-4 pb-14 pt-6 sm:px-6 lg:px-8 lg:pb-20">
+        <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[2.5rem] bg-slate-950 px-5 py-10 text-white shadow-[0_40px_120px_rgba(15,23,42,0.28)] sm:px-8 sm:py-14 lg:rounded-[3rem] lg:px-12 lg:py-16">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(56,189,248,0.22),transparent_30%),radial-gradient(circle_at_76%_18%,rgba(129,140,248,0.22),transparent_32%),linear-gradient(180deg,rgba(255,255,255,0.05),transparent_55%)]" />
+          <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
 
-          <form action="/tools" method="get" role="search" className="mt-8 flex max-w-3xl flex-col gap-3 rounded-[2rem] border border-blue-100 bg-white p-2 shadow-xl shadow-blue-950/5 sm:flex-row">
-            <label htmlFor="home-tool-search" className="sr-only">搜索工具</label>
-            <input
-              id="home-tool-search"
-              name="q"
-              placeholder="搜索 PDF、Word、图片、JSON、二维码、人民币大写..."
-              className="min-w-0 flex-1 rounded-[1.5rem] border border-transparent bg-transparent px-5 py-4 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-200 focus:bg-white"
-            />
-            <button
-              type="submit"
-              className="rounded-[1.5rem] bg-slate-950 px-7 py-4 text-sm font-bold text-white shadow-lg shadow-slate-950/20 transition hover:-translate-y-0.5 hover:bg-blue-700"
-            >
-              直接找工具
-            </button>
-          </form>
+          <div className="relative mx-auto max-w-5xl text-center">
+            <p className="mx-auto inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-black uppercase tracking-[0.22em] text-blue-100">
+              本地处理 · 真实下载 · 免费工具箱
+            </p>
+            <h1 className="mt-7 text-4xl font-black tracking-tight text-white sm:text-6xl lg:text-7xl">
+              把文件、图片和文本处理变成
+              <span className="block bg-gradient-to-r from-cyan-200 via-blue-300 to-violet-200 bg-clip-text text-transparent">一眼就会用的结果工作台</span>
+            </h1>
+            <p className="mx-auto mt-6 max-w-3xl text-base leading-7 text-slate-300 sm:text-xl sm:leading-9">
+              PDF 转 Word、图片压缩、JSON 格式化等常用工具集中到一个高效入口。登录后即可复制、预览和下载真实结果。
+            </p>
 
-          <div className="mt-5 flex flex-wrap gap-3">
-            {zhPopularSearches.map((item) => (
-              <Link
-                key={item.label}
-                href={`/tools?q=${encodeURIComponent(item.query)}`}
-                className="rounded-full border border-blue-100 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:text-blue-700"
+            <form action="/tools" method="get" role="search" className="mx-auto mt-8 flex max-w-3xl flex-col gap-3 rounded-[2rem] border border-white/15 bg-white p-2 shadow-2xl shadow-blue-950/25 sm:flex-row">
+              <label htmlFor="home-tool-search" className="sr-only">搜索工具</label>
+              <input
+                id="home-tool-search"
+                name="q"
+                placeholder="搜索 PDF、Word、图片、JSON、二维码、人民币大写..."
+                className="min-w-0 flex-1 rounded-[1.5rem] border border-transparent bg-transparent px-5 py-4 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-200 focus:bg-blue-50/50"
+              />
+              <button
+                type="submit"
+                className="rounded-[1.5rem] bg-blue-600 px-7 py-4 text-sm font-black text-white shadow-lg shadow-blue-600/30 transition hover:-translate-y-0.5 hover:bg-blue-500"
               >
-                {item.label}
+                直接找工具
+              </button>
+            </form>
+
+            <div className="mt-5 flex flex-wrap justify-center gap-3">
+              {zhPopularSearches.map((item) => (
+                <Link
+                  key={item.label}
+                  href={`/tools?q=${encodeURIComponent(item.query)}`}
+                  className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-0.5 hover:border-cyan-300/60 hover:bg-white/15 hover:text-white"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+
+            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+              <Link
+                href="/tools/pdf-convert"
+                className="inline-flex items-center justify-center rounded-full bg-white px-7 py-4 text-sm font-black text-slate-950 shadow-xl shadow-white/10 transition hover:-translate-y-0.5 hover:bg-blue-50"
+              >
+                开始使用工具 →
               </Link>
-            ))}
-          </div>
-
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-            <Link
-              href="/tools/pdf-convert"
-              className="inline-flex items-center justify-center rounded-full bg-blue-600 px-7 py-4 text-sm font-bold text-white shadow-xl shadow-blue-600/25 transition hover:-translate-y-0.5 hover:bg-blue-700"
-            >
-              开始使用工具 →
-            </Link>
-            <Link
-              href="/tools"
-              className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-7 py-4 text-sm font-bold text-slate-900 shadow-sm transition hover:-translate-y-0.5 hover:border-blue-200 hover:text-blue-700"
-            >
-              查看全部工具
-            </Link>
-          </div>
-
-          <div className="mt-9 grid max-w-2xl grid-cols-3 gap-3 text-center">
-            <div className="rounded-[1.25rem] border border-blue-100 bg-white p-4 shadow-sm">
-              <p className="text-2xl font-black text-slate-950">{toolList.length}+</p>
-              <p className="mt-1 text-xs font-semibold text-slate-500">在线工具</p>
-            </div>
-            <div className="rounded-[1.25rem] border border-blue-100 bg-white p-4 shadow-sm">
-              <p className="text-2xl font-black text-slate-950">复制</p>
-              <p className="mt-1 text-xs font-semibold text-slate-500">文本结果</p>
-            </div>
-            <div className="rounded-[1.25rem] border border-blue-100 bg-white p-4 shadow-sm">
-              <p className="text-2xl font-black text-slate-950">下载</p>
-              <p className="mt-1 text-xs font-semibold text-slate-500">文件结果</p>
+              <Link
+                href="/tools"
+                className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/10 px-7 py-4 text-sm font-black text-white transition hover:-translate-y-0.5 hover:bg-white/15"
+              >
+                查看全部工具
+              </Link>
             </div>
           </div>
-        </div>
 
-        <div className="relative min-h-[460px]">
-          <div className="absolute right-0 top-4 w-full max-w-[560px] rounded-[2.5rem] border border-blue-100 bg-white p-6 shadow-2xl shadow-blue-950/10">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="grid h-12 w-12 place-items-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 text-lg font-black text-white shadow-lg shadow-blue-500/30">T</div>
+          <div className="relative mt-10 grid gap-4 lg:grid-cols-[0.86fr_1.14fr] lg:items-end">
+            <div className="rounded-[2rem] border border-white/12 bg-white/10 p-5 shadow-2xl shadow-blue-950/30 backdrop-blur">
+              <div className="flex items-center justify-between gap-4">
                 <div>
-                  <p className="text-sm font-bold text-slate-500">万能文档转换</p>
-                  <p className="text-xl font-black text-slate-950">PDF 转 Word</p>
+                  <p className="text-sm font-bold text-slate-300">万能文档转换</p>
+                  <p className="mt-1 text-2xl font-black text-white">PDF 转 Word</p>
+                </div>
+                <span className="rounded-full bg-emerald-400/15 px-4 py-2 text-sm font-black text-emerald-200">已完成</span>
+              </div>
+
+              <div className="mt-6 grid items-center gap-4 rounded-[1.75rem] border border-white/10 bg-slate-900/80 p-5 sm:grid-cols-[1fr_auto_1fr]">
+                <div className="rounded-[1.35rem] bg-white p-5 text-center text-slate-950">
+                  <div className="mx-auto grid h-14 w-12 place-items-center rounded-2xl bg-rose-700 text-sm font-black text-white">PDF</div>
+                  <p className="mt-4 text-sm font-black">简历.pdf</p>
+                  <p className="mt-1 text-xs text-slate-500">331 KB</p>
+                </div>
+                <div className="text-center text-3xl font-black text-cyan-300">→</div>
+                <div className="rounded-[1.35rem] bg-white p-5 text-center text-slate-950">
+                  <div className="mx-auto grid h-14 w-12 place-items-center rounded-2xl bg-blue-600 text-sm font-black text-white">W</div>
+                  <p className="mt-4 text-sm font-black">简历.docx</p>
+                  <p className="mt-1 text-xs text-slate-500">可下载</p>
                 </div>
               </div>
-              <span className="rounded-full bg-emerald-100 px-4 py-2 text-sm font-bold text-emerald-700">已完成</span>
-            </div>
 
-            <div className="mt-8 grid items-center gap-4 rounded-[2rem] border border-blue-100 bg-gradient-to-br from-blue-50 to-white p-6 sm:grid-cols-[1fr_auto_1fr]">
-              <div className="rounded-[1.5rem] bg-white p-5 text-center shadow-sm">
-                <div className="mx-auto grid h-16 w-14 place-items-center rounded-2xl bg-rose-700 text-sm font-black text-white">PDF</div>
-                <p className="mt-4 text-sm font-bold text-slate-900">简历.pdf</p>
-                <p className="mt-1 text-xs text-slate-500">331 KB</p>
-              </div>
-              <div className="text-3xl font-black text-blue-400">→</div>
-              <div className="rounded-[1.5rem] bg-white p-5 text-center shadow-sm">
-                <div className="mx-auto grid h-16 w-14 place-items-center rounded-2xl bg-blue-600 text-sm font-black text-white">W</div>
-                <p className="mt-4 text-sm font-bold text-slate-900">简历.docx</p>
-                <p className="mt-1 text-xs text-slate-500">可下载</p>
+              <div className="mt-5 rounded-[1.5rem] border border-white/10 bg-white/10 p-4">
+                <div className="flex items-center justify-between text-sm font-semibold text-slate-200">
+                  <span>正在生成可复制预览</span>
+                  <span>100%</span>
+                </div>
+                <div className="mt-3 h-3 rounded-full bg-white/10">
+                  <div className="h-3 rounded-full bg-gradient-to-r from-cyan-300 to-blue-500" style={{ width: '100%' }} />
+                </div>
               </div>
             </div>
 
-            <div className="mt-6 rounded-[1.5rem] border border-slate-100 bg-white p-5">
-              <div className="flex items-center justify-between text-sm font-semibold text-slate-600">
-                <span>正在生成可复制预览</span>
-                <span>100%</span>
+            <div>
+              <div className="grid grid-cols-3 gap-3 text-center">
+                {heroStats.map((item) => (
+                  <div key={item.label} className="rounded-[1.5rem] border border-white/12 bg-white/10 p-4">
+                    <p className="text-2xl font-black text-white">{item.value}</p>
+                    <p className="mt-1 text-xs font-semibold text-slate-300">{item.label}</p>
+                  </div>
+                ))}
               </div>
-              <div className="mt-3 h-3 rounded-full bg-slate-100">
-                <div className="h-3 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400" style={{ width: '100%' }} />
+
+              <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                {heroShowcase.map((tool) => (
+                  <Link
+                    key={tool.title}
+                    href={tool.href}
+                    className="group rounded-[1.75rem] border border-white/12 bg-white/10 p-5 transition hover:-translate-y-1 hover:bg-white/15"
+                  >
+                    <div className={`mb-5 h-2 rounded-full bg-gradient-to-r ${tool.tone}`} />
+                    <h2 className="text-lg font-black text-white">{tool.title}</h2>
+                    <p className="mt-2 text-sm text-slate-300">{tool.meta}</p>
+                    <span className="mt-5 inline-flex text-sm font-black text-cyan-200 group-hover:translate-x-1">打开工具 →</span>
+                  </Link>
+                ))}
               </div>
             </div>
-
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              <Link href="/tools/pdf-convert" className="rounded-[1.25rem] border border-blue-100 bg-blue-50 px-5 py-4 text-center text-sm font-bold text-blue-700 transition hover:bg-blue-100">
-                预览结果
-              </Link>
-              <Link href="/tools/pdf-convert" className="rounded-[1.25rem] bg-blue-600 px-5 py-4 text-center text-sm font-bold text-white shadow-lg shadow-blue-500/25 transition hover:bg-blue-700">
-                下载文件
-              </Link>
-            </div>
-          </div>
-
-          <div className="pointer-events-none absolute left-0 top-28 hidden rounded-3xl border border-blue-100 bg-white p-4 shadow-xl shadow-cyan-500/10 md:block">
-            <p className="text-xs font-bold uppercase tracking-[0.25em] text-slate-500">Image</p>
-            <p className="mt-2 text-sm font-black text-slate-950">图片压缩 -68%</p>
-          </div>
-          <div className="pointer-events-none absolute bottom-10 left-12 hidden rounded-3xl border border-blue-100 bg-white p-4 shadow-xl shadow-violet-500/10 lg:block">
-            <p className="text-xs font-bold uppercase tracking-[0.25em] text-slate-500">JSON</p>
-            <p className="mt-2 text-sm font-black text-slate-950">格式化完成</p>
-          </div>
-          <div className="pointer-events-none absolute bottom-4 right-10 hidden rounded-[2rem] bg-gradient-to-br from-violet-600 to-blue-600 p-5 text-white shadow-xl shadow-blue-500/20 sm:block">
-            <p className="text-3xl font-black">{'{ }'}</p>
           </div>
         </div>
       </section>

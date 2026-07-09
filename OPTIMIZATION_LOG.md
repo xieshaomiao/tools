@@ -164,3 +164,19 @@
 - 上线地址：https://toolly-ruddy.vercel.app
 - GitHub：https://github.com/xieshaomiao/tools
 - 累计有效优化项：107 / 500（达到 500 后继续向 1000 推进）。
+
+## 2026-07-09 · 官网首页高级视觉与转化首屏优化
+
+- 用户问题：希望官网页面更“美轮美奂”，可参考 MotionSites 的强首屏、深色舞台、大标题和卡片展示结构，但不能抄袭其内容；同时不能牺牲搜索、登录、真实结果和移动端速度。
+- 有效改进：7 项。
+  - 首页中文首屏改为深色舞台式产品区，大标题、渐变强调和聚焦搜索形成更强第一印象。
+  - 英文首页同步升级，保持全球用户访问时的视觉与转化路径一致。
+  - 搜索框改为居中主入口，热门搜索标签放在首屏内，用户进入后能直接找 PDF、图片、JSON、二维码等工具。
+  - 首屏新增结果工作台演示，将 PDF 转 Word、可复制预览和下载状态放在一个明确的任务场景中。
+  - 首屏新增四个高频工具展示卡，直接链接 PDF 转 Word、图片压缩、JSON 格式化和二维码生成，减少用户寻找成本。
+  - 将在线工具数、复制结果、下载结果提前到首屏，强化“这不是演示页，能产出结果”的信任感。
+  - 针对移动端 LCP 压短首屏说明文字并收紧行高，避免视觉升级拖慢手机首屏。
+- 验证证据：参考页 `https://motionsites.ai` 已截图到 `/tmp/toolly-visual-round-20260709/reference-motionsites.ai.png`，仅借鉴结构气质，不复制文案与素材；`npm run check` 通过；`npm run build` 通过；67 页本地 SEO 审计通过；Playwright 截图保存在 `/tmp/toolly-visual-round-20260709-after2/`，桌面和手机首页均正常；本地首页 Lighthouse 桌面 Performance / Accessibility / Best Practices / SEO 为 96 / 100 / 100 / 100，移动端为 98 / 100 / 100 / 100，移动端 LCP 为 2.3 秒，CLS 为 0。
+- 上线地址：https://toolly-ruddy.vercel.app
+- GitHub：https://github.com/xieshaomiao/tools
+- 累计有效优化项：114 / 500（达到 500 后继续向 1000 推进）。

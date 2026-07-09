@@ -13,9 +13,9 @@
 
 | Skill | 已完成 | 目标 | 本轮证据 |
 | --- | ---: | ---: | --- |
-| `product-design:audit` | 4 | 100 | 工具页移动端审计出首屏描述区偏高、加载态不够解释性；截图保存在 `/tmp/toolly-toolpage-gate-qa-20260709-final/` |
-| `build-web-apps:frontend-testing-debugging` | 4 | 100 | PDF 工具页移动端 Lighthouse 89/100/100/100 → 93/100/100/100；加载态和免费注册入口 Playwright 回归通过 |
-| `build-web-apps:react-best-practices` | 4 | 100 | 工具页保持服务端静态内容，客户端登录门禁仅处理状态切换；加载态文案轻量化，`npm run check` 与 `npm run build` 通过 |
+| `product-design:audit` | 5 | 100 | 参考 MotionSites 结构气质后重做官网首屏：深色舞台、大标题、搜索入口和工具展示卡；截图保存在 `/tmp/toolly-visual-round-20260709-after2/` |
+| `build-web-apps:frontend-testing-debugging` | 5 | 100 | 首页视觉升级后完成桌面/手机 Playwright 与 Lighthouse 回归；移动端 98/100/100/100，SEO 67 页通过 |
+| `build-web-apps:react-best-practices` | 5 | 100 | 首页继续保持服务端静态渲染和轻量链接导航，无新增客户端状态；`npm run check` 与 `npm run build` 通过 |
 | `github:github` | 1 | 100 | GitHub CLI 未登录无法改远端 Topics；已增强 README 高频关键词入口和 `package.json` 搜索关键词，准备后续补齐仓库 Topics |
 
 ## 未计数记录
