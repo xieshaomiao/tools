@@ -35,6 +35,36 @@ type SessionRow = {
 let sqlClient: ReturnType<typeof neon> | null = null;
 let schemaPromise: Promise<void> | null = null;
 
+const TRANSIENT_DATABASE_ERROR = /fetch failed|econnreset|etimedout|connection reset|socket disconnected|tls connection|network/i;
+
+function databaseErrorText(error: unknown) {
+  const messages: string[] = [];
+  let current = error;
+  for (let depth = 0; depth < 4 && current; depth += 1) {
+    if (current instanceof Error) messages.push(current.message);
+    else messages.push(String(current));
+    current = typeof current === 'object' && current && 'cause' in current
+      ? (current as { cause?: unknown }).cause
+      : null;
+  }
+  return messages.join(' ');
+}
+
+async function withDatabaseRetry<T>(operation: () => Promise<T>) {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      return await operation();
+    } catch (error) {
+      lastError = error;
+      const canRetry = attempt < 2 && TRANSIENT_DATABASE_ERROR.test(databaseErrorText(error));
+      if (!canRetry) throw error;
+      await new Promise((resolve) => setTimeout(resolve, 180 * (attempt + 1)));
+    }
+  }
+  throw lastError;
+}
+
 function getSql() {
   if (sqlClient) return sqlClient;
   const databaseUrl = process.env.DATABASE_URL ?? process.env.POSTGRES_URL;
@@ -49,7 +79,7 @@ async function ensureSchema() {
   if (!schemaPromise) {
     const initialization = (async () => {
       const sql = getSql();
-      await sql`
+      await withDatabaseRetry(() => sql`
         CREATE TABLE IF NOT EXISTS toolly_users (
           id TEXT PRIMARY KEY,
           email TEXT UNIQUE NOT NULL,
@@ -58,17 +88,17 @@ async function ensureSchema() {
           created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
           membership_expiry TIMESTAMPTZ
         )
-      `;
-      await sql`
+      `);
+      await withDatabaseRetry(() => sql`
         CREATE TABLE IF NOT EXISTS toolly_sessions (
           token_hash TEXT PRIMARY KEY,
           user_id TEXT NOT NULL REFERENCES toolly_users(id) ON DELETE CASCADE,
           created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
           expires_at TIMESTAMPTZ NOT NULL
         )
-      `;
-      await sql`CREATE INDEX IF NOT EXISTS toolly_sessions_user_id_idx ON toolly_sessions(user_id)`;
-      await sql`CREATE INDEX IF NOT EXISTS toolly_sessions_expires_at_idx ON toolly_sessions(expires_at)`;
+      `);
+      await withDatabaseRetry(() => sql`CREATE INDEX IF NOT EXISTS toolly_sessions_user_id_idx ON toolly_sessions(user_id)`);
+      await withDatabaseRetry(() => sql`CREATE INDEX IF NOT EXISTS toolly_sessions_expires_at_idx ON toolly_sessions(expires_at)`);
     })();
     schemaPromise = initialization.catch((error) => {
       schemaPromise = null;
@@ -132,7 +162,7 @@ export async function registerUser(email: string, password: string) {
   const id = crypto.randomUUID();
   const membershipExpiry = createExpiry(180);
 
-  const rows = await sql`
+  const rows = await withDatabaseRetry(() => sql`
     INSERT INTO toolly_users (
       id, email, password_hash, password_salt, membership_expiry
     ) VALUES (
@@ -140,9 +170,22 @@ export async function registerUser(email: string, password: string) {
     )
     ON CONFLICT (email) DO NOTHING
     RETURNING id, email, password_hash, password_salt, created_at, membership_expiry
-  ` as unknown as UserRow[];
+  ` as unknown as Promise<UserRow[]>);
 
   if (!rows.length) {
+    const retryRows = await withDatabaseRetry(() => sql`
+      SELECT id, email, password_hash, password_salt, created_at, membership_expiry
+      FROM toolly_users
+      WHERE id = ${id}
+      LIMIT 1
+    ` as unknown as Promise<UserRow[]>);
+    if (retryRows[0]) {
+      return {
+        success: true as const,
+        message: '注册成功，已开启半年免费会员体验。',
+        user: rowToUser(retryRows[0]),
+      };
+    }
     return { success: false as const, message: '该邮箱已注册，请直接登录。' };
   }
 
@@ -157,12 +200,12 @@ export async function authenticateUser(email: string, password: string) {
   await ensureSchema();
   const sql = getSql();
   const normalizedEmail = email.trim().toLowerCase();
-  const rows = await sql`
+  const rows = await withDatabaseRetry(() => sql`
     SELECT id, email, password_hash, password_salt, created_at, membership_expiry
     FROM toolly_users
     WHERE email = ${normalizedEmail}
     LIMIT 1
-  ` as unknown as UserRow[];
+  ` as unknown as Promise<UserRow[]>);
 
   const row = rows[0];
   if (!row || !(await verifyPassword(password, row.password_salt, row.password_hash))) {
@@ -178,11 +221,12 @@ export async function createSession(userId: string) {
   const tokenHash = hashToken(token);
   const expiresAt = createExpiry(30);
 
-  await sql`DELETE FROM toolly_sessions WHERE expires_at <= NOW()`;
-  await sql`
+  await withDatabaseRetry(() => sql`DELETE FROM toolly_sessions WHERE expires_at <= NOW()`);
+  await withDatabaseRetry(() => sql`
     INSERT INTO toolly_sessions (token_hash, user_id, expires_at)
     VALUES (${tokenHash}, ${userId}, ${expiresAt})
-  `;
+    ON CONFLICT (token_hash) DO NOTHING
+  `);
   return token;
 }
 
@@ -190,12 +234,12 @@ export async function getSession(token: string): Promise<SessionRecord | null> {
   if (!token) return null;
   await ensureSchema();
   const sql = getSql();
-  const rows = await sql`
+  const rows = await withDatabaseRetry(() => sql`
     SELECT user_id, created_at, expires_at
     FROM toolly_sessions
     WHERE token_hash = ${hashToken(token)} AND expires_at > NOW()
     LIMIT 1
-  ` as unknown as SessionRow[];
+  ` as unknown as Promise<SessionRow[]>);
 
   const row = rows[0];
   if (!row) return null;
@@ -211,18 +255,18 @@ export async function invalidateSession(token: string) {
   if (!token) return;
   await ensureSchema();
   const sql = getSql();
-  await sql`DELETE FROM toolly_sessions WHERE token_hash = ${hashToken(token)}`;
+  await withDatabaseRetry(() => sql`DELETE FROM toolly_sessions WHERE token_hash = ${hashToken(token)}`);
 }
 
 export async function getUserById(id: string) {
   await ensureSchema();
   const sql = getSql();
-  const rows = await sql`
+  const rows = await withDatabaseRetry(() => sql`
     SELECT id, email, password_hash, password_salt, created_at, membership_expiry
     FROM toolly_users
     WHERE id = ${id}
     LIMIT 1
-  ` as unknown as UserRow[];
+  ` as unknown as Promise<UserRow[]>);
   return rows[0] ? rowToUser(rows[0]) : null;
 }
 
@@ -230,13 +274,13 @@ export async function getUserFromToken(token: string) {
   if (!token) return null;
   await ensureSchema();
   const sql = getSql();
-  const rows = await sql`
+  const rows = await withDatabaseRetry(() => sql`
     SELECT u.id, u.email, u.password_hash, u.password_salt, u.created_at, u.membership_expiry
     FROM toolly_sessions AS s
     INNER JOIN toolly_users AS u ON u.id = s.user_id
     WHERE s.token_hash = ${hashToken(token)} AND s.expires_at > NOW()
     LIMIT 1
-  ` as unknown as UserRow[];
+  ` as unknown as Promise<UserRow[]>);
   return rows[0] ? rowToUser(rows[0]) : null;
 }
 
