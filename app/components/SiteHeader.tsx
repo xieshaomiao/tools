@@ -41,9 +41,11 @@ export default function SiteHeader() {
             <span className="ml-2 hidden text-xs font-bold text-slate-500 sm:inline">{isEnglish ? 'Online tools' : '在线工具箱'}</span>
           </span>
         </Link>
-        <nav aria-label={isEnglish ? 'Primary navigation' : '主导航'} className="flex flex-wrap items-center gap-2 sm:gap-3">
+        <nav aria-label={isEnglish ? 'Primary navigation' : '主导航'} className="flex min-h-10 flex-wrap items-center justify-end gap-2 sm:gap-3">
           <Link href={isEnglish ? '/en/tools' : '/tools'} className="rounded-full px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-blue-50 hover:text-blue-700">{isEnglish ? 'Tools' : '工具目录'}</Link>
-          {status.isAuthenticated ? (
+          {!status.loaded && pathname !== '/auth' ? (
+            <span className="h-10 w-24 animate-pulse rounded-full bg-slate-100" aria-label={isEnglish ? 'Checking sign-in status' : '正在检查登录状态'} />
+          ) : status.isAuthenticated ? (
             <>
               <Link href="/membership" className="hidden max-w-52 truncate rounded-full border border-slate-200 bg-white/70 px-4 py-2 text-sm font-semibold text-slate-600 shadow-sm sm:block" title={status.email ?? ''}>{status.email}</Link>
               <button type="button" onClick={logout} className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-900 shadow-sm transition hover:border-blue-200 hover:text-blue-700">{isEnglish ? 'Sign out' : '退出'}</button>

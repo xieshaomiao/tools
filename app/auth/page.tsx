@@ -39,7 +39,17 @@ export default function AuthPage() {
     setNextPath(safeNext);
     setIsEnglish(safeNext === '/en' || safeNext.startsWith('/en/'));
     if (params.get('mode') === 'register') setMode('register');
-  }, []);
+
+    const controller = new AbortController();
+    fetch('/api/auth/status', { cache: 'no-store', signal: controller.signal })
+      .then((response) => response.ok ? response.json() : null)
+      .then((status) => {
+        if (status?.isAuthenticated) router.replace(safeNext);
+      })
+      .catch(() => undefined);
+
+    return () => controller.abort();
+  }, [router]);
 
   const switchMode = (nextMode: AuthMode) => {
     setMode(nextMode);
@@ -74,22 +84,29 @@ export default function AuthPage() {
     if (!validate()) return;
     setSubmitting(true);
     const endpoint = mode === 'login' ? '/api/auth/login' : '/api/auth/register';
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), 20000);
     try {
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email.trim(), password, locale: isEnglish ? 'en' : 'zh-CN' }),
+        signal: controller.signal,
       });
-      const data = await response.json();
+      const data = await response.json().catch(() => null);
       if (!response.ok || !data.success) {
-        setMessage(data.message || (isEnglish ? 'Something went wrong. Try again.' : '操作失败，请稍后重试。'));
+        setMessage(data?.message || (isEnglish ? 'Something went wrong. Try again.' : '操作失败，请稍后重试。'));
         return;
       }
       router.push(nextPath);
       router.refresh();
-    } catch {
-      setMessage(isEnglish ? 'The network request failed. Check your connection and try again.' : '网络请求失败，请检查网络后重试。');
+    } catch (error) {
+      const timedOut = error instanceof DOMException && error.name === 'AbortError';
+      setMessage(timedOut
+        ? (isEnglish ? 'The request took too long. Please try again.' : '请求等待时间过长，请重新尝试。')
+        : (isEnglish ? 'The network request failed. Check your connection and try again.' : '网络请求失败，请检查网络后重试。'));
     } finally {
+      window.clearTimeout(timeoutId);
       setSubmitting(false);
     }
   };
@@ -151,10 +168,10 @@ export default function AuthPage() {
   };
 
   return (
-    <main lang={isEnglish ? 'en' : 'zh-CN'} className="relative isolate min-h-[calc(100vh-5rem)] overflow-hidden px-6 py-10 lg:px-8 lg:py-16">
+    <main lang={isEnglish ? 'en' : 'zh-CN'} className="relative isolate min-h-[calc(100vh-5rem)] overflow-hidden px-4 py-6 sm:px-6 sm:py-10 lg:px-8 lg:py-16">
       <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_12%_16%,rgba(59,130,246,0.2),transparent_30%),radial-gradient(circle_at_86%_22%,rgba(124,58,237,0.16),transparent_28%),linear-gradient(180deg,#f8fbff_0%,#eef5ff_52%,#f8fbff_100%)]" />
-      <div className="mx-auto grid max-w-7xl overflow-hidden rounded-[2.75rem] border border-white/80 bg-white/70 shadow-[0_32px_90px_rgba(30,64,175,0.14)] backdrop-blur-xl lg:grid-cols-[1.08fr_0.92fr]">
-        <section className="relative overflow-hidden bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-900 p-8 text-white sm:p-12 lg:p-16" aria-labelledby="auth-benefits-title">
+      <div className="mx-auto grid max-w-7xl overflow-hidden rounded-[2rem] border border-white/80 bg-white/70 shadow-[0_32px_90px_rgba(30,64,175,0.14)] backdrop-blur-xl sm:rounded-[2.75rem] lg:grid-cols-[1.08fr_0.92fr]">
+        <section className="order-2 relative overflow-hidden bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-900 p-7 text-white sm:p-10 lg:order-1 lg:p-16" aria-labelledby="auth-benefits-title">
           <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-blue-500/25 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-28 -left-20 h-80 w-80 rounded-full bg-violet-500/20 blur-3xl" />
           <div className="relative">
@@ -168,7 +185,7 @@ export default function AuthPage() {
               <span className="rounded-full border border-white/15 bg-white/10 px-4 py-2.5">{copy.resultBadge}</span>
             </div>
 
-            <ol className="mt-12 space-y-5">
+            <ol className="mt-10 space-y-4 lg:mt-12 lg:space-y-5">
               {benefits[isEnglish ? 'en' : 'zh-CN'].map(([number, title, text]) => (
                 <li key={number} className="flex gap-4 rounded-[1.6rem] border border-white/10 bg-white/[0.07] p-5">
                   <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-white text-sm font-black text-blue-700">{number}</span>
@@ -182,7 +199,7 @@ export default function AuthPage() {
           </div>
         </section>
 
-        <section className="flex items-center p-6 sm:p-10 lg:p-14" aria-labelledby="auth-form-title">
+        <section className="order-1 flex items-center bg-white/75 p-6 sm:p-10 lg:order-2 lg:bg-transparent lg:p-14" aria-labelledby="auth-form-title">
           <div className="w-full">
             <div className="grid grid-cols-2 rounded-full border border-slate-200 bg-slate-100 p-1" role="tablist" aria-label={isEnglish ? 'Account action' : '账号操作'}>
               <button type="button" role="tab" aria-selected={mode === 'login'} onClick={() => switchMode('login')} className={`rounded-full px-5 py-3 text-sm font-black transition ${mode === 'login' ? 'bg-white text-slate-950 shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}>
@@ -198,7 +215,7 @@ export default function AuthPage() {
             </h2>
             <p className="mt-3 leading-7 text-slate-600">{mode === 'login' ? copy.loginBody : copy.registerBody}</p>
 
-            <form onSubmit={handleSubmit} className="mt-8 space-y-5" noValidate>
+            <form onSubmit={handleSubmit} className="mt-8 space-y-5" noValidate aria-busy={submitting}>
               <div>
                 <label htmlFor="auth-email" className="block text-sm font-bold text-slate-800">{copy.email}</label>
                 <input
@@ -229,7 +246,7 @@ export default function AuthPage() {
                     maxLength={128}
                     autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
                     aria-invalid={Boolean(fieldErrors.password)}
-                    aria-describedby="auth-password-hint auth-password-error"
+                    aria-describedby={fieldErrors.password ? 'auth-password-hint auth-password-error' : 'auth-password-hint'}
                     className="w-full rounded-[1.25rem] border border-slate-200 bg-white py-4 pl-4 pr-20 text-base text-slate-900 outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100 aria-[invalid=true]:border-red-400 aria-[invalid=true]:ring-4 aria-[invalid=true]:ring-red-50"
                   />
                   <button type="button" onClick={() => setShowPassword((visible) => !visible)} aria-pressed={showPassword} className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full px-3 py-2 text-sm font-black text-blue-700 hover:bg-blue-50">

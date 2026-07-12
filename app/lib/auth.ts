@@ -94,12 +94,20 @@ function rowToUser(row: UserRow): UserRecord {
 }
 
 function hashPassword(password: string, salt: string) {
-  return crypto.scryptSync(password, salt, 64).toString('hex');
+  return new Promise<string>((resolve, reject) => {
+    crypto.scrypt(password, salt, 64, (error, derivedKey) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+      resolve(derivedKey.toString('hex'));
+    });
+  });
 }
 
-function verifyPassword(password: string, salt: string, expectedHash: string) {
+async function verifyPassword(password: string, salt: string, expectedHash: string) {
   try {
-    const actual = Buffer.from(hashPassword(password, salt), 'hex');
+    const actual = Buffer.from(await hashPassword(password, salt), 'hex');
     const expected = Buffer.from(expectedHash, 'hex');
     return actual.length === expected.length && crypto.timingSafeEqual(actual, expected);
   } catch {
@@ -120,7 +128,7 @@ export async function registerUser(email: string, password: string) {
   const sql = getSql();
   const normalizedEmail = email.trim().toLowerCase();
   const salt = crypto.randomBytes(16).toString('hex');
-  const passwordHash = hashPassword(password, salt);
+  const passwordHash = await hashPassword(password, salt);
   const id = crypto.randomUUID();
   const membershipExpiry = createExpiry(180);
 
@@ -157,7 +165,7 @@ export async function authenticateUser(email: string, password: string) {
   ` as unknown as UserRow[];
 
   const row = rows[0];
-  if (!row || !verifyPassword(password, row.password_salt, row.password_hash)) {
+  if (!row || !(await verifyPassword(password, row.password_salt, row.password_hash))) {
     return null;
   }
   return rowToUser(row);
