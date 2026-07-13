@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import AdSenseLoader from './components/AdSenseLoader';
 import SiteFooter from './components/SiteFooter';
 import SiteHeader from './components/SiteHeader';
+import WebsiteResilience from './components/WebsiteResilience';
 import { SITE_URL } from './lib/site';
 
 const defaultTitle = 'Toolly 在线工具箱 | PDF 文档转换、图片与开发工具';
@@ -60,6 +61,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         {/* Client-side loader will inject AdSense script when publisherId is configured */}
         <AdSenseLoader />
+        <WebsiteResilience />
         <SiteHeader />
         {children}
 
