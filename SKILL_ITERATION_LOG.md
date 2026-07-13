@@ -13,14 +13,14 @@
 
 | Skill | 已完成 | 目标 | 本轮证据 |
 | --- | ---: | ---: | --- |
-| `product-design:audit` | 9 | 100 | 线上手机截图发现页头账号检查空白、翻译 FAQ 会员口径和账号页试用口径；统一为可见状态与免费网站账号说明 |
-| `build-web-apps:frontend-testing-debugging` | 9 | 100 | 完成线上 390×844 首页、翻译 FAQ、无横向溢出检查，以及生产注册、翻译、PDF 转 Word、DOCX、退出完整回归 |
-| `build-web-apps:react-best-practices` | 9 | 100 | 账号检查和退出请求增加 AbortController 超时与稳定状态；移除重复翻译权限请求后，检查与生产构建通过 |
-| `github:github` | 1 | 100 | GitHub CLI 未登录无法改远端 Topics；已增强 README 高频关键词入口和 `package.json` 搜索关键词，准备后续补齐仓库 Topics |
-| `browser:control-in-app-browser` | 3 | 100 | 线上 390×844 首页和翻译 FAQ 完成可见截图与 DOM 复核：首页无账号空白和横向溢出，FAQ 显示免费账号且无会员/180 天文案 |
+| `product-design:audit` | 10 | 100 | 以流量文章、信任页、账号删除和英文目录为真实用户路径完成桌面与 390×844 可见审查，清理 App、广告测试和中英混排文案 |
+| `build-web-apps:frontend-testing-debugging` | 10 | 100 | 本地与线上 74 页 SEO、18 页变现安全、广告四态、注册删除、删除后登录失败和生产移动端目录回归全部通过 |
+| `build-web-apps:react-best-practices` | 10 | 100 | 广告脚本按页面延迟加载且防重复请求，账号面板中英文状态一致，网络异常删除状态不做错误保证，检查与生产构建通过 |
+| `github:github` | 2 | 100 | 提交 `af05a36` 推送 main，README、原创文章入口、广告配置说明和正式站代码在公开仓库可检索 |
+| `browser:control-in-app-browser` | 4 | 100 | 390×844 完成博客真实跳转、英文注册、删除确认和正式英文目录交互；无横向溢出、广告脚本、App 文案或控制台错误 |
 | `vercel:investigation-mode` | 2 | 100 | 交叉验证浏览器、curl、Node 与 Vercel API，确认直连 TLS 重置来自本机网络出口；显式代理可恢复请求，部署本身为 READY，网站增加离线恢复 |
-| `vercel:auth` | 3 | 100 | 生产临时账号完成注册、登录态、免费翻译、受保护 PDF 转 Word、退出和退出后匿名状态回归，账号已从数据库清理 |
-| `vercel:deployments-cicd` | 3 | 100 | GitHub 主分支提交 `86a5e9d` 自动部署为 `READY`，主地址与备用地址上线免费账号口径并通过 65 页线上 SEO 审计 |
+| `vercel:auth` | 4 | 100 | 生产临时账号完成注册、登录态、错误密码删除拒绝、正确删除、会话注销和删除后无法登录，测试账号已清理 |
+| `vercel:deployments-cicd` | 4 | 100 | GitHub 主分支提交 `af05a36` 自动上线，正式站通过 74 页 SEO、18 页变现安全和移动端英文目录回归 |
 
 ## 未计数记录
 
