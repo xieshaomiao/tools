@@ -13,14 +13,14 @@
 
 | Skill | 已完成 | 目标 | 本轮证据 |
 | --- | ---: | ---: | --- |
-| `product-design:audit` | 7 | 100 | 手机端登录审计发现表单被介绍内容压到第二屏；调整为表单优先后，390×844 首屏可直接登录；前后截图保存在 `/tmp/toolly-auth-production-20260713/` |
-| `build-web-apps:frontend-testing-debugging` | 7 | 100 | 内置浏览器验证桌面/手机登录页、登录跳转、已登录重定向、无横向溢出和控制台健康；生产注册/登录/退出闭环均为 HTTP 200 |
-| `build-web-apps:react-best-practices` | 7 | 100 | 登录状态避免首屏闪烁，密码哈希改为异步，客户端请求增加超时与安全响应解析；`npm run check` 与 `npm run build` 通过 |
+| `product-design:audit` | 8 | 100 | 审计发现 App 占位下载页与“仅网站”定位冲突且损害信任；首页改为真实注册 CTA，博客改为工具任务入口，旧地址保留永久跳转 |
+| `build-web-apps:frontend-testing-debugging` | 8 | 100 | 内置浏览器完成 390×844 注册首屏、真实注册跳转、首页无溢出和控制台检查；生产接口再验证注册、状态、PDF 转 Word、401 鉴权和 DOCX 完整性 |
+| `build-web-apps:react-best-practices` | 8 | 100 | 账号状态、密码修改、超时取消、断网恢复和 App 入口清理完成后，`npm run check` 与生产构建均通过 |
 | `github:github` | 1 | 100 | GitHub CLI 未登录无法改远端 Topics；已增强 README 高频关键词入口和 `package.json` 搜索关键词，准备后续补齐仓库 Topics |
-| `browser:control-in-app-browser` | 1 | 100 | 本轮内置浏览器 DOM、截图、控制台与登录交互全部可用，验证生产手机表单首屏、桌面双栏和登录后跳转 |
-| `vercel:investigation-mode` | 1 | 100 | 按运行日志→浏览器→部署顺序定位到手机首屏顺序和 Neon/Vercel TLS 重置两类问题，并分别修复可控范围内的根因 |
-| `vercel:auth` | 1 | 100 | 完成注册、登录、会话、退出与生产数据库连通性回归；新增数据库临时故障重试和状态接口降级 |
-| `vercel:deployments-cicd` | 1 | 100 | 强制无缓存生产部署为 READY，主域名完成别名切换，生产 API、浏览器、日志和抓取入口均复测 |
+| `browser:control-in-app-browser` | 2 | 100 | 本地生产版手机视口完成 DOM、截图、控制台和真实注册交互，注册后跳转 `/tools`；生产导航受本机代理间歇超时影响时改用同版本线上接口与抓取证据复核 |
+| `vercel:investigation-mode` | 2 | 100 | 交叉验证浏览器、curl、Node 与 Vercel API，确认直连 TLS 重置来自本机网络出口；显式代理可恢复请求，部署本身为 READY，网站增加离线恢复 |
+| `vercel:auth` | 2 | 100 | 新增安全修改密码和旧会话失效；生产再次验证注册、登录态、受保护转换接口、未开放升级接口与测试账号清理 |
+| `vercel:deployments-cicd` | 2 | 100 | GitHub 主分支提交 `4ee7b5f` 自动部署为 `READY`，三个生产别名切换到 `dpl_3UPZf9WfpE3ZhXyhaHWd4TFCvESK`，线上 sitemap 与旧地址跳转复测通过 |
 
 ## 未计数记录
 
