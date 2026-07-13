@@ -26,6 +26,13 @@ export default function MembershipPanel() {
   const [reloadKey, setReloadKey] = useState(0);
   const [loggingOut, setLoggingOut] = useState(false);
   const [actionMessage, setActionMessage] = useState('');
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordSubmitting, setPasswordSubmitting] = useState(false);
+  const [passwordMessage, setPasswordMessage] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -62,6 +69,42 @@ export default function MembershipPanel() {
     } catch {
       setActionMessage('退出失败，请检查网络后重试。');
       setLoggingOut(false);
+    }
+  };
+
+  const handleChangePassword = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setPasswordMessage('');
+    setPasswordError('');
+    if (newPassword.length < 8 || newPassword.length > 128) {
+      setPasswordError('新密码长度需要为 8–128 位。');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPasswordError('两次输入的新密码不一致。');
+      return;
+    }
+
+    setPasswordSubmitting(true);
+    try {
+      const response = await fetch('/api/auth/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+      const data = await response.json().catch(() => null);
+      if (!response.ok || !data?.success) {
+        setPasswordError(data?.message || '密码修改失败，请稍后重试。');
+        return;
+      }
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      setPasswordMessage(data.message || '密码修改成功。');
+    } catch {
+      setPasswordError('网络请求失败，请检查连接后重试。');
+    } finally {
+      setPasswordSubmitting(false);
     }
   };
 
@@ -114,6 +157,19 @@ export default function MembershipPanel() {
               </button>
               <button
                 type="button"
+                onClick={() => {
+                  setShowPasswordForm((current) => !current);
+                  setPasswordError('');
+                  setPasswordMessage('');
+                }}
+                className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:border-blue-300 hover:text-blue-700"
+                aria-expanded={showPasswordForm}
+                aria-controls="change-password-form"
+              >
+                {showPasswordForm ? '收起密码设置' : '修改密码'}
+              </button>
+              <button
+                type="button"
                 onClick={handleLogout}
                 disabled={loggingOut}
                 className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:border-slate-900 hover:bg-slate-100 disabled:cursor-wait disabled:opacity-60"
@@ -122,6 +178,28 @@ export default function MembershipPanel() {
               </button>
             </div>
             {actionMessage ? <p role="alert" className="text-sm font-semibold text-red-600">{actionMessage}</p> : null}
+            {showPasswordForm ? (
+              <form id="change-password-form" onSubmit={handleChangePassword} className="space-y-4 rounded-[1.5rem] border border-blue-100 bg-blue-50/70 p-5" aria-busy={passwordSubmitting}>
+                <div>
+                  <label htmlFor="current-password" className="text-sm font-bold text-slate-800">当前密码</label>
+                  <input id="current-password" type="password" autoComplete="current-password" value={currentPassword} onChange={(event) => setCurrentPassword(event.target.value)} maxLength={128} required className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
+                </div>
+                <div>
+                  <label htmlFor="new-password" className="text-sm font-bold text-slate-800">新密码</label>
+                  <input id="new-password" type="password" autoComplete="new-password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} minLength={8} maxLength={128} required aria-describedby="new-password-hint" className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
+                  <p id="new-password-hint" className="mt-2 text-xs leading-5 text-slate-500">长度 8–128 位，请勿复用其他网站密码。</p>
+                </div>
+                <div>
+                  <label htmlFor="confirm-password" className="text-sm font-bold text-slate-800">再次输入新密码</label>
+                  <input id="confirm-password" type="password" autoComplete="new-password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} minLength={8} maxLength={128} required className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100" />
+                </div>
+                <button type="submit" disabled={passwordSubmitting} className="w-full rounded-full bg-blue-700 px-5 py-3 text-sm font-black text-white transition hover:bg-blue-800 disabled:cursor-wait disabled:opacity-60">
+                  {passwordSubmitting ? '正在保存…' : '保存新密码'}
+                </button>
+                {passwordError ? <p role="alert" className="text-sm font-semibold text-red-600">{passwordError}</p> : null}
+                {passwordMessage ? <p role="status" className="text-sm font-semibold text-emerald-700">{passwordMessage}</p> : null}
+              </form>
+            ) : null}
           </>
         ) : (
           <>

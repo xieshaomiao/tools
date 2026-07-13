@@ -284,6 +284,43 @@ export async function getUserFromToken(token: string) {
   return rows[0] ? rowToUser(rows[0]) : null;
 }
 
+export async function changeUserPassword(userId: string, currentPassword: string, newPassword: string) {
+  await ensureSchema();
+  const sql = getSql();
+  const rows = await withDatabaseRetry(() => sql`
+    SELECT id, email, password_hash, password_salt, created_at, membership_expiry
+    FROM toolly_users
+    WHERE id = ${userId}
+    LIMIT 1
+  ` as unknown as Promise<UserRow[]>);
+  const row = rows[0];
+  if (!row || !(await verifyPassword(currentPassword, row.password_salt, row.password_hash))) {
+    return false;
+  }
+
+  const newSalt = crypto.randomBytes(16).toString('hex');
+  const newHash = await hashPassword(newPassword, newSalt);
+  const updatedRows = await withDatabaseRetry(() => sql`
+    UPDATE toolly_users
+    SET password_hash = ${newHash}, password_salt = ${newSalt}
+    WHERE id = ${userId} AND password_hash = ${row.password_hash}
+    RETURNING id
+  ` as unknown as Promise<Array<{ id: string }>>);
+
+  if (!updatedRows.length) {
+    const retryRows = await withDatabaseRetry(() => sql`
+      SELECT id
+      FROM toolly_users
+      WHERE id = ${userId} AND password_hash = ${newHash} AND password_salt = ${newSalt}
+      LIMIT 1
+    ` as unknown as Promise<Array<{ id: string }>>);
+    if (!retryRows.length) return false;
+  }
+
+  await withDatabaseRetry(() => sql`DELETE FROM toolly_sessions WHERE user_id = ${userId}`);
+  return true;
+}
+
 export function getMembershipStatus(user: UserRecord | null) {
   if (!user) {
     return { isActive: false, expiresAt: null, remainingDays: 0 };
