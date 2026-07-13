@@ -362,7 +362,7 @@ export default function HomePage() {
             <div className="rounded-[2.5rem] border border-blue-100 bg-gradient-to-br from-blue-600 to-indigo-700 p-8 text-white shadow-[0_30px_90px_rgba(37,99,235,0.24)]">
               <h2 className="text-3xl font-black tracking-tight">让用户更快到达结果</h2>
               <p className="mt-5 text-sm leading-7 text-blue-50">
-                首页已经把搜索、分类、热门入口和登录后可用的结果路径放到最前面，适合继续做 SEO 内容页和广告位测试。
+                从搜索、分类或热门入口进入工具，登录后即可处理内容，并把文本或文件结果带走。
               </p>
               <Link href="/auth?next=%2Ftools" className="mt-7 inline-flex rounded-full bg-white px-6 py-3 text-sm font-black text-blue-700 transition hover:-translate-y-0.5">
                 登录后使用

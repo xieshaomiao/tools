@@ -7,7 +7,6 @@ export type ToolMeta = {
   category: string;
   mode: 'text' | 'file' | 'dual' | 'generate';
   placeholder: string;
-  premium?: boolean;
 };
 
 export const toolList: ToolMeta[] = [
@@ -139,8 +138,7 @@ export const toolList: ToolMeta[] = [
     badge: '翻译工具',
     category: '内容工具',
     mode: 'text',
-    placeholder: '输入文本后快速翻译成英文或中文，新账号提供 180 天在线翻译体验。',
-    premium: true,
+    placeholder: '输入文本后快速翻译成英文或中文，登录免费账号即可使用。',
   },
   {
     toolKey: 'copywriting-polish',

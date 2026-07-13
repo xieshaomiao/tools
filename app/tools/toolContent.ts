@@ -119,14 +119,14 @@ export function toolSteps(tool: LocalizedTool) {
 export function toolFaq(tool: LocalizedTool) {
   if (tool.locale === 'en') {
     return [
-      { question: `Is ${tool.title} free to use?`, answer: tool.premium ? 'The page can be opened for free, while this advanced operation requires a Toolly membership.' : 'Yes. This Toolly utility can be used without a paid download or desktop installation.' },
+      { question: `Is ${tool.title} free to use?`, answer: 'Yes. Create or sign in to a free Toolly account to use the workspace. No paid download or desktop installation is required.' },
       { question: 'Is my content uploaded?', answer: tool.mode === 'file' || ['jwt-decoder', 'hash-generator', 'base64'].includes(tool.toolKey) ? 'Processing is performed in the current browser whenever the page states local processing. Keep the page open until the result is ready.' : 'Most processing runs directly in the browser. Translation-related features may contact an online translation service to create the requested result.' },
       { question: `What can I do with ${tool.title}?`, answer: `${tool.description} ${tool.example}` },
     ];
   }
 
   return [
-    { question: `${tool.title}可以免费使用吗？`, answer: tool.premium ? '页面可以免费访问，但该高级处理功能需要登录 Toolly 会员后使用。' : '可以。这个 Toolly 工具无需购买软件下载或安装桌面程序。' },
+    { question: `${tool.title}可以免费使用吗？`, answer: '可以。注册或登录免费 Toolly 账号后即可使用操作区，无需购买软件下载或安装桌面程序。' },
     { question: '我的内容会上传服务器吗？', answer: tool.mode === 'file' || ['jwt-decoder', 'hash-generator', 'base64'].includes(tool.toolKey) ? '页面标注“本地处理”的操作会在当前浏览器中完成。处理结束前请保持页面开启。' : '多数处理直接在浏览器中运行；翻译类功能为了获得结果，可能会调用在线翻译服务。' },
     { question: `${tool.title}适合哪些场景？`, answer: `${tool.description}${tool.example}` },
   ];

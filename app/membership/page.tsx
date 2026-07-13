@@ -3,7 +3,7 @@ import MembershipPanel from '@/app/components/MembershipPanel';
 
 export const metadata = {
   title: 'Toolly 账号与服务说明 | 登录后使用在线工具',
-  description: '了解 Toolly 免费账号、登录后工具使用范围、浏览器本地处理、复制下载结果、在线翻译体验状态以及当前未开放真实支付的说明。',
+  description: '管理 Toolly 免费账号和密码，了解登录后文档、图片、文本与开发工具的使用范围，以及浏览器本地处理、在线翻译、复制和下载结果的方式。',
   alternates: { canonical: '/membership' },
 };
 
@@ -24,13 +24,13 @@ export default function MembershipPage() {
             <div>
               <h1 className="max-w-3xl text-3xl font-black leading-tight tracking-[-0.04em] sm:text-5xl">登录后使用工具，账号规则一次说清楚。</h1>
               <p className="mt-4 max-w-3xl text-base leading-7 text-blue-100 sm:mt-6 sm:text-lg sm:leading-8">
-                Toolly 的工具操作区需要免费账号。能在浏览器完成的内容优先本地处理；在线翻译会调用网络服务，并显示单独的体验状态。
+                Toolly 的工具操作区需要免费账号。能在浏览器完成的内容优先本地处理；在线翻译需要网络连接，当前已上线工具不设置付费门槛。
               </p>
             </div>
             <div className="grid gap-2 text-sm font-bold sm:grid-cols-3 sm:gap-3 lg:grid-cols-1">
               <span className="rounded-full border border-white/15 bg-white/10 px-4 py-2.5 sm:px-5 sm:py-3">免费账号即可开始</span>
               <span className="rounded-full border border-white/15 bg-white/10 px-4 py-2.5 sm:px-5 sm:py-3">优先浏览器本地处理</span>
-              <span className="rounded-full border border-white/15 bg-white/10 px-4 py-2.5 sm:px-5 sm:py-3">当前不开放在线支付</span>
+              <span className="rounded-full border border-white/15 bg-white/10 px-4 py-2.5 sm:px-5 sm:py-3">当前工具无需付款</span>
             </div>
           </div>
         </header>
@@ -59,8 +59,8 @@ export default function MembershipPage() {
               </article>
               <article className="rounded-[2.25rem] border border-violet-100 bg-violet-50/80 p-8">
                 <p className="text-sm font-black uppercase tracking-[0.2em] text-violet-700">在线服务</p>
-                <h2 className="mt-4 text-2xl font-black text-slate-950">翻译体验单独显示状态</h2>
-                <p className="mt-4 leading-7 text-slate-600">在线翻译需要网络服务。新账号当前会获得体验期；真实续费和付款尚未开放，不会出现虚假的支付按钮。</p>
+                <h2 className="mt-4 text-2xl font-black text-slate-950">在线翻译对免费账号开放</h2>
+                <p className="mt-4 leading-7 text-slate-600">在线翻译需要网络服务。注册或登录免费账号后即可使用，当前已上线工具不设置单独的体验到期限制。</p>
               </article>
             </div>
 
@@ -70,7 +70,7 @@ export default function MembershipPage() {
                 <li className="rounded-2xl bg-slate-50 p-5 leading-7"><strong className="text-slate-950">说明先行：</strong>先告诉你输入、输出和限制，再进入处理。</li>
                 <li className="rounded-2xl bg-slate-50 p-5 leading-7"><strong className="text-slate-950">结果可带走：</strong>支持复制或下载的地方，会提供明确入口。</li>
                 <li className="rounded-2xl bg-slate-50 p-5 leading-7"><strong className="text-slate-950">隐私优先：</strong>能本地处理的文件优先留在当前浏览器。</li>
-                <li className="rounded-2xl bg-slate-50 p-5 leading-7"><strong className="text-slate-950">不做假承诺：</strong>未上线的收费能力不会伪装成可购买服务。</li>
+                <li className="rounded-2xl bg-slate-50 p-5 leading-7"><strong className="text-slate-950">规则清楚：</strong>当前已上线工具均对免费账号开放，不设置隐藏收费入口。</li>
               </ul>
             </div>
           </div>

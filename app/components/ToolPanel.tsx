@@ -329,8 +329,6 @@ function StandardToolPanel({ tool, locale }: { tool: ToolMeta; locale: SiteLocal
     copied: isEnglish ? 'Copied to the clipboard.' : '已复制到剪贴板',
     copyFailed: isEnglish ? 'Copy failed. Select and copy the result manually.' : '复制失败，请长按结果手动复制',
     resultFirst: isEnglish ? 'Generate a result first.' : '请先生成结果',
-    premiumTitle: isEnglish ? 'Online service trial' : '在线服务体验',
-    premiumBody: isEnglish ? 'New accounts include a 180-day online-service trial.' : '新账号包含 180 天在线服务体验，当前未开放续费。',
     chooseFile: isEnglish ? 'Choose a file' : '选择文件',
     targetFormat: isEnglish ? 'Output format' : '目标格式',
     processing: isEnglish ? 'Processing…' : '处理中…',
@@ -382,8 +380,6 @@ function StandardToolPanel({ tool, locale }: { tool: ToolMeta; locale: SiteLocal
   const [uuidCount, setUuidCount] = useState(5);
   const [imageTarget, setImageTarget] = useState<'png' | 'jpeg' | 'webp'>('webp');
   const [translateTarget, setTranslateTarget] = useState<'zh' | 'en'>('zh');
-  const [isMember, setIsMember] = useState(false);
-  const [authLoading, setAuthLoading] = useState(true);
 
   const wordStats = useMemo(() => ({
 
@@ -440,36 +436,10 @@ function StandardToolPanel({ tool, locale }: { tool: ToolMeta; locale: SiteLocal
     setDownloadName('');
   }, [tool.toolKey]);
 
-  useEffect(() => {
-    if (!tool.premium) {
-      setAuthLoading(false);
-      return;
-    }
-    async function loadAuthStatus() {
-      try {
-        const response = await fetch('/api/auth/status');
-        if (!response.ok) return;
-        const data = await response.json();
-        setIsMember(data.isMember);
-      } catch {
-        // Keep guest state when status lookup fails.
-      } finally {
-        setAuthLoading(false);
-      }
-    }
-
-    loadAuthStatus();
-  }, [tool.premium]);
-
   const handleAction = async () => {
     setCopyMessage('');
     setDownloadBlob(null);
     setDownloadName('');
-    if (tool.premium && !authLoading && !isMember) {
-      setOutput(isEnglish ? 'This online-service trial has ended. Renewals are not available yet.' : '当前在线服务体验已结束，续费尚未开放。');
-      return;
-    }
-
     if (tool.toolKey === 'json-format') {
       try {
         const parsed = JSON.parse(valueA);
@@ -741,12 +711,6 @@ function StandardToolPanel({ tool, locale }: { tool: ToolMeta; locale: SiteLocal
       <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
         <h2 className="text-xl font-semibold text-slate-900">{tool.title}</h2>
         <p className="mt-4 text-slate-600 leading-7">{tool.placeholder}</p>
-        {tool.premium ? (
-          <div className="mt-4 rounded-[1.5rem] border border-amber-200 bg-amber-50 p-4 text-amber-900">
-            <p className="text-sm font-semibold">{ui.premiumTitle}</p>
-            <p className="mt-2 text-sm">{ui.premiumBody}</p>
-          </div>
-        ) : null}
       </div>
 
       {tool.toolKey === 'image-compress' || tool.toolKey === 'image-convert' ? (

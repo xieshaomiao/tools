@@ -12,23 +12,51 @@ export default function SiteHeader() {
   const router = useRouter();
   const isEnglish = useSiteLocale();
   const [status, setStatus] = useState<HeaderStatus>({ loaded: false, isAuthenticated: false, email: null });
+  const [loggingOut, setLoggingOut] = useState(false);
+  const [logoutError, setLogoutError] = useState('');
 
   useEffect(() => {
     const controller = new AbortController();
+    let active = true;
+    const timeoutId = window.setTimeout(() => {
+      if (!active) return;
+      controller.abort();
+      setStatus({ loaded: true, isAuthenticated: false, email: null });
+    }, 8000);
     fetch('/api/auth/status', { cache: 'no-store', signal: controller.signal })
       .then((response) => response.ok ? response.json() : null)
-      .then((data) => setStatus({ loaded: true, isAuthenticated: Boolean(data?.isAuthenticated), email: data?.email ?? null }))
+      .then((data) => {
+        if (!active) return;
+        setStatus({ loaded: true, isAuthenticated: Boolean(data?.serviceAvailable !== false && data?.isAuthenticated), email: data?.email ?? null });
+      })
       .catch((error) => {
-        if ((error as Error).name !== 'AbortError') setStatus((current) => ({ ...current, loaded: true }));
-      });
-    return () => controller.abort();
+        if (active && (error as Error).name !== 'AbortError') setStatus({ loaded: true, isAuthenticated: false, email: null });
+      })
+      .finally(() => window.clearTimeout(timeoutId));
+    return () => {
+      active = false;
+      window.clearTimeout(timeoutId);
+      controller.abort();
+    };
   }, [pathname]);
 
   const logout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    setStatus({ loaded: true, isAuthenticated: false, email: null });
-    router.push(isEnglish ? '/en' : '/');
-    router.refresh();
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), 12000);
+    setLoggingOut(true);
+    setLogoutError('');
+    try {
+      const response = await fetch('/api/auth/logout', { method: 'POST', signal: controller.signal });
+      if (!response.ok) throw new Error('Logout failed');
+      setStatus({ loaded: true, isAuthenticated: false, email: null });
+      router.push(isEnglish ? '/en' : '/');
+      router.refresh();
+    } catch {
+      setLogoutError(isEnglish ? 'Could not sign out. Check your connection and try again.' : '退出失败，请检查网络后重试。');
+    } finally {
+      window.clearTimeout(timeoutId);
+      setLoggingOut(false);
+    }
   };
 
   return (
@@ -44,15 +72,16 @@ export default function SiteHeader() {
         <nav aria-label={isEnglish ? 'Primary navigation' : '主导航'} className="flex min-h-10 flex-wrap items-center justify-end gap-2 sm:gap-3">
           <Link href={isEnglish ? '/en/tools' : '/tools'} className="rounded-full px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-blue-50 hover:text-blue-700">{isEnglish ? 'Tools' : '工具目录'}</Link>
           {!status.loaded && pathname !== '/auth' ? (
-            <span className="h-10 w-24 animate-pulse rounded-full bg-slate-100" aria-label={isEnglish ? 'Checking sign-in status' : '正在检查登录状态'} />
+            <span className="inline-flex h-10 items-center rounded-full bg-slate-100 px-4 text-xs font-bold text-slate-500" role="status">{isEnglish ? 'Checking account…' : '检查账号中…'}</span>
           ) : status.isAuthenticated ? (
             <>
               <Link href="/membership" className="hidden max-w-52 truncate rounded-full border border-slate-200 bg-white/70 px-4 py-2 text-sm font-semibold text-slate-600 shadow-sm sm:block" title={status.email ?? ''}>{status.email}</Link>
-              <button type="button" onClick={logout} className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-900 shadow-sm transition hover:border-blue-200 hover:text-blue-700">{isEnglish ? 'Sign out' : '退出'}</button>
+              <button type="button" onClick={logout} disabled={loggingOut} className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-900 shadow-sm transition hover:border-blue-200 hover:text-blue-700 disabled:cursor-wait disabled:opacity-60">{loggingOut ? (isEnglish ? 'Signing out…' : '正在退出…') : (isEnglish ? 'Sign out' : '退出')}</button>
             </>
           ) : pathname !== '/auth' ? (
             <Link href={`/auth?next=${encodeURIComponent(pathname)}`} className="rounded-full bg-slate-950 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-slate-950/15 transition hover:-translate-y-0.5 hover:bg-blue-700">{isEnglish ? 'Sign in / Register' : '登录 / 注册'}</Link>
           ) : null}
+          {logoutError ? <p role="alert" className="basis-full text-right text-xs font-semibold text-red-600">{logoutError}</p> : null}
         </nav>
       </div>
     </header>

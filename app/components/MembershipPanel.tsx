@@ -6,10 +6,7 @@ import { useRouter } from 'next/navigation';
 type AuthStatus = {
   serviceAvailable: boolean;
   isAuthenticated: boolean;
-  isMember: boolean;
   email: string | null;
-  expiresAt: string | null;
-  remainingDays: number;
   loading: boolean;
 };
 
@@ -17,10 +14,7 @@ export default function MembershipPanel() {
   const [status, setStatus] = useState<AuthStatus>({
     serviceAvailable: true,
     isAuthenticated: false,
-    isMember: false,
     email: null,
-    expiresAt: null,
-    remainingDays: 0,
     loading: true,
   });
   const [reloadKey, setReloadKey] = useState(0);
@@ -37,25 +31,43 @@ export default function MembershipPanel() {
 
   useEffect(() => {
     const controller = new AbortController();
+    let active = true;
+    const timeoutId = window.setTimeout(() => {
+      if (!active) return;
+      controller.abort();
+      setStatus((current) => ({ ...current, serviceAvailable: false, loading: false }));
+    }, 12000);
     async function loadStatus() {
       try {
         const response = await fetch('/api/auth/status', { cache: 'no-store', signal: controller.signal });
+        if (!active) return;
         if (!response.ok) {
           setStatus((current) => ({ ...current, serviceAvailable: false, loading: false }));
           return;
         }
 
         const data = await response.json();
-        setStatus({ ...data, serviceAvailable: data.serviceAvailable !== false, loading: false });
+        setStatus({
+          serviceAvailable: data.serviceAvailable !== false,
+          isAuthenticated: Boolean(data.isAuthenticated),
+          email: data.email ?? null,
+          loading: false,
+        });
       } catch (error) {
-        if ((error as Error).name !== 'AbortError') {
+        if (active && (error as Error).name !== 'AbortError') {
           setStatus((current) => ({ ...current, serviceAvailable: false, loading: false }));
         }
+      } finally {
+        window.clearTimeout(timeoutId);
       }
     }
 
     loadStatus();
-    return () => controller.abort();
+    return () => {
+      active = false;
+      window.clearTimeout(timeoutId);
+      controller.abort();
+    };
   }, [reloadKey]);
 
   const handleLogout = async () => {
@@ -137,16 +149,9 @@ export default function MembershipPanel() {
               <p className="mt-1 break-all text-sm">{status.email}</p>
             </div>
             <p>
-              在线翻译体验：
-              <span className="font-semibold text-slate-900">
-                {status.isMember ? `有效，剩余 ${status.remainingDays} 天` : '当前未激活'}
-              </span>
+              账号状态：<span className="font-semibold text-slate-900">正常，可使用全部当前工具</span>
             </p>
-            {status.isMember && status.expiresAt ? (
-              <p>体验有效期至：{new Date(status.expiresAt).toLocaleDateString()}</p>
-            ) : (
-              <p>翻译体验到期不影响其他工具；真实续费尚未开放。</p>
-            )}
+            <p>在线翻译需要网络连接，当前已上线工具不设置单独的使用期限。</p>
             <div className="flex flex-wrap gap-3">
               <button
                 type="button"
@@ -218,9 +223,9 @@ export default function MembershipPanel() {
       </div>
 
       <div className="mt-8 rounded-[1.75rem] bg-slate-50 p-6 text-sm leading-7 text-slate-700">
-        <p className="font-semibold text-slate-900">支付状态说明</p>
-        <p className="mt-3">Toolly 当前未开放真实支付，续费接口也已关闭，因此不会出现无法兑现的“立即续费”或“立即付款”。</p>
-        <p className="mt-3">创建免费账号不需要付款。登录后可以从工具目录进入完整操作区。</p>
+        <p className="font-semibold text-slate-900">免费账号说明</p>
+        <p className="mt-3">创建账号不需要付款。登录后可以从工具目录进入完整操作区，并使用当前已上线的全部工具。</p>
+        <p className="mt-3">请妥善保管密码；如需更换，可在当前页面完成安全修改。</p>
       </div>
     </div>
   );

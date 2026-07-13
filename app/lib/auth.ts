@@ -182,7 +182,7 @@ export async function registerUser(email: string, password: string) {
     if (retryRows[0]) {
       return {
         success: true as const,
-        message: '注册成功，已开启半年免费会员体验。',
+        message: '注册成功，已开启免费工具账号。',
         user: rowToUser(retryRows[0]),
       };
     }
@@ -191,7 +191,7 @@ export async function registerUser(email: string, password: string) {
 
   return {
     success: true as const,
-    message: '注册成功，已开启半年免费会员体验。',
+    message: '注册成功，已开启免费工具账号。',
     user: rowToUser(rows[0]),
   };
 }
