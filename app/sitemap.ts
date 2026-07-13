@@ -8,13 +8,11 @@ const staticRoutes = [
   { path: '/blog', priority: 0.8, changeFrequency: 'weekly' as const },
   { path: '/blog/what-is-json', priority: 0.7, changeFrequency: 'monthly' as const },
   { path: '/blog/how-tool-pages-work', priority: 0.7, changeFrequency: 'monthly' as const },
-  { path: '/blog/app-download-seo', priority: 0.7, changeFrequency: 'monthly' as const },
-  { path: '/download', priority: 0.6, changeFrequency: 'monthly' as const },
   { path: '/membership', priority: 0.5, changeFrequency: 'monthly' as const },
   { path: '/privacy', priority: 0.3, changeFrequency: 'yearly' as const },
 ];
 
-const CONTENT_LAST_MODIFIED = new Date('2026-07-07T00:00:00.000Z');
+const CONTENT_LAST_MODIFIED = new Date('2026-07-13T00:00:00.000Z');
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const toolRoutes = toolList.map((tool) => ({

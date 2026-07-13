@@ -25,7 +25,7 @@ assert(/Sitemap:/i.test(robots), 'robots.txt has no sitemap declaration', failur
 const { response: sitemapResponse, text: sitemap } = await getText(`${baseUrl}/sitemap.xml`);
 assert(sitemapResponse.ok, `sitemap.xml returned ${sitemapResponse.status}`, failures);
 const discovered = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
-assert(discovered.length === 67, `expected 67 sitemap URLs, found ${discovered.length}`, failures);
+assert(discovered.length === 65, `expected 65 sitemap URLs, found ${discovered.length}`, failures);
 assert(new Set(discovered).size === discovered.length, 'sitemap contains duplicate URLs', failures);
 assert(sitemap.includes('hreflang="en"'), 'sitemap has no English hreflang entries', failures);
 assert(sitemap.includes('hreflang="zh-CN"'), 'sitemap has no Chinese hreflang entries', failures);

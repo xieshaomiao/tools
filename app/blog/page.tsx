@@ -17,11 +17,6 @@ const articles = [
     description: '学习如何使用在线工具页面吸引长尾关键词和提升广告点击率。',
     href: '/blog/how-tool-pages-work',
   },
-  {
-    title: '移动 App 下载页优化技巧',
-    description: '为 iOS 和 Android 下载页面设计高转化结构，增加移动端留存。',
-    href: '/blog/app-download-seo',
-  },
 ];
 
 export default function BlogPage() {
@@ -31,7 +26,7 @@ export default function BlogPage() {
         <p className="text-sm font-semibold uppercase tracking-[0.3em] text-slate-500">博客</p>
         <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-950">SEO 文章与工具指南</h1>
         <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">
-          专注于在线工具、内容优化和移动 App 下载的实用文章，帮助你提升网站流量与广告收益。
+          专注于在线工具、内容优化和浏览器本地处理的实用文章，帮助你更快完成真实任务。
         </p>
       </header>
 
@@ -49,16 +44,22 @@ export default function BlogPage() {
       </div>
 
       <div className="mt-10 rounded-[2rem] border border-slate-200 bg-slate-50 p-8 shadow-sm">
-        <h2 className="text-2xl font-semibold text-slate-900">App 下载推荐</h2>
+        <h2 className="text-2xl font-semibold text-slate-900">从一个真实任务开始</h2>
         <p className="mt-4 text-slate-600 leading-7">
-          想在手机上快速访问 Toolly？请访问我们的 App 下载页面，了解 iOS 和安卓版本的下载入口。
+          无需安装软件。直接在网页中处理 PDF、JSON、图片和文本，完成后复制结果或下载文件。
         </p>
         <div className="mt-6 flex flex-wrap gap-4">
           <Link
-            href="/download"
+            href="/tools/pdf-convert"
             className="rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
           >
-            访问下载页
+            试用文档转换
+          </Link>
+          <Link
+            href="/tools"
+            className="rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:border-blue-200 hover:text-blue-700"
+          >
+            查看全部工具
           </Link>
         </div>
       </div>

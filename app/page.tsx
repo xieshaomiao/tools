@@ -402,8 +402,8 @@ export default function HomePage() {
               <Link href="/tools" className="rounded-full bg-white px-7 py-4 text-center text-sm font-black text-slate-950 transition hover:-translate-y-0.5">
                 查看全部工具
               </Link>
-              <Link href="/download" className="rounded-full border border-white/20 px-7 py-4 text-center text-sm font-black text-white transition hover:-translate-y-0.5 hover:bg-white/10">
-                下载 App
+              <Link href="/auth?mode=register&next=%2Ftools" className="rounded-full border border-white/20 px-7 py-4 text-center text-sm font-black text-white transition hover:-translate-y-0.5 hover:bg-white/10">
+                免费创建账号
               </Link>
             </div>
           </div>
