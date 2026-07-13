@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import AdSlot from '@/app/components/AdSlot';
 import { categorySummary, enPopularSearches } from '@/app/lib/tool-discovery';
 import { SITE_URL } from '@/app/lib/site';
 import { getLocalizedTool } from '@/app/tools/toolContent';
@@ -308,11 +307,10 @@ export default function EnglishHomePage() {
             <div className="rounded-[2.5rem] border border-blue-100 bg-gradient-to-br from-blue-600 to-indigo-700 p-8 text-white shadow-[0_30px_90px_rgba(37,99,235,0.24)]">
               <h2 className="text-3xl font-black tracking-tight">Help visitors reach the result faster</h2>
               <p className="mt-5 text-sm leading-7 text-blue-50">
-                Search, categories, popular tools and the sign-in path now sit near the top, ready for SEO content pages and ad placement testing.
+                Search, categories, popular tools and the sign-in path sit near the top so visitors can move from a clear task to a usable result with fewer steps.
               </p>
               <Link href="/auth?next=%2Fen%2Ftools" className="mt-7 inline-flex rounded-full bg-white px-6 py-3 text-sm font-black text-blue-700 transition hover:-translate-y-0.5">Sign in to use</Link>
             </div>
-            <AdSlot />
             <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
               <h2 className="text-xl font-black text-slate-950">Browse by category</h2>
               <div className="mt-5 flex flex-wrap gap-2">
@@ -340,7 +338,7 @@ export default function EnglishHomePage() {
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
               <Link href="/en/tools" className="rounded-full bg-white px-7 py-4 text-center text-sm font-black text-slate-950 transition hover:-translate-y-0.5">View all tools</Link>
-              <Link href="/download" className="rounded-full border border-white/20 px-7 py-4 text-center text-sm font-black text-white transition hover:-translate-y-0.5 hover:bg-white/10">Download app</Link>
+              <Link href="/auth?mode=register&lang=en&next=%2Fen%2Ftools" className="rounded-full border border-white/20 px-7 py-4 text-center text-sm font-black text-white transition hover:-translate-y-0.5 hover:bg-white/10">Create free account</Link>
             </div>
           </div>
         </div>

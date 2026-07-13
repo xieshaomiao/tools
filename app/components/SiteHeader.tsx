@@ -75,7 +75,7 @@ export default function SiteHeader() {
             <span className="inline-flex h-10 items-center rounded-full bg-slate-100 px-4 text-xs font-bold text-slate-500" role="status">{isEnglish ? 'Checking account…' : '检查账号中…'}</span>
           ) : status.isAuthenticated ? (
             <>
-              <Link href="/membership" className="hidden max-w-52 truncate rounded-full border border-slate-200 bg-white/70 px-4 py-2 text-sm font-semibold text-slate-600 shadow-sm sm:block" title={status.email ?? ''}>{status.email}</Link>
+              <Link href={isEnglish ? '/en/membership' : '/membership'} className="hidden max-w-52 truncate rounded-full border border-slate-200 bg-white/70 px-4 py-2 text-sm font-semibold text-slate-600 shadow-sm sm:block" title={status.email ?? ''}>{status.email}</Link>
               <button type="button" onClick={logout} disabled={loggingOut} className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-900 shadow-sm transition hover:border-blue-200 hover:text-blue-700 disabled:cursor-wait disabled:opacity-60">{loggingOut ? (isEnglish ? 'Signing out…' : '正在退出…') : (isEnglish ? 'Sign out' : '退出')}</button>
             </>
           ) : pathname !== '/auth' ? (

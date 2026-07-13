@@ -1,11 +1,31 @@
+const requestedMode = process.env.NEXT_PUBLIC_ADSENSE_MODE?.trim().toLowerCase() ?? 'off';
+const mode = requestedMode === 'review' || requestedMode === 'live' ? requestedMode : 'off';
 const publisherId = process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID?.trim() ?? '';
-const defaultSlot = process.env.NEXT_PUBLIC_ADSENSE_DEFAULT_SLOT?.trim() ?? '';
+const articleSlot = process.env.NEXT_PUBLIC_ADSENSE_ARTICLE_SLOT?.trim() ?? '';
+const complianceReady = process.env.NEXT_PUBLIC_ADSENSE_COMPLIANCE_READY === 'true';
+const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim() || 'https://toolly-ruddy.vercel.app';
+const productionHost = process.env.NEXT_PUBLIC_ADSENSE_PRODUCTION_HOST?.trim().toLowerCase() ?? '';
+const publisherIsValid = /^ca-pub-\d{16}$/.test(publisherId);
+const articleSlotIsValid = /^\d+$/.test(articleSlot);
+let canonicalHost = '';
+try {
+  canonicalHost = new URL(configuredSiteUrl).hostname.toLowerCase();
+} catch {
+  canonicalHost = '';
+}
+const productionHostIsValid = Boolean(productionHost && productionHost === canonicalHost);
 
 const adConfig = {
   ads: {
-    enabled: /^ca-pub-\d+$/.test(publisherId) && /^\d+$/.test(defaultSlot),
+    mode,
+    verificationEnabled: mode !== 'off' && publisherIsValid,
+    enabled: mode === 'live' && complianceReady && publisherIsValid && articleSlotIsValid && productionHostIsValid,
     publisherId,
-    sampleAdUnit: defaultSlot,
+    sellerId: publisherIsValid ? publisherId.replace(/^ca-/, '') : '',
+    articleSlot,
+    complianceReady,
+    productionHost,
+    productionHostIsValid,
   },
 };
 

@@ -136,6 +136,7 @@ export default function AuthPage() {
     back: 'Return without signing in',
     agreement: 'By continuing, you agree to the',
     privacy: 'privacy policy',
+    terms: 'terms of service',
     accountPrompt: 'New to Toolly?',
     loginPrompt: 'Already have an account?',
   } : {
@@ -163,6 +164,7 @@ export default function AuthPage() {
     back: '暂不登录，返回工具页',
     agreement: '继续即表示你同意',
     privacy: '隐私政策',
+    terms: '服务条款',
     accountPrompt: '还没有账号？',
     loginPrompt: '已经有账号？',
   };
@@ -274,7 +276,13 @@ export default function AuthPage() {
                   {mode === 'login' ? copy.register : copy.login}
                 </button>
               </p>
-              <p className="mt-3">{copy.agreement} <Link href="/privacy" className="font-bold text-slate-900 underline underline-offset-4">{copy.privacy}</Link>{isEnglish ? '.' : '。'}</p>
+              <p className="mt-3">
+                {copy.agreement}{' '}
+                <Link href={isEnglish ? '/en/privacy' : '/privacy'} className="font-bold text-slate-900 underline underline-offset-4">{copy.privacy}</Link>
+                {isEnglish ? ' and the ' : '和'}
+                <Link href={isEnglish ? '/en/terms' : '/terms'} className="font-bold text-slate-900 underline underline-offset-4">{copy.terms}</Link>
+                {isEnglish ? '.' : '。'}
+              </p>
               <Link href={nextPath} className="mt-4 inline-flex font-black text-slate-900 underline decoration-slate-300 underline-offset-4 hover:text-blue-700">{copy.back}</Link>
             </div>
           </div>

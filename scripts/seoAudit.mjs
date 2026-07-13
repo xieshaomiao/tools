@@ -11,8 +11,30 @@ function tagContent(html, name) {
 }
 
 async function getText(url) {
-  const response = await fetch(url, { redirect: 'follow', headers: { 'user-agent': 'Toolly-SEO-Audit/1.0' } });
-  return { response, text: await response.text() };
+  let lastError;
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      const response = await fetch(url, {
+        redirect: 'follow',
+        headers: { 'user-agent': 'Toolly-SEO-Audit/1.0' },
+        signal: AbortSignal.timeout(15000),
+      });
+      return { response, text: await response.text() };
+    } catch (error) {
+      lastError = error;
+      if (attempt === 0) await new Promise((resolve) => setTimeout(resolve, 250));
+    }
+  }
+  throw new Error(`${url} could not be fetched: ${lastError instanceof Error ? lastError.message : String(lastError)}`);
+}
+
+function visibleText(html) {
+  return html
+    .replace(/<(script|style|template)[^>]*>[\s\S]*?<\/\1>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&(?:nbsp|amp|quot|#39);/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 const failures = [];
@@ -25,10 +47,13 @@ assert(/Sitemap:/i.test(robots), 'robots.txt has no sitemap declaration', failur
 const { response: sitemapResponse, text: sitemap } = await getText(`${baseUrl}/sitemap.xml`);
 assert(sitemapResponse.ok, `sitemap.xml returned ${sitemapResponse.status}`, failures);
 const discovered = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
-assert(discovered.length === 65, `expected 65 sitemap URLs, found ${discovered.length}`, failures);
+assert(discovered.length >= 74, `expected at least 74 sitemap URLs, found ${discovered.length}`, failures);
 assert(new Set(discovered).size === discovered.length, 'sitemap contains duplicate URLs', failures);
 assert(sitemap.includes('hreflang="en"'), 'sitemap has no English hreflang entries', failures);
 assert(sitemap.includes('hreflang="zh-CN"'), 'sitemap has no Chinese hreflang entries', failures);
+for (const requiredPath of ['/blog/pdf-to-word-guide', '/membership', '/about', '/contact', '/privacy', '/terms', '/en/membership', '/en/about', '/en/contact', '/en/privacy', '/en/terms']) {
+  assert(discovered.some((url) => new URL(url).pathname === requiredPath), `sitemap is missing ${requiredPath}`, failures);
+}
 
 const pagePaths = discovered.map((url) => {
   const parsed = new URL(url);
@@ -38,6 +63,7 @@ const pagePaths = discovered.map((url) => {
 for (const path of pagePaths) {
   const { response, text: html } = await getText(`${baseUrl}${path}`);
   const pageFailures = [];
+  const pageText = visibleText(html);
   assert(response.ok, `HTTP ${response.status}`, pageFailures);
   assert(/<title>[^<]{8,}<\/title>/i.test(html), 'missing or short title', pageFailures);
   assert(tagContent(html, 'description').length >= 50, 'missing or short meta description', pageFailures);
@@ -60,7 +86,19 @@ for (const path of pagePaths) {
     });
     assert(html.includes('FAQPage'), 'missing FAQPage structured data', pageFailures);
     assert(html.includes('BreadcrumbList'), 'missing BreadcrumbList structured data', pageFailures);
-    assert(html.length >= 12000, 'tool page HTML is unexpectedly thin', pageFailures);
+    assert(pageText.length >= 900, 'tool page visible content is unexpectedly thin', pageFailures);
+  }
+
+  if (path.startsWith('/blog/')) {
+    const jsonBlocks = [...html.matchAll(/<script[^>]+type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi)].map((match) => match[1]);
+    assert(jsonBlocks.length >= 2, `expected at least 2 JSON-LD blocks, found ${jsonBlocks.length}`, pageFailures);
+    jsonBlocks.forEach((block, index) => {
+      try { JSON.parse(block.replaceAll('&quot;', '"')); } catch { pageFailures.push(`JSON-LD block ${index + 1} is invalid`); }
+    });
+    assert(html.includes('Article'), 'missing Article structured data', pageFailures);
+    assert(html.includes('FAQPage'), 'missing FAQPage structured data', pageFailures);
+    assert(pageText.length >= 1200, 'article visible content is unexpectedly thin', pageFailures);
+    assert(/href=["']\/tools\//i.test(html), 'article has no related tool link', pageFailures);
   }
 
   pageFailures.forEach((failure) => failures.push(`${path}: ${failure}`));

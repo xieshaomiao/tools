@@ -32,6 +32,12 @@ type SessionRow = {
   expires_at: string | Date;
 };
 
+type DeleteAttemptRow = {
+  failed_attempts: number;
+  window_started_at: string | Date;
+  blocked_until: string | Date | null;
+};
+
 let sqlClient: ReturnType<typeof neon> | null = null;
 let schemaPromise: Promise<void> | null = null;
 
@@ -99,6 +105,14 @@ async function ensureSchema() {
       `);
       await withDatabaseRetry(() => sql`CREATE INDEX IF NOT EXISTS toolly_sessions_user_id_idx ON toolly_sessions(user_id)`);
       await withDatabaseRetry(() => sql`CREATE INDEX IF NOT EXISTS toolly_sessions_expires_at_idx ON toolly_sessions(expires_at)`);
+      await withDatabaseRetry(() => sql`
+        CREATE TABLE IF NOT EXISTS toolly_delete_attempts (
+          user_id TEXT PRIMARY KEY REFERENCES toolly_users(id) ON DELETE CASCADE,
+          failed_attempts INTEGER NOT NULL DEFAULT 0,
+          window_started_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+          blocked_until TIMESTAMPTZ
+        )
+      `);
     })();
     schemaPromise = initialization.catch((error) => {
       schemaPromise = null;
@@ -319,6 +333,73 @@ export async function changeUserPassword(userId: string, currentPassword: string
 
   await withDatabaseRetry(() => sql`DELETE FROM toolly_sessions WHERE user_id = ${userId}`);
   return true;
+}
+
+export async function deleteUserAccount(userId: string, password: string) {
+  await ensureSchema();
+  const sql = getSql();
+  const rows = await withDatabaseRetry(() => sql`
+    SELECT id, email, password_hash, password_salt, created_at, membership_expiry
+    FROM toolly_users
+    WHERE id = ${userId}
+    LIMIT 1
+  ` as unknown as Promise<UserRow[]>);
+  const row = rows[0];
+  if (!row || !(await verifyPassword(password, row.password_salt, row.password_hash))) {
+    return false;
+  }
+
+  const deletedRows = await withDatabaseRetry(() => sql`
+    DELETE FROM toolly_users
+    WHERE id = ${userId} AND password_hash = ${row.password_hash}
+    RETURNING id
+  ` as unknown as Promise<Array<{ id: string }>>);
+
+  if (deletedRows.length) return true;
+
+  const retryRows = await withDatabaseRetry(() => sql`
+    SELECT id
+    FROM toolly_users
+    WHERE id = ${userId}
+    LIMIT 1
+  ` as unknown as Promise<Array<{ id: string }>>);
+  return retryRows.length === 0;
+}
+
+export async function getDeleteAccountRetryAfter(userId: string) {
+  await ensureSchema();
+  const sql = getSql();
+  const rows = await withDatabaseRetry(() => sql`
+    SELECT failed_attempts, window_started_at, blocked_until
+    FROM toolly_delete_attempts
+    WHERE user_id = ${userId}
+    LIMIT 1
+  ` as unknown as Promise<DeleteAttemptRow[]>);
+  const blockedUntil = rows[0]?.blocked_until ? new Date(rows[0].blocked_until).getTime() : 0;
+  return Math.max(Math.ceil((blockedUntil - Date.now()) / 1000), 0);
+}
+
+export async function recordDeleteAccountFailure(userId: string) {
+  await ensureSchema();
+  const sql = getSql();
+  await withDatabaseRetry(() => sql`
+    INSERT INTO toolly_delete_attempts (user_id, failed_attempts, window_started_at, blocked_until)
+    VALUES (${userId}, 1, NOW(), NULL)
+    ON CONFLICT (user_id) DO UPDATE SET
+      failed_attempts = CASE
+        WHEN toolly_delete_attempts.window_started_at < NOW() - INTERVAL '15 minutes' THEN 1
+        ELSE toolly_delete_attempts.failed_attempts + 1
+      END,
+      window_started_at = CASE
+        WHEN toolly_delete_attempts.window_started_at < NOW() - INTERVAL '15 minutes' THEN NOW()
+        ELSE toolly_delete_attempts.window_started_at
+      END,
+      blocked_until = CASE
+        WHEN toolly_delete_attempts.window_started_at < NOW() - INTERVAL '15 minutes' THEN NULL
+        WHEN toolly_delete_attempts.failed_attempts + 1 >= 5 THEN NOW() + INTERVAL '15 minutes'
+        ELSE toolly_delete_attempts.blocked_until
+      END
+  `);
 }
 
 export function getMembershipStatus(user: UserRecord | null) {

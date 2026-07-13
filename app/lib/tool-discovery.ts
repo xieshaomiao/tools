@@ -1,5 +1,5 @@
 import { ToolMeta } from '@/app/tools/toolConfig';
-import { LocalizedTool } from '@/app/tools/toolContent';
+import { getLocalizedTool, LocalizedTool } from '@/app/tools/toolContent';
 
 type SearchIntent = {
   label: string;
@@ -37,7 +37,8 @@ export function groupLocalizedTools(tools: LocalizedTool[]) {
 
 export function categorySummary(tools: ToolMeta[], locale: 'zh-CN' | 'en') {
   const counts = tools.reduce((map, tool) => {
-    map.set(tool.category, (map.get(tool.category) ?? 0) + 1);
+    const category = locale === 'en' ? getLocalizedTool(tool, 'en').category : tool.category;
+    map.set(category, (map.get(category) ?? 0) + 1);
     return map;
   }, new Map<string, number>());
 

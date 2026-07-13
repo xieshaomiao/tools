@@ -15,6 +15,7 @@
     "cap:sync": "npx cap sync",
     "deploy:vercel": "vercel --prod",
     "ad:validate": "node ./scripts/validateAdsPlaceholder.js",
+    "monetization:audit": "node ./scripts/monetizationAudit.mjs",
     "seo:audit": "node ./scripts/seoAudit.mjs",
     "seo:submit-indexnow": "node ./scripts/submitIndexNow.mjs"
   },

@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import AdSlot from '@/app/components/AdSlot';
 import ToolAccessGate from '@/app/components/ToolAccessGate';
 import { absoluteUrl } from '@/app/lib/site';
 import { toolList } from '@/app/tools/toolConfig';
@@ -114,7 +113,6 @@ export default function ToolPageView({ tool, locale }: { tool: LocalizedTool; lo
         <section id="tool-workspace" className="grid gap-8 scroll-mt-28 lg:grid-cols-[1.4fr_0.8fr]">
           <ToolAccessGate tool={tool} locale={locale} />
           <aside className="space-y-6">
-            <AdSlot />
             <div className="rounded-[2rem] border border-blue-100 bg-white p-6 text-slate-600 shadow-sm">
               <h2 className="text-xl font-black text-slate-950">{isEnglish ? 'Privacy and output' : '隐私与结果'}</h2>
               <ul className="mt-5 space-y-4 text-sm leading-7">

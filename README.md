@@ -53,7 +53,7 @@ npm run start
 ## 搜索引擎与开源发现
 
 - 网站输出 `robots.txt` 与自动更新的 `sitemap.xml`
-- 67 个公开网址覆盖中文和英文首页、目录及 28 个双语工具页
+- 74 个公开网址覆盖中文和英文首页、目录、账号与法律页面，以及 28 个双语工具页
 - 每个工具拥有独立标题、描述、Canonical、hreflang、FAQ、BreadcrumbList 和 WebApplication 结构化数据
 - GitHub README 与项目元数据覆盖 PDF converter、document converter、online tools、Next.js 等关键词
 - 建议 GitHub Topics：`online-tools`、`pdf-converter`、`pdf-to-word`、`document-converter`、`image-compressor`、`json-formatter`、`developer-tools`、`nextjs`、`tailwindcss`
@@ -62,7 +62,13 @@ npm run start
 
 ## 广告配置
 
-网站在未配置真实广告账号时不会向用户显示占位广告。AdSense 审核通过后，在部署环境设置 `NEXT_PUBLIC_ADSENSE_PUBLISHER_ID` 与 `NEXT_PUBLIC_ADSENSE_DEFAULT_SLOT` 即可启用广告。
+网站默认使用 `off` 模式：不会输出广告验证 Meta、广告脚本、广告位或 `ads.txt` 占位内容。
+
+- 审核准备：设置 `NEXT_PUBLIC_ADSENSE_MODE=review` 与真实 `NEXT_PUBLIC_ADSENSE_PUBLISHER_ID`。网站会输出所有权 Meta 和正确的 `ads.txt`，但不会加载广告。
+- 正式投放：只有完成 AdSense 审核、Google 认证 CMP/隐私消息和页面排除设置后，才设置 `NEXT_PUBLIC_ADSENSE_MODE=live`、`NEXT_PUBLIC_ADSENSE_COMPLIANCE_READY=true`、真实 `NEXT_PUBLIC_ADSENSE_ARTICLE_SLOT`，并让 `NEXT_PUBLIC_ADSENSE_PRODUCTION_HOST` 与 `NEXT_PUBLIC_SITE_URL` 的主机名完全一致。
+- 这些变量只应配置在 Vercel 的 Production 环境；Preview 与 Development 环境保持 `off`，避免测试访问产生真实广告请求。
+- 广告只允许出现在原创文章正文之后，不在登录页、账号页、工具操作区、上传、复制或下载按钮附近展示。
+- 使用 `npm run ad:validate` 检查配置；不得填写示例发布商 ID，也不得点击或自动化访问真实广告。
 
 ## 隐私说明
 

@@ -1,6 +1,6 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import AdSenseLoader from './components/AdSenseLoader';
+import adConfig from './config/ad';
 import SiteFooter from './components/SiteFooter';
 import SiteHeader from './components/SiteHeader';
 import WebsiteResilience from './components/WebsiteResilience';
@@ -53,14 +53,15 @@ export const metadata: Metadata = {
     title: defaultTitle,
     description: defaultDescription,
   },
+  ...(adConfig.ads.verificationEnabled ? {
+    other: { 'google-adsense-account': adConfig.ads.publisherId },
+  } : {}),
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="zh-CN">
       <body>
-        {/* Client-side loader will inject AdSense script when publisherId is configured */}
-        <AdSenseLoader />
         <WebsiteResilience />
         <SiteHeader />
         {children}

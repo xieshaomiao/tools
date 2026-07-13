@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import AdSlot from './components/AdSlot';
 import { categorySummary, zhPopularSearches } from './lib/tool-discovery';
 import { SITE_URL } from './lib/site';
 import { toolList, type ToolMeta } from './tools/toolConfig';
@@ -368,7 +367,6 @@ export default function HomePage() {
                 登录后使用
               </Link>
             </div>
-            <AdSlot />
             <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
               <h2 className="text-xl font-black text-slate-950">按分类浏览</h2>
               <div className="mt-5 flex flex-wrap gap-2">

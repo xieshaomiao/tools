@@ -28,8 +28,12 @@ export default function SiteFooter() {
           </div>
           <nav aria-label={isEnglish ? 'Footer navigation' : '页脚导航'} className="flex flex-wrap items-center gap-3">
             <Link href={isEnglish ? '/en/tools' : '/tools'} className="rounded-full border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700">{isEnglish ? 'Tools' : '工具目录'}</Link>
+            <Link href="/blog" className="rounded-full border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700">{isEnglish ? 'Guides' : '使用指南'}</Link>
+            <Link href={isEnglish ? '/en/about' : '/about'} className="rounded-full border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700">{isEnglish ? 'About' : '关于'}</Link>
+            <Link href={isEnglish ? '/en/contact' : '/contact'} className="rounded-full border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700">{isEnglish ? 'Contact' : '联系'}</Link>
             {isEnglish ? <Link href="/" hrefLang="zh-CN" className="rounded-full border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700">中文</Link> : <Link href="/en" hrefLang="en" className="rounded-full border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700">English</Link>}
-            <Link href="/privacy" className="rounded-full border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700">{isEnglish ? 'Privacy' : '隐私政策'}</Link>
+            <Link href={isEnglish ? '/en/privacy' : '/privacy'} className="rounded-full border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700">{isEnglish ? 'Privacy' : '隐私政策'}</Link>
+            <Link href={isEnglish ? '/en/terms' : '/terms'} className="rounded-full border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700">{isEnglish ? 'Terms' : '服务条款'}</Link>
             <Link href="https://github.com/xieshaomiao/tools" className="rounded-full border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700">GitHub</Link>
           </nav>
         </div>

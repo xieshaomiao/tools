@@ -4,7 +4,7 @@ import MembershipPanel from '@/app/components/MembershipPanel';
 export const metadata = {
   title: 'Toolly 账号与服务说明 | 登录后使用在线工具',
   description: '管理 Toolly 免费账号和密码，了解登录后文档、图片、文本与开发工具的使用范围，以及浏览器本地处理、在线翻译、复制和下载结果的方式。',
-  alternates: { canonical: '/membership' },
+  alternates: { canonical: '/membership', languages: { 'zh-CN': '/membership', en: '/en/membership' } },
 };
 
 const accountSteps = [
@@ -76,7 +76,7 @@ export default function MembershipPage() {
           </div>
 
           <aside className="order-1 space-y-6 lg:order-2 lg:sticky lg:top-28 lg:self-start">
-            <MembershipPanel />
+            <MembershipPanel locale="zh" />
             <div className="rounded-[2.25rem] border border-slate-200 bg-slate-950 p-8 text-white shadow-xl shadow-slate-950/10">
               <p className="text-sm font-black uppercase tracking-[0.2em] text-blue-200">继续使用</p>
               <h2 className="mt-4 text-2xl font-black">现在去完成一个真实任务</h2>
