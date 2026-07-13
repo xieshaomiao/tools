@@ -13,14 +13,14 @@
 
 | Skill | 已完成 | 目标 | 本轮证据 |
 | --- | ---: | ---: | --- |
-| `product-design:audit` | 8 | 100 | 审计发现 App 占位下载页与“仅网站”定位冲突且损害信任；首页改为真实注册 CTA，博客改为工具任务入口，旧地址保留永久跳转 |
-| `build-web-apps:frontend-testing-debugging` | 8 | 100 | 内置浏览器完成 390×844 注册首屏、真实注册跳转、首页无溢出和控制台检查；生产接口再验证注册、状态、PDF 转 Word、401 鉴权和 DOCX 完整性 |
-| `build-web-apps:react-best-practices` | 8 | 100 | 账号状态、密码修改、超时取消、断网恢复和 App 入口清理完成后，`npm run check` 与生产构建均通过 |
+| `product-design:audit` | 9 | 100 | 线上手机截图发现页头账号检查空白、翻译 FAQ 会员口径和账号页试用口径；统一为可见状态与免费网站账号说明 |
+| `build-web-apps:frontend-testing-debugging` | 9 | 100 | 完成线上 390×844 首页、翻译 FAQ、无横向溢出检查，以及生产注册、翻译、PDF 转 Word、DOCX、退出完整回归 |
+| `build-web-apps:react-best-practices` | 9 | 100 | 账号检查和退出请求增加 AbortController 超时与稳定状态；移除重复翻译权限请求后，检查与生产构建通过 |
 | `github:github` | 1 | 100 | GitHub CLI 未登录无法改远端 Topics；已增强 README 高频关键词入口和 `package.json` 搜索关键词，准备后续补齐仓库 Topics |
-| `browser:control-in-app-browser` | 2 | 100 | 本地生产版手机视口完成 DOM、截图、控制台和真实注册交互，注册后跳转 `/tools`；生产导航受本机代理间歇超时影响时改用同版本线上接口与抓取证据复核 |
+| `browser:control-in-app-browser` | 3 | 100 | 线上 390×844 首页和翻译 FAQ 完成可见截图与 DOM 复核：首页无账号空白和横向溢出，FAQ 显示免费账号且无会员/180 天文案 |
 | `vercel:investigation-mode` | 2 | 100 | 交叉验证浏览器、curl、Node 与 Vercel API，确认直连 TLS 重置来自本机网络出口；显式代理可恢复请求，部署本身为 READY，网站增加离线恢复 |
-| `vercel:auth` | 2 | 100 | 新增安全修改密码和旧会话失效；生产再次验证注册、登录态、受保护转换接口、未开放升级接口与测试账号清理 |
-| `vercel:deployments-cicd` | 2 | 100 | GitHub 主分支提交 `4ee7b5f` 自动部署为 `READY`，三个生产别名切换到 `dpl_3UPZf9WfpE3ZhXyhaHWd4TFCvESK`，线上 sitemap 与旧地址跳转复测通过 |
+| `vercel:auth` | 3 | 100 | 生产临时账号完成注册、登录态、免费翻译、受保护 PDF 转 Word、退出和退出后匿名状态回归，账号已从数据库清理 |
+| `vercel:deployments-cicd` | 3 | 100 | GitHub 主分支提交 `86a5e9d` 自动部署为 `READY`，主地址与备用地址上线免费账号口径并通过 65 页线上 SEO 审计 |
 
 ## 未计数记录
 
