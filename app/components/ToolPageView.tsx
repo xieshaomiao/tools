@@ -78,7 +78,7 @@ export default function ToolPageView({ tool, locale }: { tool: LocalizedTool; lo
               <p className="mt-5 max-w-3xl text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">{tool.description}</p>
               <div className="mt-7 flex flex-wrap gap-3">
                 <Link href="#tool-workspace" className="rounded-full bg-blue-600 px-7 py-4 text-sm font-black text-white shadow-xl shadow-blue-600/20 transition hover:-translate-y-0.5 hover:bg-blue-700">
-                  {isEnglish ? 'Start after signing in' : '登录后开始使用'}
+                  {isEnglish ? 'Open workspace' : '开始使用'}
                 </Link>
                 <Link href={directoryHref} className="rounded-full border border-slate-200 bg-white px-7 py-4 text-sm font-black text-slate-900 transition hover:-translate-y-0.5 hover:border-blue-200 hover:text-blue-700">
                   {isEnglish ? 'Browse all tools' : '查看全部工具'}

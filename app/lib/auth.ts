@@ -298,16 +298,3 @@ export function getMembershipStatus(user: UserRecord | null) {
     remainingDays,
   };
 }
-
-export async function upgradeMembership(userId: string, plan: 'monthly' | 'yearly') {
-  await ensureSchema();
-  const sql = getSql();
-  const addDays = plan === 'monthly' ? 30 : 365;
-  const rows = await sql`
-    UPDATE toolly_users
-    SET membership_expiry = GREATEST(COALESCE(membership_expiry, NOW()), NOW()) + (${addDays} * INTERVAL '1 day')
-    WHERE id = ${userId}
-    RETURNING id, email, password_hash, password_salt, created_at, membership_expiry
-  ` as unknown as UserRow[];
-  return rows[0] ? rowToUser(rows[0]) : null;
-}

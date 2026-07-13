@@ -14,6 +14,13 @@ export default function ToolAccessGate({ tool, locale }: { tool: ToolMeta; local
 
   useEffect(() => {
     const controller = new AbortController();
+    let active = true;
+    const timeoutId = window.setTimeout(() => {
+      if (active) {
+        controller.abort();
+        setState('unavailable');
+      }
+    }, 12000);
     async function checkAccess() {
       try {
         const response = await fetch('/api/auth/status', { cache: 'no-store', signal: controller.signal });
@@ -21,14 +28,24 @@ export default function ToolAccessGate({ tool, locale }: { tool: ToolMeta; local
           setState('unavailable');
           return;
         }
-        const data = await response.json() as { isAuthenticated?: boolean };
+        const data = await response.json() as { serviceAvailable?: boolean; isAuthenticated?: boolean };
+        if (data.serviceAvailable === false) {
+          setState('unavailable');
+          return;
+        }
         setState(data.isAuthenticated ? 'authenticated' : 'signed-out');
       } catch (error) {
-        if ((error as Error).name !== 'AbortError') setState('unavailable');
+        if (active && (error as Error).name !== 'AbortError') setState('unavailable');
+      } finally {
+        window.clearTimeout(timeoutId);
       }
     }
     checkAccess();
-    return () => controller.abort();
+    return () => {
+      active = false;
+      window.clearTimeout(timeoutId);
+      controller.abort();
+    };
   }, []);
 
   if (state === 'authenticated') return <ToolPanel tool={tool} locale={locale} />;

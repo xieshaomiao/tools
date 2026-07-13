@@ -329,8 +329,8 @@ function StandardToolPanel({ tool, locale }: { tool: ToolMeta; locale: SiteLocal
     copied: isEnglish ? 'Copied to the clipboard.' : '已复制到剪贴板',
     copyFailed: isEnglish ? 'Copy failed. Select and copy the result manually.' : '复制失败，请长按结果手动复制',
     resultFirst: isEnglish ? 'Generate a result first.' : '请先生成结果',
-    premiumTitle: isEnglish ? 'Membership tool' : '会员专享工具',
-    premiumBody: isEnglish ? 'This advanced utility requires a Toolly membership.' : '该工具属于高级会员服务，新用户可享半年免费体验。',
+    premiumTitle: isEnglish ? 'Online service trial' : '在线服务体验',
+    premiumBody: isEnglish ? 'New accounts include a 180-day online-service trial.' : '新账号包含 180 天在线服务体验，当前未开放续费。',
     chooseFile: isEnglish ? 'Choose a file' : '选择文件',
     targetFormat: isEnglish ? 'Output format' : '目标格式',
     processing: isEnglish ? 'Processing…' : '处理中…',
@@ -466,7 +466,7 @@ function StandardToolPanel({ tool, locale }: { tool: ToolMeta; locale: SiteLocal
     setDownloadBlob(null);
     setDownloadName('');
     if (tool.premium && !authLoading && !isMember) {
-      setOutput(isEnglish ? 'This tool requires a Toolly membership. Sign in and upgrade to continue.' : '该工具仅限会员使用，请登录并升级会员后再试。');
+      setOutput(isEnglish ? 'This online-service trial has ended. Renewals are not available yet.' : '当前在线服务体验已结束，续费尚未开放。');
       return;
     }
 

@@ -15,28 +15,28 @@ const accountSteps = [
 
 export default function MembershipPage() {
   return (
-    <main className="relative isolate min-h-screen overflow-hidden px-6 py-12 lg:px-8 lg:py-16">
+    <main className="relative isolate min-h-screen overflow-hidden px-4 py-6 sm:px-6 sm:py-12 lg:px-8 lg:py-16">
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[640px] bg-[radial-gradient(circle_at_18%_16%,rgba(59,130,246,0.2),transparent_32%),radial-gradient(circle_at_82%_12%,rgba(124,58,237,0.17),transparent_30%),linear-gradient(180deg,#f8fbff_0%,transparent_90%)]" />
       <div className="mx-auto max-w-7xl">
-        <header className="overflow-hidden rounded-[2.75rem] border border-white/80 bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-900 p-8 text-white shadow-[0_30px_80px_rgba(30,64,175,0.2)] sm:p-12 lg:p-16">
+        <header className="overflow-hidden rounded-[2rem] border border-white/80 bg-gradient-to-br from-slate-950 via-blue-950 to-indigo-900 p-7 text-white shadow-[0_30px_80px_rgba(30,64,175,0.2)] sm:rounded-[2.75rem] sm:p-12 lg:p-16">
           <p className="text-sm font-black uppercase tracking-[0.28em] text-blue-200">账号中心</p>
-          <div className="mt-6 grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
+          <div className="mt-4 grid gap-6 sm:mt-6 sm:gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
             <div>
-              <h1 className="max-w-3xl text-4xl font-black leading-tight tracking-[-0.04em] sm:text-5xl">登录后使用工具，账号规则一次说清楚。</h1>
-              <p className="mt-6 max-w-3xl text-lg leading-8 text-blue-100">
+              <h1 className="max-w-3xl text-3xl font-black leading-tight tracking-[-0.04em] sm:text-5xl">登录后使用工具，账号规则一次说清楚。</h1>
+              <p className="mt-4 max-w-3xl text-base leading-7 text-blue-100 sm:mt-6 sm:text-lg sm:leading-8">
                 Toolly 的工具操作区需要免费账号。能在浏览器完成的内容优先本地处理；在线翻译会调用网络服务，并显示单独的体验状态。
               </p>
             </div>
-            <div className="grid gap-3 text-sm font-bold sm:grid-cols-3 lg:grid-cols-1">
-              <span className="rounded-full border border-white/15 bg-white/10 px-5 py-3">免费账号即可开始</span>
-              <span className="rounded-full border border-white/15 bg-white/10 px-5 py-3">优先浏览器本地处理</span>
-              <span className="rounded-full border border-white/15 bg-white/10 px-5 py-3">当前不开放在线支付</span>
+            <div className="grid gap-2 text-sm font-bold sm:grid-cols-3 sm:gap-3 lg:grid-cols-1">
+              <span className="rounded-full border border-white/15 bg-white/10 px-4 py-2.5 sm:px-5 sm:py-3">免费账号即可开始</span>
+              <span className="rounded-full border border-white/15 bg-white/10 px-4 py-2.5 sm:px-5 sm:py-3">优先浏览器本地处理</span>
+              <span className="rounded-full border border-white/15 bg-white/10 px-4 py-2.5 sm:px-5 sm:py-3">当前不开放在线支付</span>
             </div>
           </div>
         </header>
 
         <section className="mt-8 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
-          <div className="space-y-8">
+          <div className="order-2 space-y-8 lg:order-1">
             <div className="rounded-[2.5rem] border border-slate-200/80 bg-white/85 p-8 shadow-sm backdrop-blur sm:p-10">
               <p className="text-sm font-black uppercase tracking-[0.22em] text-blue-700">清晰的开始路径</p>
               <h2 className="mt-4 text-3xl font-black tracking-tight text-slate-950">从账号到结果，只需三步</h2>
@@ -75,7 +75,7 @@ export default function MembershipPage() {
             </div>
           </div>
 
-          <aside className="space-y-6 lg:sticky lg:top-28 lg:self-start">
+          <aside className="order-1 space-y-6 lg:order-2 lg:sticky lg:top-28 lg:self-start">
             <MembershipPanel />
             <div className="rounded-[2.25rem] border border-slate-200 bg-slate-950 p-8 text-white shadow-xl shadow-slate-950/10">
               <p className="text-sm font-black uppercase tracking-[0.2em] text-blue-200">继续使用</p>
