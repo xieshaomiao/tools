@@ -12,6 +12,8 @@ const mode = (process.env.NEXT_PUBLIC_ADSENSE_MODE || 'off').trim().toLowerCase(
 const publisher = (process.env.NEXT_PUBLIC_ADSENSE_PUBLISHER_ID || '').trim();
 const slot = (process.env.NEXT_PUBLIC_ADSENSE_ARTICLE_SLOT || '').trim();
 const complianceReady = process.env.NEXT_PUBLIC_ADSENSE_COMPLIANCE_READY === 'true';
+const cmpProvider = (process.env.NEXT_PUBLIC_ADSENSE_CMP_PROVIDER || '').trim().toLowerCase();
+const cmpPublished = process.env.NEXT_PUBLIC_ADSENSE_CMP_PUBLISHED === 'true';
 const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://toolly-ruddy.vercel.app').trim();
 const productionHost = (process.env.NEXT_PUBLIC_ADSENSE_PRODUCTION_HOST || '').trim().toLowerCase();
 
@@ -40,6 +42,16 @@ if (!complianceReady) {
   process.exit(1);
 }
 
+if (!['google-privacy-messaging', 'google-certified-third-party'].includes(cmpProvider)) {
+  console.error('Live ads require an explicit Google-certified CMP provider in NEXT_PUBLIC_ADSENSE_CMP_PROVIDER.');
+  process.exit(1);
+}
+
+if (!cmpPublished) {
+  console.error('Live ads require NEXT_PUBLIC_ADSENSE_CMP_PUBLISHED=true only after the consent message is published.');
+  process.exit(1);
+}
+
 if (!/^\d+$/.test(slot)) {
   console.error('Live ads require a numeric article ad unit ID.');
   process.exit(1);
@@ -58,5 +70,5 @@ if (!productionHost || productionHost !== canonicalHost) {
   process.exit(1);
 }
 
-console.log('AdSense live configuration formats and compliance gate are valid.');
+console.log('AdSense live configuration formats, certified CMP attestation, and compliance gate are valid.');
 process.exit(0);

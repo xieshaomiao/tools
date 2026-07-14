@@ -65,7 +65,7 @@ npm run start
 网站默认使用 `off` 模式：不会输出广告验证 Meta、广告脚本、广告位或 `ads.txt` 占位内容。
 
 - 审核准备：设置 `NEXT_PUBLIC_ADSENSE_MODE=review` 与真实 `NEXT_PUBLIC_ADSENSE_PUBLISHER_ID`。网站会输出所有权 Meta 和正确的 `ads.txt`，但不会加载广告。
-- 正式投放：只有完成 AdSense 审核、Google 认证 CMP/隐私消息和页面排除设置后，才设置 `NEXT_PUBLIC_ADSENSE_MODE=live`、`NEXT_PUBLIC_ADSENSE_COMPLIANCE_READY=true`、真实 `NEXT_PUBLIC_ADSENSE_ARTICLE_SLOT`，并让 `NEXT_PUBLIC_ADSENSE_PRODUCTION_HOST` 与 `NEXT_PUBLIC_SITE_URL` 的主机名完全一致。
+- 正式投放：只有完成 AdSense 审核、Google 认证 CMP/隐私消息和页面排除设置后，才设置 `NEXT_PUBLIC_ADSENSE_MODE=live`、`NEXT_PUBLIC_ADSENSE_COMPLIANCE_READY=true`、`NEXT_PUBLIC_ADSENSE_CMP_PROVIDER=google-privacy-messaging`（或 `google-certified-third-party`）、`NEXT_PUBLIC_ADSENSE_CMP_PUBLISHED=true`、真实 `NEXT_PUBLIC_ADSENSE_ARTICLE_SLOT`，并让 `NEXT_PUBLIC_ADSENSE_PRODUCTION_HOST` 与 `NEXT_PUBLIC_SITE_URL` 的主机名完全一致。
 - 这些变量只应配置在 Vercel 的 Production 环境；Preview 与 Development 环境保持 `off`，避免测试访问产生真实广告请求。
 - 广告只允许出现在原创文章正文之后，不在登录页、账号页、工具操作区、上传、复制或下载按钮附近展示。
 - 使用 `npm run ad:validate` 检查配置；不得填写示例发布商 ID，也不得点击或自动化访问真实广告。
