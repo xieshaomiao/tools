@@ -9,6 +9,9 @@ const requiredPages = [
   '/blog/what-is-json',
   '/blog/how-tool-pages-work',
   '/blog/pdf-to-word-guide',
+  '/en/blog',
+  '/en/blog/pdf-to-word-guide',
+  '/en/blog/fix-json-errors',
   '/privacy',
   '/terms',
   '/about',
@@ -71,7 +74,7 @@ try {
 try {
   const { response, text } = await fetchText('/sitemap.xml');
   if (response.status !== 200) failures.push(`/sitemap.xml returned ${response.status}`);
-  for (const path of ['/blog/pdf-to-word-guide', '/privacy', '/terms', '/about', '/contact']) {
+  for (const path of ['/blog/pdf-to-word-guide', '/en/blog', '/en/blog/pdf-to-word-guide', '/en/blog/fix-json-errors', '/privacy', '/terms', '/about', '/contact']) {
     if (!text.includes(path)) failures.push(`sitemap is missing ${path}`);
   }
 } catch (error) {

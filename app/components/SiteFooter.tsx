@@ -1,11 +1,30 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 import { useSiteLocale } from '@/app/hooks/useSiteLocale';
 
 export default function SiteFooter() {
   const isEnglish = useSiteLocale();
+  const pathname = usePathname();
+  const footerLinks = isEnglish
+    ? [
+      { href: '/en/tools', label: 'Tools' },
+      { href: '/en/blog', label: 'Guides' },
+      { href: '/en/about', label: 'About' },
+      { href: '/en/contact', label: 'Contact' },
+      { href: '/en/privacy', label: 'Privacy' },
+      { href: '/en/terms', label: 'Terms' },
+    ]
+    : [
+      { href: '/tools', label: '工具目录' },
+      { href: '/blog', label: '使用指南' },
+      { href: '/about', label: '关于' },
+      { href: '/contact', label: '联系' },
+      { href: '/privacy', label: '隐私政策' },
+      { href: '/terms', label: '服务条款' },
+    ];
 
   useEffect(() => {
     document.documentElement.lang = isEnglish ? 'en' : 'zh-CN';
@@ -27,13 +46,20 @@ export default function SiteFooter() {
             </p>
           </div>
           <nav aria-label={isEnglish ? 'Footer navigation' : '页脚导航'} className="flex flex-wrap items-center gap-3">
-            <Link href={isEnglish ? '/en/tools' : '/tools'} className="rounded-full border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700">{isEnglish ? 'Tools' : '工具目录'}</Link>
-            <Link href="/blog" className="rounded-full border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700">{isEnglish ? 'Guides' : '使用指南'}</Link>
-            <Link href={isEnglish ? '/en/about' : '/about'} className="rounded-full border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700">{isEnglish ? 'About' : '关于'}</Link>
-            <Link href={isEnglish ? '/en/contact' : '/contact'} className="rounded-full border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700">{isEnglish ? 'Contact' : '联系'}</Link>
+            {footerLinks.map((item) => {
+              const current = pathname === item.href || pathname.startsWith(`${item.href}/`);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  aria-current={current ? 'page' : undefined}
+                  className={`rounded-full border bg-white px-4 py-2 font-semibold transition ${current ? 'border-blue-200 text-blue-700' : 'border-slate-200 text-slate-700 hover:border-blue-200 hover:text-blue-700'}`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
             {isEnglish ? <Link href="/" hrefLang="zh-CN" className="rounded-full border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700">中文</Link> : <Link href="/en" hrefLang="en" className="rounded-full border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700">English</Link>}
-            <Link href={isEnglish ? '/en/privacy' : '/privacy'} className="rounded-full border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700">{isEnglish ? 'Privacy' : '隐私政策'}</Link>
-            <Link href={isEnglish ? '/en/terms' : '/terms'} className="rounded-full border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700">{isEnglish ? 'Terms' : '服务条款'}</Link>
             <Link href="https://github.com/xieshaomiao/tools" className="rounded-full border border-slate-200 bg-white px-4 py-2 font-semibold text-slate-700 transition hover:border-blue-200 hover:text-blue-700">GitHub</Link>
           </nav>
         </div>

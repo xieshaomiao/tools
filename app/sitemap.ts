@@ -37,6 +37,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const bilingualStaticRoutes = [
     { url: absoluteUrl('/en'), lastModified: CONTENT_LAST_MODIFIED, changeFrequency: 'weekly' as const, priority: 0.9, alternates: { languages: { 'zh-CN': absoluteUrl('/'), en: absoluteUrl('/en') } } },
     { url: absoluteUrl('/en/tools'), lastModified: CONTENT_LAST_MODIFIED, changeFrequency: 'weekly' as const, priority: 0.8, alternates: { languages: { 'zh-CN': absoluteUrl('/tools'), en: absoluteUrl('/en/tools') } } },
+    { url: absoluteUrl('/en/blog'), lastModified: CONTENT_LAST_MODIFIED, changeFrequency: 'weekly' as const, priority: 0.8, alternates: { languages: { 'zh-CN': absoluteUrl('/blog'), en: absoluteUrl('/en/blog') } } },
+    { url: absoluteUrl('/en/blog/pdf-to-word-guide'), lastModified: CONTENT_LAST_MODIFIED, changeFrequency: 'monthly' as const, priority: 0.8, alternates: { languages: { 'zh-CN': absoluteUrl('/blog/pdf-to-word-guide'), en: absoluteUrl('/en/blog/pdf-to-word-guide') } } },
+    { url: absoluteUrl('/en/blog/fix-json-errors'), lastModified: CONTENT_LAST_MODIFIED, changeFrequency: 'monthly' as const, priority: 0.7, alternates: { languages: { 'zh-CN': absoluteUrl('/blog/what-is-json'), en: absoluteUrl('/en/blog/fix-json-errors') } } },
     { url: absoluteUrl('/en/membership'), lastModified: CONTENT_LAST_MODIFIED, changeFrequency: 'monthly' as const, priority: 0.5, alternates: { languages: { 'zh-CN': absoluteUrl('/membership'), en: absoluteUrl('/en/membership') } } },
     { url: absoluteUrl('/en/about'), lastModified: CONTENT_LAST_MODIFIED, changeFrequency: 'yearly' as const, priority: 0.5, alternates: { languages: { 'zh-CN': absoluteUrl('/about'), en: absoluteUrl('/en/about') } } },
     { url: absoluteUrl('/en/contact'), lastModified: CONTENT_LAST_MODIFIED, changeFrequency: 'yearly' as const, priority: 0.4, alternates: { languages: { 'zh-CN': absoluteUrl('/contact'), en: absoluteUrl('/en/contact') } } },
@@ -47,6 +50,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const bilingualPathMap: Record<string, string> = {
     '/': '/en',
     '/tools': '/en/tools',
+    '/blog': '/en/blog',
+    '/blog/pdf-to-word-guide': '/en/blog/pdf-to-word-guide',
+    '/blog/what-is-json': '/en/blog/fix-json-errors',
     '/membership': '/en/membership',
     '/about': '/en/about',
     '/contact': '/en/contact',

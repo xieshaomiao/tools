@@ -17,7 +17,7 @@ export default function EnglishPrivacyPage() {
           <p className="text-sm font-black uppercase tracking-[0.25em] text-blue-200">Toolly legal information</p>
           <h1 className="mt-5 text-4xl font-black tracking-tight sm:text-5xl">Privacy Policy</h1>
           <p className="mt-5 max-w-3xl leading-8 text-blue-100">This policy explains the information Toolly handles when providing accounts and online tools, why it is handled, and the conditions that must be met before advertising is enabled.</p>
-          <p className="mt-5 text-sm font-bold text-blue-200">Effective and last updated: July 13, 2026</p>
+          <p className="mt-5 text-sm font-bold text-blue-200">Effective and last updated: July 15, 2026</p>
         </header>
 
         <div className="mt-8 space-y-6">
@@ -66,6 +66,7 @@ export default function EnglishPrivacyPage() {
             <div className="mt-4 space-y-4 leading-8">
               <p>If Google AdSense is enabled in the future, third-party vendors, including Google, may use cookies, web beacons, IP addresses, or other identifiers to serve, limit, and measure ads based on a user&apos;s prior visits to Toolly or other websites.</p>
               <p>Google&apos;s use of advertising cookies enables Google and its partners to serve ads based on visits to this site and other sites on the internet. Users can visit <Link href="https://adssettings.google.com/" className="font-bold text-blue-700 underline underline-offset-4">Google Ads Settings</Link> to control or opt out of personalized advertising.</p>
+              <p>Google may process information from sites and apps that use its services. Read <Link href="https://policies.google.com/technologies/partner-sites" className="font-bold text-blue-700 underline underline-offset-4">How Google uses information from sites or apps that use its services</Link> for details about those uses and available choices.</p>
               <p>If advertising vendors other than Google are used later, Toolly will identify them and provide available opt-out information before activation.</p>
               <p>Before enabling consent-dependent advertising technology for visitors in regions such as the EEA, the United Kingdom, and Switzerland, Toolly will use a consent management platform (CMP) that meets Google&apos;s requirements, present the available choices, and provide a “Privacy and cookie settings” entry point so consent can be managed or withdrawn. Relevant advertising will not be enabled before these conditions are met.</p>
             </div>

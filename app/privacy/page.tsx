@@ -9,7 +9,7 @@ export const metadata = {
   },
 };
 
-const updatedAt = '2026 年 7 月 13 日';
+const updatedAt = '2026 年 7 月 15 日';
 
 export default function PrivacyPage() {
   return (
@@ -81,6 +81,11 @@ export default function PrivacyPage() {
                 Google 使用广告 Cookie 后，Google 及其合作伙伴可依据用户对本站或互联网其他网站的访问投放广告。用户可前往
                 <Link href="https://adssettings.google.com/" className="mx-1 font-bold text-blue-700 underline underline-offset-4">Google 广告设置</Link>
                 管理或退出个性化广告。
+              </p>
+              <p>
+                Google 可能会处理来自使用其服务的网站和应用的信息。可阅读
+                <Link href="https://policies.google.com/technologies/partner-sites" className="mx-1 font-bold text-blue-700 underline underline-offset-4">Google 如何使用合作网站或应用中的信息</Link>
+                了解相关用途与选择。
               </p>
               <p>若以后使用 Google 以外的广告供应商，Toolly 会在启用前补充供应商及其退出方式。</p>
               <p>面向欧洲经济区、英国和瑞士等适用地区启用需要同意的广告技术前，Toolly 会使用符合 Google 要求的同意管理平台（CMP）展示选择，并提供“隐私和 Cookie 设置”入口，以便用户管理或撤回同意。在这些条件未满足前不会启用相关广告投放。</p>
