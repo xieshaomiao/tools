@@ -287,3 +287,20 @@
 - 上线地址：https://toolly-ruddy.vercel.app
 - GitHub：https://github.com/xieshaomiao/tools
 - 累计有效优化项：161 / 500（达到 500 后继续向 1000 推进）。
+
+## 2026-07-15 · AdSense 审核配置复核与原创英文内容上线
+
+- 用户问题：AdSense 后台显示 `ads.txt`“未找到”，同时网站仍处于“正在准备”；需要保证后续部署不会丢失验证配置，并降低审核时的低价值内容与信任风险。
+- 有效改进：7 项。
+  - 重新写入并锁定生产环境的 AdSense 审核模式、真实发布商 ID、Google Privacy & Messaging CMP 提供方和 CMP 已发布状态；合规确认、正式广告位和 live 模式继续保持关闭。
+  - 使用上一版干净源码重新构建生产环境，验证新环境仍输出所有权 Meta 与正确 `ads.txt`，同时不加载 `adsbygoogle.js` 或任何广告位。
+  - 新增英文原创指南中心 `/en/blog`，把英文用户从模板化工具目录引导到可公开阅读的故障诊断和安全使用内容。
+  - 新增英文 PDF 转 Word 深度指南，覆盖文本型、扫描型、受保护和复杂排版 PDF，并说明 OCR、可编辑性、版式与隐私边界。
+  - 新增英文 JSON 错误排查指南，覆盖引号、尾随逗号、括号、转义、注释和非 JSON 值，并提供 FAQ 与结构化数据。
+  - 中英文页头增加“指南、关于、联系”主导航，页脚修正英文指南路径并为当前页面增加明确状态，让审核者和普通用户更容易发现原创内容与法律页面。
+  - 中英文隐私政策增加 Google 合作网站数据使用说明链接，Sitemap 与变现审计同步覆盖英文指南。
+- 验证证据：提交 `a69c52f` 已推送 GitHub；Vercel 正式部署 `dpl_C3ALT9DnHLjb5BcP8TVmAD8ESEPZ` 为 READY 并接管主域名；`npm run check` 与 `npm run build` 通过；本地 SEO 审计验证 77 个公开页面，本地变现审计验证 21 个关键页面；线上 `/en/blog`、两篇英文指南、中英文隐私政策、`ads.txt`、`robots.txt` 和 `sitemap.xml` 均返回 HTTP 200；线上首页保留 `ca-pub-2660043295441780` 所有权 Meta，Google 广告爬虫读取到正确发布商行，广告脚本仍未加载；隐私政策的 Google 合作网站说明链接和中英文主导航均已上线。
+- 审核边界：AdSense 申请时间为 2026-07-13 21:24，后台说明通常数天、部分情况需 2-4 周；真实运营者名称、地区和私密联系邮箱仍需用户本人提供，不能虚构；正式广告继续等待 Google 审批和真实广告单元。
+- 上线地址：https://toolly-ruddy.vercel.app
+- GitHub：https://github.com/xieshaomiao/tools
+- 累计有效优化项：168 / 500（达到 500 后继续向 1000 推进）。
