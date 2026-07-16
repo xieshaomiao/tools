@@ -69,6 +69,19 @@ npm run start
 - 这些变量只应配置在 Vercel 的 Production 环境；Preview 与 Development 环境保持 `off`，避免测试访问产生真实广告请求。
 - 广告只允许出现在原创文章正文之后，不在登录页、账号页、工具操作区、上传、复制或下载按钮附近展示。
 - 使用 `npm run ad:validate` 检查配置；不得填写示例发布商 ID，也不得点击或自动化访问真实广告。
+- 使用变现审计同时验证公开页面、所有权 Meta、广告脚本和 `ads.txt` 是否与当前模式一致：
+
+```bash
+# 默认关闭模式：不得暴露发布商信息或广告脚本，ads.txt 应返回 404
+MONETIZATION_AUDIT_MODE=off npm run monetization:audit
+
+# 审核模式：每个公开页面必须保留所有权 Meta，ads.txt 必须精确匹配，且仍不得加载广告脚本
+MONETIZATION_AUDIT_MODE=review \
+NEXT_PUBLIC_ADSENSE_PUBLISHER_ID=ca-pub-0000000000000000 \
+npm run monetization:audit -- https://your-production-host.example
+```
+
+示例 ID 必须替换成 AdSense 后台显示的真实 16 位发布商 ID。正式投放仍使用 `npm run ad:validate` 的 `live` 配置检查，并在真实地区验证 CMP，不用自动化点击任何广告。
 
 ## 隐私说明
 
